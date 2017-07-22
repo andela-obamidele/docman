@@ -1,0 +1,31 @@
+{
+  "name": "docman",
+  "version": "1.0.0",
+  "description": "A document management application",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela-obamidele/docman.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andela-obamidele/docman/issues"
+  },
+  "homepage": "https://github.com/andela-obamidele/docman#readme",
+  "devDependencies": {
+    "eslint": "^4.3.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.7.0",
+    "gulp-eslint": "^4.0.0"
+  },
+  "dependencies": {
+    "gulp": "^3.9.1"
+  }
+}
