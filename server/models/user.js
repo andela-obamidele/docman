@@ -1,11 +1,18 @@
 import bcrypt from 'bcrypt';
+import errorMessages from '../helpers/constants/errors';
+
+const { userAuthErrors } = errorMessages;
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+      unique: true,
+      validate: {
+        isEmail: {
+          msg: userAuthErrors.BAD_EMAIL_ERROR
+        }
+      }
     },
     password: {
       type: DataTypes.STRING,
@@ -31,9 +38,9 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASECADE'
     });
     User.belongsTo(models.Role, {
-      foreignKey: 'roleId',
+      foreignKey: 'role',
       targetKey: 'id',
-      as: 'role',
+      defaultValue: 2,
       onDelete: 'CASCADE',
     });
   };

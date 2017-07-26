@@ -4,10 +4,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    authorId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     body: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -17,18 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       values: ['public', 'private', 'role'],
       allowNull: false
     },
-    author: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
   });
 
   Document.associate = (models) => {
     // associations can be defined here
     Document.belongsTo(models.User, {
-      foreignKey: 'userId',
+      foreignKey: 'author',
       targetKey: 'id',
-      as: 'author',
       onDelete: 'CASCADE',
     });
   };

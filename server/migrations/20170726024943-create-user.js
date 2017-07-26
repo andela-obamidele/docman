@@ -11,6 +11,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         onDelete: 'CASCADE',
+        defaultValue: 2,
         references: {
           model: 'Roles',
           key: 'id',
@@ -31,7 +32,6 @@ module.exports = {
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
         type: Sequelize.DATE
       }
     });
