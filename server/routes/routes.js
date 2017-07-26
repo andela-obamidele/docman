@@ -1,34 +1,14 @@
 import express from 'express';
-
+import userController from '../controllers/userController';
+import documentController from '../controllers/documentController';
 
 const router = express.Router();
 
-router.post('/users/login', (req, res) => {
-  res.send({
-    endpoint: '/users/login',
-    explain: 'logs user in'
-  });
-});
+router.post('/users/login', userController.loginUser);
 
-router.post('/users/', (req, res) => {
-  res.send({
-    endpoint: '/users/',
-    explain: 'creates a new user'
-  });
-});
+router.post('/users/', userController.signupUser);
 
-router.get('/users/', (req, res) => {
-  if (Object.keys(req.query).length) {
-    return res.send({
-      endpoint: '/user/?limit={integer}&offset={integer}',
-      explain: 'Pagination for users'
-    });
-  }
-  res.send({
-    endpoint: '/users/',
-    explain: 'get matching instances of user'
-  });
-});
+router.get('/users/', userController.getUser);
 
 router.put('/users/:id', (req, res) => {
   res.send({
@@ -37,63 +17,20 @@ router.put('/users/:id', (req, res) => {
   });
 });
 
-router.delete('/user/id', (req, res) => {
-  res.send({
-    endpoint: '/users/:id',
-    explain: 'delete user'
-  });
-});
+router.delete('/users/:id', userController.deleteUser);
 
-router.post('/documents/', (req, res) => {
-  res.send({
-    endpoint: '/documents/',
-    explain: 'create a new document instance'
-  });
-});
+router.post('/documents/', documentController.createDocument);
 
-router.get('/documents/', (req, res) => {
-  if (Object.keys(req.query).length) {
-    return res.send({
-      endpoint: '/documents/?limit={integer}&offset={integer}',
-      explain: 'pagination for docs'
-    });
-  }
-  res.send({ endpoint: '/documents/', explain: 'find matching instances of document' });
-});
+router.get('/documents/', documentController.getDocument);
 
-router.put('/documents/:id', (req, res) => {
-  res.send({
-    endpoint: '/documents/:id',
-    explain: 'updates document'
-  });
-});
+router.put('/documents/:id', documentController.updateDocument);
 
-router.delete('/documents/:id', (req, res) => {
-  res.send({
-    endpoint: '/document/:id',
-    explain: 'delete document'
-  });
-});
+router.delete('/documents/:id', documentController.deleteDocument);
 
-router.get('/users/:id/documents', (req, res) => {
-  res.send({
-    endpoint: '/users/:id/documents',
-    explain: 'find documents belonging to the user'
-  });
-});
+router.get('/users/:id/documents', documentController.getUserDocuments);
 
-router.get('/search/users/', (req, res) => {
-  res.send({
-    endpoint: '/search/users/',
-    explain: 'search for a user'
-  });
-});
+router.get('/search/users/', userController.searchUser);
 
-router.get('/search/documents/', (req, res) => {
-  res.send({
-    endpoint: '/search/documents/',
-    explain: 'search for a document'
-  });
-});
+router.get('/search/documents/', documentController.searchDocuments);
 
 export default router;
