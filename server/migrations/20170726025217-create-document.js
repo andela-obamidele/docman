@@ -41,7 +41,7 @@ module.exports = {
     });
     return query;
   },
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     const query = queryInterface.dropTable('Documents');
     return query;
   }
