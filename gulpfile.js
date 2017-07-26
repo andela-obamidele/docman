@@ -28,7 +28,6 @@ gulp.task('build-dev', () => {
     .pipe(sourcemaps.init())
     .pipe(babel({
     }))
-    .pipe(concat('all.js'))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist'));
   return filesStream;
@@ -36,11 +35,13 @@ gulp.task('build-dev', () => {
 
 gulp.task('serve-dev', ['lint', 'build-dev'], () => {
   nodemon({
-    script: 'dist/all.js',
+    script: 'dist/server.js',
     ext: 'js',
     ignore: [
-      'gulpfile.js'
-    ]
+      'gulpfile.js',
+      'dist/**'
+    ],
+    tasks: ['lint', 'build-dev']
   });
 });
 
@@ -53,3 +54,4 @@ gulp.task('serve', ['build'], () => {
     nodemonStream.emit('restart', 20);
   });
 });
+
