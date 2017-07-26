@@ -26,10 +26,14 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     User.hasMany(models.Document, {
       foreignKey: 'userId',
+      sourceKey: 'id',
+      as: 'author',
       onDelete: 'CASECADE'
     });
     User.belongsTo(models.Role, {
       foreignKey: 'roleId',
+      targetKey: 'id',
+      as: 'role',
       onDelete: 'CASCADE',
     });
   };

@@ -53,4 +53,3 @@ gulp.task('serve', ['build'], () => {
     nodemonStream.emit('restart', 20);
   });
 });
-

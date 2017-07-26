@@ -59,3 +59,7 @@ typings/
 
 # bundled files
 dist
+
+# store
+server/models/.DS_Store
+
