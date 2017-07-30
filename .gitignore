@@ -62,4 +62,5 @@ dist
 
 # store
 server/models/.DS_Store
-
+# coverage files 
+coverage
