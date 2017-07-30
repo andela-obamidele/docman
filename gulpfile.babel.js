@@ -1,13 +1,18 @@
-const eslint = require('gulp-eslint');
-const gulp = require('gulp');
-const babel = require('gulp-babel');
-const uglify = require('gulp-uglify');
-const nodemon = require('gulp-nodemon');
-const sourcemaps = require('gulp-sourcemaps');
-const concat = require('gulp-concat');
+import eslint from 'gulp-eslint';
+import gulp from 'gulp';
+import mocha from 'gulp-spawn-mocha';
+import babel from 'gulp-babel';
+import uglify from 'gulp-uglify';
+import nodemon from 'gulp-nodemon';
+import sourcemaps from 'gulp-sourcemaps';
+import concat from 'gulp-concat';
+import dotenv from 'dotenv';
+
+
+dotenv.config();
 
 gulp.task('lint', () => {
-  const gulpStream = gulp.src(['**/*.js', '!node_modules/**', '!dist/**'])
+  const gulpStream = gulp.src(['**/*.js', '!node_modules/**', '!dist/**', '!./coverage/**'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
@@ -37,6 +42,9 @@ gulp.task('serve-dev', ['lint', 'build-dev'], () => {
   nodemon({
     script: 'dist/server.js',
     ext: 'js',
+    env: {
+      SECRET: process.env.SECRET
+    },
     ignore: [
       'gulpfile.js',
       'dist/**'
@@ -55,3 +63,24 @@ gulp.task('serve', ['build'], () => {
   });
 });
 
+gulp.task('test', ['lint'], () => {
+  gulp.src(['tests/**/*.js'])
+    .pipe(mocha({
+      compilers: 'babel-core/register',
+      reporter: 'dot',
+      env: { NODE_ENV: 'test' },
+      istanbul: {
+        dir: 'coverage/',
+        includeAllSources: {
+          root: './server',
+        },
+        x: [
+          '**/dist/**',
+          '**/node_modules**/',
+          '**/migrations/**',
+          '**/seeders/**',
+          '**gulpfile.babel.js**'],
+        print: 'both'
+      }
+    }));
+});
