@@ -70,7 +70,7 @@ export default {
       }
     } else {
       const { errors } = error;
-      errorMessage = errors[0].message;
+      errorMessage = errors[0].message || userAuthErrors.incompleteCredentialsError;
     }
     return HTTPResponse.status(400).json({
       error: errorMessage

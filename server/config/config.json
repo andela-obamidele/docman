@@ -7,10 +7,7 @@
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "docman_test",
-    "host": "127.0.0.1",
+    "use_env_variable": "TEST_DB_URL",
     "dialect": "mysql"
   },
   "production": {

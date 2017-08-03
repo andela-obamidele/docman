@@ -5,8 +5,8 @@ import { User } from '../models';
 import errorMessages from '../constants/errors';
 import successMessages from '../constants/successes';
 import authHelpers from '../helpers/authHelpers';
-// eslint-disable-next-line
-const { userAuthErrors, errorCodes } = errorMessages;
+
+const { userAuthErrors } = errorMessages;
 const { userAuthSuccess } = successMessages;
 
 export default {
@@ -21,8 +21,7 @@ export default {
         return authHelpers
           .sendUniqueJWT(userCredentials, response, successMessage);
       })
-      .catch((error) => {
-        console.log('error.........', error);
+      .catch(() => {
         response.status(401).json({ error: userAuthErrors.wrongEmailOrPassword });
       });
   },

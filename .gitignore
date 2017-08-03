@@ -64,3 +64,6 @@ dist
 server/models/.DS_Store
 # coverage files 
 coverage
+
+# coveralls configuration
+.coveralls.yml

@@ -100,7 +100,7 @@ describe('/api/v1/users/login', () => {
     it(`should respond with '${unAuthorizedUserError}' when user is not authenticated`, () => {
       const supertestRequest = request
         .get('/api/v1/users/')
-        .expect(401)
+        .expect(403)
         .expect((response) => {
           assert.equal(response.body.error, unAuthorizedUserError);
         });
