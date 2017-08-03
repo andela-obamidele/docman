@@ -10,7 +10,7 @@ export default {
     unAuthorizedUserError: 'sorry, you don\'t have permission to carry out this action. please signup first or login if you have not'
   },
   errorCodes: {
-    errNoDefaultForField: 1364,
-    erDupEntry: 1062
+    errNoDefaultForField: '1364',
+    erDupEntry: '23505'
   }
 };

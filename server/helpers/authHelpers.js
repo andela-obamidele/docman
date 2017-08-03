@@ -61,11 +61,11 @@ export default {
    */
   handleSignupError(error, HTTPResponse) {
     let errorMessage = errorMessages.genericErrorMessage;
-
-    if (error.original) {
-      if (error.original.errno === errorCodes.errNoDefaultForField) {
+    const { original } = error;
+    if (original) {
+      if (original.code === errorCodes.errNoDefaultForField) {
         errorMessage = userAuthErrors.incompleteCredentialsError;
-      } else if (error.original.errno === errorCodes.erDupEntry) {
+      } else if (original.code === errorCodes.erDupEntry) {
         errorMessage = userAuthErrors.duplicateEmailError;
       }
     } else {

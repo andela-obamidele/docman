@@ -67,7 +67,7 @@ gulp.task('test', ['lint'], () => {
     .pipe(mocha({
       compilers: 'babel-core/register',
       reporter: 'dot',
-      timeout: 10000,
+      timeout: 20000,
       env: { NODE_ENV: 'test' },
       istanbul: {
         dir: 'coverage/',

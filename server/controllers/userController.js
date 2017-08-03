@@ -35,12 +35,21 @@ export default {
     if (authHelpers.isTheTwoPasswordsSame(password,
       confirmationPassword,
       response)) {
-      return User.findOrCreate({ where: { email, password } })
-        .spread((user) => {
-          authHelpers.sendUniqueJWT(user.dataValues, response);
-        }).catch((error) => {
-          authHelpers.handleSignupError(error, response);
-        });
+      return User.create({ email, password })
+        .then(user => authHelpers.sendUniqueJWT(user.dataValues, response))
+        .catch(error => authHelpers.handleSignupError(error, response))
+        .catch(() => User.findOne({ where: { email } }))
+        .then((user) => {
+          const { dataValues } = user;
+          if (dataValues) {
+            return authHelpers.sendUniqueJWT(dataValues, response);
+          }
+        })
+        .catch(() => response
+          .status(503)
+          .json({
+            error: 'your connection is probably slow. Please try again after a while'
+          }));
     }
   },
   getUser: (request, response) => {

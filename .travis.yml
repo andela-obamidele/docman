@@ -1,7 +1,16 @@
+dist: precise
 language: node_js
 node_js:
-  - "node"
-install: npm install
+  - "7"
+services:
+  - postgresql
+before_script:
+ - npm install -g gulp-cli
+ - npm install -g sequelize-cli
+ - npm install -g  istanbul@1.0.0-alpha.2
+ - psql -c 'create database travis_ci_test;' -U postgres 
+ - sequelize db:migrate
+ - sequelize db:seed:all
 script: gulp test
 after_success:
   - npm install -g codeclimate-test-reporter
