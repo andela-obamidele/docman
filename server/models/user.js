@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import errorMessages from '../helpers/constants/errors';
+import errorMessages from '../constants/errors';
 
 const { userAuthErrors } = errorMessages;
 
@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       validate: {
         isEmail: {
-          msg: userAuthErrors.BAD_EMAIL_ERROR
+          msg: userAuthErrors.badEmailError
         }
       }
     },
