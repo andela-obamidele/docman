@@ -1,14 +1,15 @@
 import express from 'express';
+
 import userController from '../controllers/userController';
 import documentController from '../controllers/documentController';
+import authorizationChecker from '../middlewares/authorization';
 
 const router = express.Router();
-
 
 router.post('/users/login', userController.loginUser);
 
 router.post('/users/', userController.signupUser);
-
+router.use(authorizationChecker);
 router.get('/users/', userController.getUser);
 
 router.put('/users/:id', (req, res) => {

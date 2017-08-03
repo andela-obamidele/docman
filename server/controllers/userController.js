@@ -1,51 +1,48 @@
 
-import jwt from 'jsonwebtoken';
+// eslint-disable-next-line
+import bcrypt from 'bcrypt';
 import { User } from '../models';
-import errorMessages from '../helpers/constants/errors';
-
+import errorMessages from '../constants/errors';
+import successMessages from '../constants/successes';
+import authHelpers from '../helpers/authHelpers';
+// eslint-disable-next-line
 const { userAuthErrors, errorCodes } = errorMessages;
+const { userAuthSuccess } = successMessages;
 
-const secret = process.env.SECRET;
 export default {
   loginUser: (request, response) => {
-    response.send({
-      endpoint: '/users/login',
-      explain: 'logs user in'
-    });
+    const { email, password } = request.body;
+    return User.findOne({ where: { email } })
+      .then((user) => {
+        const hashedPassword = user.dataValues.password;
+        const userCredentials = user.dataValues;
+        const successMessage = userAuthSuccess.successfulLogin;
+        authHelpers.isPasswordCorrect(password, hashedPassword);
+        return authHelpers
+          .sendUniqueJWT(userCredentials, response, successMessage);
+      })
+      .catch((error) => {
+        console.log('error.........', error);
+        response.status(401).json({ error: userAuthErrors.wrongEmailOrPassword });
+      });
   },
   signupUser: (request, response) => {
-    const { email, password, confirmationPassword } = request.body;
-    let errorMessage = errorMessages.GENERIC_ERROR_MESSAGE;
-    if (password !== confirmationPassword) {
-      errorMessage = userAuthErrors.CONFLICTING_PASSWORDS_ERROR;
-      return response.status(400).send({
-        error: errorMessage
-      });
+    const {
+      email,
+      password,
+      confirmationPassword
+    } = request.body;
+
+    if (authHelpers.isTheTwoPasswordsSame(password,
+      confirmationPassword,
+      response)) {
+      return User.findOrCreate({ where: { email, password } })
+        .spread((user) => {
+          authHelpers.sendUniqueJWT(user.dataValues, response);
+        }).catch((error) => {
+          authHelpers.handleSignupError(error, response);
+        });
     }
-    return User.findOrCreate({ where: { email, password } })
-      .spread(() => {
-        const token = jwt.sign({
-          data: { email, password }
-        }, secret, { expiresIn: '48h' });
-        response.json({
-          message: 'signup successful',
-          token
-        });
-      }).catch((error) => {
-        if (error.original) {
-          if (error.original.errno === errorCodes.ER_NO_DEFAULT_FOR_FIELD) {
-            errorMessage = userAuthErrors.INCOMPLETE_CREDENTIALS_ERROR;
-          } else if (error.original.errno === errorCodes.ER_DUP_ENTRY) {
-            errorMessage = userAuthErrors.DUPLICATE_EMAIL_ERROR;
-          }
-        } else {
-          const { errors } = error;
-          errorMessage = errors[0].message;
-        }
-        return response.status(400).json({
-          error: errorMessage
-        });
-      });
   },
   getUser: (request, response) => {
     if (Object.keys(request.query).length) {

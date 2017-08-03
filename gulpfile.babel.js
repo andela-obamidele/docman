@@ -29,10 +29,9 @@ gulp.task('build', () => {
 
 
 gulp.task('build-dev', () => {
-  const filesStream = gulp.src(['server/**/*.js', '!node_modules', '!dist/'])
+  const filesStream = gulp.src('server/**/*.js')
     .pipe(sourcemaps.init())
-    .pipe(babel({
-    }))
+    .pipe(babel())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist'));
   return filesStream;
@@ -67,7 +66,7 @@ gulp.task('test', ['lint'], () => {
   gulp.src(['tests/**/*.js'])
     .pipe(mocha({
       compilers: 'babel-core/register',
-      reporter: 'dot',
+      reporter: 'landing',
       env: { NODE_ENV: 'test' },
       istanbul: {
         dir: 'coverage/',
