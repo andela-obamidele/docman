@@ -66,7 +66,8 @@ gulp.task('test', ['lint'], () => {
   gulp.src(['tests/**/*.js'])
     .pipe(mocha({
       compilers: 'babel-core/register',
-      reporter: 'landing',
+      reporter: 'dot',
+      timeout: 20000,
       env: { NODE_ENV: 'test' },
       istanbul: {
         dir: 'coverage/',

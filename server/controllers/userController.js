@@ -5,8 +5,8 @@ import { User } from '../models';
 import errorMessages from '../constants/errors';
 import successMessages from '../constants/successes';
 import authHelpers from '../helpers/authHelpers';
-// eslint-disable-next-line
-const { userAuthErrors, errorCodes } = errorMessages;
+
+const { userAuthErrors } = errorMessages;
 const { userAuthSuccess } = successMessages;
 
 export default {
@@ -21,8 +21,7 @@ export default {
         return authHelpers
           .sendUniqueJWT(userCredentials, response, successMessage);
       })
-      .catch((error) => {
-        console.log('error.........', error);
+      .catch(() => {
         response.status(401).json({ error: userAuthErrors.wrongEmailOrPassword });
       });
   },
@@ -36,12 +35,21 @@ export default {
     if (authHelpers.isTheTwoPasswordsSame(password,
       confirmationPassword,
       response)) {
-      return User.findOrCreate({ where: { email, password } })
-        .spread((user) => {
-          authHelpers.sendUniqueJWT(user.dataValues, response);
-        }).catch((error) => {
-          authHelpers.handleSignupError(error, response);
-        });
+      return User.create({ email, password })
+        .then(user => authHelpers.sendUniqueJWT(user.dataValues, response))
+        .catch(error => authHelpers.handleSignupError(error, response))
+        .catch(() => User.findOne({ where: { email } }))
+        .then((user) => {
+          const { dataValues } = user;
+          if (dataValues) {
+            return authHelpers.sendUniqueJWT(dataValues, response);
+          }
+        })
+        .catch(() => response
+          .status(503)
+          .json({
+            error: 'your connection is probably slow. Please try again after a while'
+          }));
     }
   },
   getUser: (request, response) => {

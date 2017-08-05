@@ -17,7 +17,7 @@ describe('POST /api/v1/users/', () => {
   const { successfulSignup } = successMessages.userAuthSuccess;
 
   beforeEach(() => {
-    User.destroy({ where: {}, cascade: true, restartIdentity: true });
+    after(() => User.destroy({ where: {}, cascade: true, restartIdentity: true }));
   });
   it(`should respond with '${badEmailError}' when provided with malformed email`, () => {
     const supertestPromise = request.post('/api/v1/users/')
