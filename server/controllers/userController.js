@@ -5,9 +5,11 @@ import { User } from '../models';
 import errorMessages from '../constants/errors';
 import successMessages from '../constants/successes';
 import authHelpers from '../helpers/authHelpers';
+import helpers from '../helpers/helpers';
 
 const { userAuthErrors } = errorMessages;
 const { userAuthSuccess } = successMessages;
+const { filterUsersResult } = helpers;
 
 export default {
   loginUser: (request, response) => {
@@ -52,17 +54,15 @@ export default {
           }));
     }
   },
-  getUser: (request, response) => {
+  getUsers: (request, response) => {
     if (Object.keys(request.query).length) {
       return response.send({
         endpoint: '/user/?limit={integer}&offset={integer}',
         explain: 'Pagination for users'
       });
     }
-    response.send({
-      endpoint: '/users/',
-      explain: 'get matching instances of user'
-    });
+    return User.findAll()
+      .then(users => response.json({ users: filterUsersResult(users) }));
   },
   deleteUser: (request, response) => {
     response.send({

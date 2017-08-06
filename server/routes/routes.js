@@ -10,7 +10,7 @@ router.post('/users/login', userController.loginUser);
 
 router.post('/users/', userController.signupUser);
 router.use(authorizationChecker);
-router.get('/users/', userController.getUser);
+router.get('/users/', userController.getUsers);
 
 router.put('/users/:id', (req, res) => {
   res.send({
