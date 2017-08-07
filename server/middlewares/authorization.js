@@ -11,3 +11,4 @@ export default (request, response, next) => {
     })
     .catch(error => response.status(403).json({ error: error.message }));
 };
+
