@@ -11,13 +11,8 @@ router.post('/users/login', userController.loginUser);
 router.post('/users/', userController.signupUser);
 router.use(authorizationChecker);
 router.get('/users/', userController.getUsers);
-
-router.put('/users/:id', (req, res) => {
-  res.send({
-    endpoint: '/users/:id',
-    explain: 'updates user attributes'
-  });
-});
+router.get('/users/:id/', userController.getUserById);
+router.put('/users/:id', userController.updateUserInfo);
 
 router.delete('/users/:id', userController.deleteUser);
 

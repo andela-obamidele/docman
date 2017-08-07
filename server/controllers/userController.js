@@ -1,6 +1,3 @@
-
-// eslint-disable-next-line
-import bcrypt from 'bcrypt';
 import { User } from '../models';
 import errorMessages from '../constants/errors';
 import successMessages from '../constants/successes';
@@ -79,6 +76,24 @@ export default {
             count: queryResult.count
           }
         }));
+  },
+  getUserById: (request, response) => {
+    const userQueryPromise = User.findById(request.params.id)
+      .then((queryResult) => {
+        if (!queryResult) {
+          return response
+            .status(404)
+            .json({ error: errorMessages.userNotFound });
+        }
+        return response.json(queryResult.dataValues);
+      })
+      .catch(() => response
+        .status(400)
+        .json({ error: errorMessages.wrongIdTypeError }));
+    return userQueryPromise;
+  },
+  updateUserInfo: (request, response) => {
+    response.send(request.params);
   },
   deleteUser: (request, response) => {
     response.send({
