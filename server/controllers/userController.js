@@ -9,7 +9,7 @@ import helpers from '../helpers/helpers';
 
 const { userAuthErrors } = errorMessages;
 const { userAuthSuccess } = successMessages;
-const { filterUsersResult } = helpers;
+const { filterUsersResult, getPageMetadata } = helpers;
 
 export default {
   loginUser: (request, response) => {
@@ -55,14 +55,30 @@ export default {
     }
   },
   getUsers: (request, response) => {
-    if (Object.keys(request.query).length) {
-      return response.send({
-        endpoint: '/user/?limit={integer}&offset={integer}',
-        explain: 'Pagination for users'
-      });
+    let { limit, offset } = request.query;
+    if (limit && offset) {
+      if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
+        return response
+          .status(406)
+          .json({ error: errorMessages.paginationQueryError });
+      }
+      limit = Number.parseInt(limit, 10);
+      offset = Number.parseInt(offset, 10);
+      return User.findAndCountAll({ limit, offset })
+        .then((queryResult) => {
+          const users = filterUsersResult(queryResult.rows);
+          const metaData = getPageMetadata(limit, offset, queryResult.count);
+          return response.json({ users, metaData });
+        });
     }
-    return User.findAll()
-      .then(users => response.json({ users: filterUsersResult(users) }));
+    return User.findAndCountAll()
+      .then(queryResult => response
+        .json({
+          users: filterUsersResult(queryResult.rows),
+          metaData: {
+            count: queryResult.count
+          }
+        }));
   },
   deleteUser: (request, response) => {
     response.send({

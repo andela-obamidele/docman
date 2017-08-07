@@ -1,9 +1,9 @@
 import supertest from 'supertest';
-// eslint-disable-next-line
 import { assert } from 'chai';
 import { User } from '../../server/models';
 import server from '../../server/server';
 import dummyUsers from '../dummyData/dummyUsers';
+import errorMessages from '../../server/constants/errors';
 
 const request = supertest(server);
 
@@ -29,4 +29,22 @@ describe('GET /api/v1/users', () => {
       const { users } = response.body;
       assert.equal(users.length, dummyUsers.length);
     }));
+
+  it(`should respond with n=limit numbers of users when
+     limit and offset is provided as query strings`, () => request
+      .get('/api/v1/users/?limit=5&offset=0')
+      .set({ Authorization: jwt })
+      .expect(200)
+      .expect((response) => {
+        assert.equal(response.body.users.length, 5);
+      }));
+
+  it(`should respond with '${errorMessages.paginationQueryError}'
+     limit or query is not number`, () => request
+      .get('/api/v1/users/?limit=one&offset=0')
+      .set({ Authorization: jwt })
+      .expect(406)
+      .expect(response => assert
+        .equal(errorMessages.paginationQueryError, response.body.error))
+  );
 });

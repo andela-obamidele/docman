@@ -7,8 +7,9 @@ export default {
     duplicateEmailError: 'this email is already used',
     wrongEmailOrPassword: 'wrong email or password',
     userNotFound: 'sorry you don\'t have a docman account. please signup first.',
-    unAuthorizedUserError: 'sorry, you don\'t have permission to carry out this action. please signup first or login if you have not'
+    unAuthorizedUserError: 'sorry, you don\'t have permission to carry out this action. please signup first or login if you have not',
   },
+  paginationQueryError: 'sorry, limit and offset shoud be numbers',
   errorCodes: {
     errNoDefaultForField: '1364',
     erDupEntry: '23505'
