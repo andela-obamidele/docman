@@ -21,20 +21,23 @@ export default {
           .sendUniqueJWT(userCredentials, response, successMessage);
       })
       .catch(() => {
-        response.status(401).json({ error: userAuthErrors.wrongEmailOrPassword });
+        response.status(401).json({
+          error: userAuthErrors.wrongEmailOrPassword
+        });
       });
   },
   signupUser: (request, response) => {
     const {
       email,
       password,
-      confirmationPassword
+      confirmationPassword,
+      username
     } = request.body;
 
     if (authHelpers.isTheTwoPasswordsSame(password,
       confirmationPassword,
       response)) {
-      return User.create({ email, password })
+      return User.create({ email, password, username })
         .then(user => authHelpers.sendUniqueJWT(user.dataValues, response))
         .catch(error => authHelpers.handleSignupError(error, response))
         .catch(() => User.findOne({ where: { email } }))
@@ -44,11 +47,14 @@ export default {
             return authHelpers.sendUniqueJWT(dataValues, response);
           }
         })
-        .catch(() => response
-          .status(503)
-          .json({
-            error: 'your connection is probably slow. Please try again after a while'
-          }));
+        .catch(() => {
+          response
+            .status(503)
+            .json({
+              error: `your connection is probably slow.
+              Please try again after a while`
+            });
+        });
     }
   },
   getUsers: (request, response) => {
@@ -93,7 +99,30 @@ export default {
     return userQueryPromise;
   },
   updateUserInfo: (request, response) => {
-    response.send(request.params);
+    const updateData = helpers.getOnlyTruthyAttributes(request.body);
+    return User.findById(request.params.id)
+      .then((queryResult) => {
+        helpers.terminateUserUpdateOnBadPayload(
+          updateData,
+          request.body,
+          queryResult);
+        let { userSuccessfullyUpdated } = userAuthSuccess;
+        if (request.body.newPassword) {
+          updateData.password = request.body.newPassword;
+          userSuccessfullyUpdated += ` ${userAuthSuccess.userUpdatedPassword}`;
+        }
+        return queryResult
+          .update(updateData)
+          .then((user) => {
+            user.dataValues.password = '********';
+            return response
+              .json({
+                user: user.dataValues,
+                message: userSuccessfullyUpdated
+              });
+          });
+      })
+      .catch(error => helpers.handleUserUpdateError(error, response));
   },
   deleteUser: (request, response) => {
     response.send({

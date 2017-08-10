@@ -1,3 +1,5 @@
+/* eslint max-len: 0 */
+
 import supertest from 'supertest';
 import { assert } from 'chai';
 // eslint-disable-next-line
@@ -19,6 +21,7 @@ const { userAuthSuccess } = successMessages;
 describe('/api/v1/users/login', () => {
   const email = 'test@testDomain.com';
   const password = 'somerandompassword';
+  const username = 'theusername';
   let jwt;
   before(() => {
     const supertestPromise = request
@@ -27,8 +30,10 @@ describe('/api/v1/users/login', () => {
       .send({
         email,
         password,
-        confirmationPassword: password
+        confirmationPassword: password,
+        username
       })
+      .expect(200)
       .then((response) => {
         jwt = response.body.token;
       })
@@ -37,7 +42,11 @@ describe('/api/v1/users/login', () => {
       });
     return supertestPromise;
   });
-  after(() => User.destroy({ where: {}, cascade: true, restartIdentity: true }));
+  after(() => User.destroy({
+    where: {},
+    cascade: true,
+    restartIdentity: true
+  }));
   it(`should respond with '${wrongEmailOrPassword}' when trying to signup with wrong password`, () => {
     const supertestPromise = request
       .post('/api/v1/users/login')

@@ -1,3 +1,7 @@
+import authHelpers from './authHelpers';
+import errorMessages from '../constants/errors';
+
+const { userAuthErrors, errorCodes } = errorMessages;
 export default {
   /**
    * @description returns a new user object containing
@@ -8,8 +12,22 @@ export default {
    */
   filterUsersResult(users) {
     const filteredUsers = users.map((user) => {
-      const { id, email, createdAt, updatedAt, role } = user.dataValues;
-      return { id, email, createdAt, updatedAt, role };
+      const { id,
+        email,
+        createdAt,
+        updatedAt,
+        role,
+        username,
+        bio } = user.dataValues;
+      return {
+        id,
+        email,
+        createdAt,
+        updatedAt,
+        role,
+        username,
+        bio
+      };
     });
     return filteredUsers;
   },
@@ -37,4 +55,88 @@ export default {
     }
     return metaData;
   },
+
+  getOnlyTruthyAttributes(object) {
+    const {
+      email,
+      username,
+      password,
+      fullName,
+      bio
+    } = object;
+    object = {
+      email,
+      username,
+      password,
+      fullName,
+      bio
+    };
+    const fetchKeys = Object.keys;
+    const keys = fetchKeys(object);
+    let filteredObject = {};
+    keys.forEach((key) => {
+      if (object[key]) {
+        filteredObject[key] = object[key];
+      }
+    });
+    filteredObject = fetchKeys(filteredObject)[0] ? filteredObject : null;
+    return filteredObject;
+  },
+  terminateUserUpdateOnBadPayload(expectedPayload, providedPayload, user) {
+    if (!user) {
+      throw new Error('unassigned id');
+    }
+    user = user.dataValues;
+    const isPasswordCorrect = authHelpers
+      .isPasswordCorrect(expectedPayload.password, user.password);
+    if (!isPasswordCorrect) {
+      throw new Error('hashedPassword and password does not match');
+    }
+    const { confirmationPassword, newPassword } = providedPayload;
+    const isPasswordsMatch = authHelpers
+      .isTheTwoPasswordsSame(newPassword, confirmationPassword);
+    if ((newPassword || confirmationPassword) && !isPasswordsMatch) {
+      throw new Error('unmatched passwords');
+    }
+  },
+  handleUserUpdateError(error, HTTPResponse) {
+    const {
+      passwordUpdateError,
+      genericUserUpdateError
+    } = errorMessages;
+    const errors = error.errors;
+
+    if (errors) {
+      const errorResponse = [];
+      errors.forEach((errorObject) => {
+        errorResponse
+          .push({
+            field: errorObject.path,
+            message: errorObject.message
+          });
+      });
+      return HTTPResponse
+        .status(403)
+        .json({ errors: errorResponse });
+    } else if (error.toString().indexOf('hash') > -1) {
+      return HTTPResponse
+        .status(403)
+        .json({ error: userAuthErrors.wrongPasswordError });
+    } else if (error.toString().indexOf('unmatched passwords') > -1) {
+      return HTTPResponse
+        .status(403)
+        .json({ error: passwordUpdateError });
+    } else if (error.toString().indexOf('unassigned id') > -1) {
+      return HTTPResponse
+        .status(404)
+        .json(({ error: errorMessages.userNotFound }));
+    } else if (error.original && error.original.code === errorCodes.notAnInt) {
+      return HTTPResponse
+        .status(400)
+        .json({ error: errorMessages.wrongIdTypeError });
+    }
+    return HTTPResponse
+      .status(404)
+      .json({ error: genericUserUpdateError });
+  }
 };

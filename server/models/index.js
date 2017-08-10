@@ -7,19 +7,25 @@ const basename = path.basename(module.filename);
 const env = process.env.NODE_ENV || 'development';
 const db = {};
 // eslint-disable-next-line import/no-dynamic-require
-const config = require(path.resolve(`${process.cwd()}/server/config/config.json`))[env];
+const config = require(path
+  .resolve(`${process.cwd()}/server/config/config.json`))[env];
 
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable]);
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config);
 }
 
 fs
   .readdirSync(__dirname)
   .filter((file) => {
-    const isFileValid = (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+    const isFileValid = (file.indexOf('.') !== 0) &&
+    (file !== basename) && (file.slice(-3) === '.js');
     return isFileValid;
   })
   .forEach((file) => {

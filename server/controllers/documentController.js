@@ -12,7 +12,10 @@ export default {
         explain: 'pagination for docs'
       });
     }
-    response.send({ endpoint: '/documents/', explain: 'find matching instances of document' });
+    response.send({
+      endpoint: '/documents/',
+      explain: 'find matching instances of document'
+    });
   },
   updateDocument: (request, response) => {
     response.send({
