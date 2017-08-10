@@ -1,3 +1,5 @@
+/* eslint max-len: 0 */
+
 import { assert } from 'chai';
 import supertest from 'supertest';
 import { User } from '../../server/models';
@@ -18,13 +20,13 @@ describe('GET /api/v1/users/:id', () => {
       .post('/api/v1/users/login')
       .send(dummyUsers[0])
       .expect(200)
-      .expect((response) => {
+      .then((response) => {
         jwt = response.body.token;
-        return User.findOne({ where: { email: dummyUsers[0].email } })
-          .then((queryResult) => {
-            sampleUserId = queryResult.dataValues.id;
-          });
+        return User.findOne({ where: { email: dummyUsers[0].email } });
       }))
+    .then((queryResult) => {
+      sampleUserId = queryResult.dataValues.id;
+    })
     .catch(error => error));
 
   it(`should respond with '${errorMessages.userNotFound}' 

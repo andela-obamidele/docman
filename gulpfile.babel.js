@@ -12,7 +12,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 gulp.task('lint', () => {
-  const gulpStream = gulp.src(['**/*.js', '!node_modules/**', '!dist/**', '!./coverage/**'])
+  const gulpStream = gulp.src([
+    '**/*.js',
+    '!node_modules/**',
+    '!dist/**',
+    '!./coverage/**'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
@@ -20,13 +24,16 @@ gulp.task('lint', () => {
 });
 
 gulp.task('build', () => {
-  gulp.src(['server/**/*.js', '!node_modules/**', '!gulpfile.js', '!dist/**'])
+  gulp.src([
+    'server/**/*.js',
+    '!node_modules/**',
+    '!gulpfile.js',
+    '!dist/**'])
     .pipe(babel())
     .pipe(concat('all.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
-
 
 gulp.task('build-dev', () => {
   const filesStream = gulp.src('server/**/*.js')

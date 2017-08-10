@@ -18,11 +18,43 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    username: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        len: {
+          args: [2, 15],
+          msg: errorMessages.usernameLimitError
+        }
+      }
+    },
+    fullName: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          arg: [0, 25],
+          msg: errorMessages.fullNameLimitError
+        }
+      }
+    },
+    bio: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [0, 240],
+          msg: errorMessages.bioLimitError
+        }
+      }
     }
   },
   {
     hooks: {
       beforeCreate: (user) => {
+        user.hashPassword(user);
+      },
+      beforeUpdate: (user) => {
         user.hashPassword(user);
       }
     }
@@ -36,7 +68,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       sourceKey: 'id',
       as: 'author',
-      onDelete: 'CASECADE'
+      onDelete: 'CASCADE'
     });
     User.belongsTo(models.Role, {
       foreignKey: 'role',

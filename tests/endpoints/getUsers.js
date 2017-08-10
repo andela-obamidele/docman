@@ -1,3 +1,5 @@
+/* eslint max-len: 0 */
+
 import supertest from 'supertest';
 import { assert } from 'chai';
 import { User } from '../../server/models';
@@ -16,7 +18,7 @@ describe('GET /api/v1/users', () => {
       .post('/api/v1/users/login')
       .send(dummyUsers[0])
       .expect(200)
-      .expect((response) => {
+      .then((response) => {
         jwt = response.body.token;
       }))
     .catch(error => error));

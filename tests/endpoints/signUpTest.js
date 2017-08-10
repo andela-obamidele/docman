@@ -1,3 +1,5 @@
+/* eslint max-len: 0 */
+
 import supertest from 'supertest';
 import { assert } from 'chai';
 import { User } from '../../server/models/';
@@ -21,7 +23,12 @@ describe('POST /api/v1/users/', () => {
   });
   it(`should respond with '${badEmailError}' when provided with malformed email`, () => {
     const supertestPromise = request.post('/api/v1/users/')
-      .send({ email: 'andela', password: 'password', confirmationPassword: 'password' })
+      .send({
+        email: 'andela',
+        password: 'password',
+        confirmationPassword: 'password',
+        username: 'andela'
+      })
       .expect(400)
       .expect((response) => {
         assert.equal(response.body.error, badEmailError);
@@ -40,7 +47,12 @@ describe('POST /api/v1/users/', () => {
 
   it(`shoud respond with '${conflictingPasswordError}' when password and cofirmation password conflicts`, () => {
     const supertestPromise = request.post('/api/v1/users')
-      .send({ email: 'fizzy@gmail.com', password: 'password', confirmationPassword: 'passwskde' })
+      .send({
+        email: 'fizzy@gmail.com',
+        password: 'password',
+        confirmationPassword: 'passwskde',
+        username: 'andela'
+      })
       .expect(400)
       .expect((response) => {
         assert.equal(response.body.error, conflictingPasswordError);
@@ -49,7 +61,12 @@ describe('POST /api/v1/users/', () => {
   });
   it(`should respond with  ${successfulSignup} and a token when provided with the right credentials`, () => {
     const supertestPromise = request.post('/api/v1/users')
-      .send({ email: 'fizzy@gmail.com', password: 'password', confirmationPassword: 'password' })
+      .send({
+        email: 'fizzy@gmail.com',
+        password: 'password',
+        confirmationPassword: 'password',
+        username: 'andela1'
+      })
       .expect(200)
       .expect((response) => {
         const { token } = response.body;

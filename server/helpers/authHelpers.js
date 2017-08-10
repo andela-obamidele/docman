@@ -66,11 +66,17 @@ export default {
       if (original.code === errorCodes.errNoDefaultForField) {
         errorMessage = userAuthErrors.incompleteCredentialsError;
       } else if (original.code === errorCodes.erDupEntry) {
-        errorMessage = userAuthErrors.duplicateEmailError;
+        const { constraint } = original;
+        if (constraint.indexOf('email') > -1) {
+          errorMessage = userAuthErrors.duplicateEmailError;
+        } else {
+          errorMessage = userAuthErrors.duplicateUsernameError;
+        }
       }
     } else {
       const { errors } = error;
-      errorMessage = errors[0].message || userAuthErrors.incompleteCredentialsError;
+      const { incompleteCredentialsError } = userAuthErrors;
+      errorMessage = errors[0].message || incompleteCredentialsError;
     }
     return HTTPResponse.status(400).json({
       error: errorMessage
@@ -88,14 +94,15 @@ export default {
       .compareSync(providedPassword, hashedPassword);
     return isPasswordCorrect;
   },
-  verifyAuthToken: (token, isTokenJWT, secret) => new Promise((resolve, reject) => {
-    jwt.verify(token, secret, (error, decode) => {
-      if (error || !token || !isTokenJWT) {
-        error = error || new Error();
-        error.message = userAuthErrors.unAuthorizedUserError;
-        return reject(error);
-      }
-      resolve(decode);
-    });
-  })
+  verifyAuthToken: (token, isTokenJWT, secret) =>
+    new Promise((resolve, reject) => {
+      jwt.verify(token, secret, (error, decode) => {
+        if (error || !token || !isTokenJWT) {
+          error = error || new Error();
+          error.message = userAuthErrors.unAuthorizedUserError;
+          return reject(error);
+        }
+        resolve(decode);
+      });
+    })
 };
