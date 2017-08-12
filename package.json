@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A document management application",
   "engines": {
-    "node": "8.2.1"
+    "node": "7"
   },
   "main": "index.js",
   "directories": {
