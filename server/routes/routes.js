@@ -3,6 +3,7 @@ import express from 'express';
 import userController from '../controllers/userController';
 import documentController from '../controllers/documentController';
 import authorizationChecker from '../middlewares/authorization';
+import deleteUserAuthorization from '../middlewares/deleteUserAuthorization';
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.get('/users/', userController.getUsers);
 router.get('/users/:id/', userController.getUserById);
 router.put('/users/:id', userController.updateUserInfo);
 
-router.delete('/users/:id', userController.deleteUser);
+router.delete('/users/:id', deleteUserAuthorization, userController.deleteUser);
 
 router.post('/documents/', documentController.createDocument);
 

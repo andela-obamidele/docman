@@ -26,7 +26,6 @@ describe('/api/v1/users/login', () => {
   before(() => {
     const supertestPromise = request
       .post('/api/v1/users/')
-      .set({ 'Content-Type': 'application/x-www-form-urlencoded' })
       .send({
         email,
         password,
@@ -102,7 +101,7 @@ describe('/api/v1/users/login', () => {
   it('should be able to access routes on sending valid jason web token to the server', () => {
     const supertestPromise = request
       .get('/api/v1/users/')
-      .set('authorization', jwt)
+      .set('Authorization', jwt)
       .expect(200);
     return supertestPromise;
   });

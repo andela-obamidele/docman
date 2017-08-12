@@ -45,7 +45,7 @@ describe('PUT /ap/v1/users/id', () => {
           newPassword: 'password',
           confirmationPassword: 'password'
         })
-        .set({ authorization: jwt })
+        .set('Authorization', jwt)
         .expect(403)
         .expect((response) => {
           const errors = response.body.errors;
@@ -60,7 +60,7 @@ describe('PUT /ap/v1/users/id', () => {
       return request
         .put(`/api/v1/users/${sampleUserId}`)
         .send({ username, newPassword, confirmationPassword, password: '2343' })
-        .set({ authorization: jwt })
+        .set('Authorization', jwt)
         .expect(403)
         .expect((response) => {
           assert.equal(response.body.error, userAuthErrors.wrongPasswordError);
@@ -69,7 +69,7 @@ describe('PUT /ap/v1/users/id', () => {
   it(`should respond with '${errorMessages.userNotFound}' when provided route is
     called with a none existing id`, () => request
       .put('/api/v1/users/9999999')
-      .set({ authorization: jwt })
+      .set('Authorization', jwt)
       .send({
         username: 'username',
         password: 'password',
@@ -83,7 +83,7 @@ describe('PUT /ap/v1/users/id', () => {
   it(`should respond with '${errorMessages.wrongIdTypeError}' when the id 
   provided in the request url is not a number`, () => request
       .put('/api/v1/users/somejargon')
-      .set({ authorization: jwt })
+      .set('Authorization', jwt)
       .send({
         email: 'some@email.com',
         password: 'somepassword',
@@ -105,7 +105,7 @@ describe('PUT /ap/v1/users/id', () => {
           newPassword: 'password',
           confirmationPassword: 'password1'
         })
-        .set({ authorization: jwt })
+        .set('Authorization', jwt)
         .expect(403)
         .expect((response) => {
           const errorMessage = response.body.error;
@@ -123,7 +123,7 @@ describe('PUT /ap/v1/users/id', () => {
           email,
           bio: 'this is a new bio'
         })
-        .set({ authorization: jwt })
+        .set('Authorization', jwt)
         .expect(200)
         .expect((response) => {
           const { message, user } = response.body;
