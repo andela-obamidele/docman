@@ -5,7 +5,8 @@ import authHelpers from '../helpers/authHelpers';
 import helpers from '../helpers/helpers';
 
 const { userAuthErrors } = errorMessages;
-const { userAuthSuccess } = successMessages;
+
+const { userAuthSuccess, userDeleteSuccessful } = successMessages;
 const { filterUsersResult, getPageMetadata } = helpers;
 
 export default {
@@ -125,10 +126,14 @@ export default {
       .catch(error => helpers.handleUserUpdateError(error, response));
   },
   deleteUser: (request, response) => {
-    response.send({
-      endpoint: '/users/:id',
-      explain: 'delete user'
-    });
+    const userToDelete = request.params.id;
+    User.destroy({ where: { id: userToDelete } })
+      .then(() => response
+        .status(200)
+        .json({
+          message: userDeleteSuccessful
+        })
+      );
   },
   searchUser: (request, response) => {
     response.send({

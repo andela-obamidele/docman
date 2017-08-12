@@ -25,7 +25,7 @@ describe('GET /api/v1/users', () => {
 
   it('should respond with an array of all users', () => request
     .get('/api/v1/users/')
-    .set({ Authorization: jwt })
+    .set('Authorization', jwt)
     .expect(200)
     .expect((response) => {
       const { users } = response.body;
@@ -35,7 +35,7 @@ describe('GET /api/v1/users', () => {
   it(`should respond with n=limit numbers of users when
      limit and offset is provided as query strings`, () => request
       .get('/api/v1/users/?limit=5&offset=0')
-      .set({ Authorization: jwt })
+      .set('Authorization', jwt)
       .expect(200)
       .expect((response) => {
         assert.equal(response.body.users.length, 5);
@@ -44,7 +44,7 @@ describe('GET /api/v1/users', () => {
   it(`should respond with '${errorMessages.paginationQueryError}'
      limit or query is not number`, () => request
       .get('/api/v1/users/?limit=one&offset=0')
-      .set({ Authorization: jwt })
+      .set('Authorization', jwt)
       .expect(406)
       .expect(response => assert
         .equal(errorMessages.paginationQueryError, response.body.error))

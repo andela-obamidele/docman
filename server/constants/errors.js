@@ -22,6 +22,9 @@ export default {
     action.
     please signup first or login if you have not`,
   },
+  voidUserDeleteError: 'the user you tried to delete is not on docman',
+  userDeleteUnauthorizedError: `sorry! you are only authorized to 
+  delete your own account`,
   genericUserUpdateError: `unfortunately, an error occurred while update 
   your profile.
   that is all we know. 

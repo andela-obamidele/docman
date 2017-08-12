@@ -8,5 +8,6 @@ export default {
     continue to use the app`,
     userSuccessfullyUpdated: 'successfully updated user info.',
     userUpdatedPassword: 'you also updated your password'
-  }
+  },
+  userDeleteSuccessful: 'user deleted successfully',
 };

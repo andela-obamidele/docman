@@ -33,7 +33,7 @@ describe('GET /api/v1/users/:id', () => {
     userId is used`, () => {
       const supertestPromise = request
         .get('/api/v1/users/92342343')
-        .set({ Authorization: jwt })
+        .set('Authorization', jwt)
         .expect(404)
         .expect((response) => {
           assert.equal(response.body.error, errorMessages.userNotFound);
@@ -44,7 +44,7 @@ describe('GET /api/v1/users/:id', () => {
     provided is not of type number`, () => {
       const supertestPromise = request
         .get('/api/v1/users/onehundred')
-        .set({ Authorization: jwt })
+        .set('Authorization', jwt)
         .expect(400)
         .expect((response) => {
           assert.equal(response.body.error, errorMessages.wrongIdTypeError);
@@ -55,7 +55,7 @@ describe('GET /api/v1/users/:id', () => {
     when the user id provided exist in db`, () => {
       const supertestPromise = request
         .get(`/api/v1/users/${sampleUserId}`)
-        .set({ authorization: jwt })
+        .set('Authorization', jwt)
         .expect(200)
         .expect((response) => {
           const expectedEmail = dummyUsers[0].email;
