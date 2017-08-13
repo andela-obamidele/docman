@@ -55,7 +55,14 @@ export default {
     }
     return metaData;
   },
-
+  /**
+   * @description eleminate all falsy values from user object.
+   * gets email, username, password, fullName and bio from object
+   * if any of this value is falsy, they are eliminated from the returned
+   * object
+   * @param {object} object user object
+   * @returns {object} new user object containing truthy values only
+   */
   getOnlyTruthyAttributes(object) {
     const {
       email,
@@ -82,6 +89,16 @@ export default {
     filteredObject = fetchKeys(filteredObject)[0] ? filteredObject : null;
     return filteredObject;
   },
+
+  /**
+   * @description helps userController.updateUserInfo to validate
+   * payload before updating. Throws error if unexpected payload
+   * is found
+   * @param {object} expectedPayload  Payload expected from the user
+   * @param {object} providedPayload Payload provided by the users
+   * @param {object} user sequelize object queried from User model
+   * @returns {void}
+   */
   terminateUserUpdateOnBadPayload(expectedPayload, providedPayload, user) {
     if (!user) {
       throw new Error('unassigned id');
@@ -99,6 +116,13 @@ export default {
       throw new Error('unmatched passwords');
     }
   },
+  /**
+   * @description help userController.updateUserInfo to handle possible errors
+   * which might occur while updating
+   * @param {object} error javascript error object
+   * @param {Response} HTTPResponse express HTTP response object
+   * @returns {Promise} from express http response object
+   */
   handleUserUpdateError(error, HTTPResponse) {
     const {
       passwordUpdateError,

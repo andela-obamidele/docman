@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Document.associate = (models) => {
-    // associations can be defined here
     Document.belongsTo(models.User, {
       foreignKey: 'author',
       targetKey: 'id',

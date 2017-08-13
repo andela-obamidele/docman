@@ -3,14 +3,21 @@ import { User } from '../models';
 import errorMessages from '../constants/errors';
 
 const { userAuthErrors } = errorMessages;
-
+/**
+ * @description Uses jason web token to authorize users to access other routes
+ * @param {Request} request http request from express
+ * @param {Response} response http response from express
+ * @param {function} next next function provided by express to middleware
+ * @return {Promise | void} Promise from http response or void if payload 
+ * passes the middleware without error
+ */
 export default (request, response, next) => {
   const authorizationError = new Error();
   authorizationError.message = userAuthErrors.unAuthorizedUserError;
   let token = request.headers.authorization || '';
   token = token.split(' ')[1];
   let user = jwt.decode(token);
-  if (user) {
+  if (user && user.data.id) {
     user = user.data;
     User.findById(user.id)
       .then((queryResult) => {

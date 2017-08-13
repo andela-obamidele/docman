@@ -4,12 +4,20 @@ import successMessages from '../constants/successes';
 import authHelpers from '../helpers/authHelpers';
 import helpers from '../helpers/helpers';
 
-const { userAuthErrors } = errorMessages;
+const { userAuthErrors, unmatchedUserSearch } = errorMessages;
 
 const { userAuthSuccess, userDeleteSuccessful } = successMessages;
 const { filterUsersResult, getPageMetadata } = helpers;
 
 export default {
+  /**
+   * @description responds with a json web token to be used for authorization
+   * on providing email and password. or an error message if an error occurs 
+   * in when using this method
+   * @param {object} request Express http request object
+   * @param {object} response Express http response object
+   * @returns {Promise} Promise object from express HTTP response
+   */
   loginUser: (request, response) => {
     const { email, password } = request.body;
     return User.findOne({ where: { email } })
@@ -27,6 +35,14 @@ export default {
         });
       });
   },
+  /**
+   * @description responds with a json web token to be used for authorization
+   * on providing email and password and username or an error message 
+   * when an error occur while using this endpoint
+   * @param {object} request Express http request object
+   * @param {object} response Express http response object
+   * @returns {Promise} Promise object from express HTTP response
+   */
   signupUser: (request, response) => {
     const {
       email,
@@ -58,6 +74,17 @@ export default {
         });
     }
   },
+  /**
+  * @description responds with list of all users when error when
+  * request parameters does not contain limit and offset query
+  * responds with list of users with pagination metadata
+  * when request paramiters contains limit and offset query.
+  *  or an error message if an error occurs 
+  * in when using this method
+  * @param {object} request Express http request object
+  * @param {object} response Express http response object
+  * @returns {Promise} Promise object from express HTTP response
+  */
   getUsers: (request, response) => {
     let { limit, offset } = request.query;
     if (limit && offset) {
@@ -84,47 +111,71 @@ export default {
           }
         }));
   },
+  /**
+  * @description responds with a simgle user object from the
+  * @param {object} request Express http request object
+  * @param {object} response Express http response object
+  * @returns {Promise} Promise object from express HTTP response
+  */
   getUserById: (request, response) => {
     const userQueryPromise = User.findById(request.params.id)
-      .then((queryResult) => {
-        if (!queryResult) {
+      .then((user) => {
+        if (!user) {
           return response
             .status(404)
             .json({ error: errorMessages.userNotFound });
         }
-        return response.json(queryResult.dataValues);
+        const { password, ...userData } = user.dataValues;
+        return response.json(userData);
       })
       .catch(() => response
         .status(400)
         .json({ error: errorMessages.wrongIdTypeError }));
     return userQueryPromise;
   },
+  /**
+  * @description updates any user data apart from id. reponds
+  * with new user object or error message if any error occurs in 
+  * the process. It is only going to get needed payload and ignore
+  * other payloads
+  * @param {object} request Express http request object
+  * @param {object} response Express http response object
+  * @returns {Promise} Promise object from express HTTP response
+  */
   updateUserInfo: (request, response) => {
     const updateData = helpers.getOnlyTruthyAttributes(request.body);
     return User.findById(request.params.id)
-      .then((queryResult) => {
+      .then((user) => {
         helpers.terminateUserUpdateOnBadPayload(
           updateData,
           request.body,
-          queryResult);
+          user);
         let { userSuccessfullyUpdated } = userAuthSuccess;
         if (request.body.newPassword) {
           updateData.password = request.body.newPassword;
           userSuccessfullyUpdated += ` ${userAuthSuccess.userUpdatedPassword}`;
         }
-        return queryResult
+        return user
           .update(updateData)
-          .then((user) => {
+          .then((updatedUser) => {
             user.dataValues.password = '********';
             return response
               .json({
-                user: user.dataValues,
+                user: updatedUser.dataValues,
                 message: userSuccessfullyUpdated
               });
           });
       })
       .catch(error => helpers.handleUserUpdateError(error, response));
   },
+  /**
+  * @description deletes a user from the database. responds with a success
+  * message. there is no error handling in this method as all error handling
+  * is expected to be done by a middleware
+  * @param {object} request Express http request object
+  * @param {object} response Express http response object
+  * @returns {Promise} Promise object from express HTTP response
+  */
   deleteUser: (request, response) => {
     const userToDelete = request.params.id;
     User.destroy({ where: { id: userToDelete } })
@@ -135,10 +186,27 @@ export default {
         })
       );
   },
+  /**
+  * @description searches user by email. respoonds with all
+  * matching instances or an error message if search term does
+  * not match any email in the database
+  * @param {object} request Express http request object
+  * @param {object} response Express http response object
+  * @returns {Promise} Promise object from express HTTP response
+  */
   searchUser: (request, response) => {
-    response.send({
-      endpoint: '/search/documents/',
-      explain: 'search for a user'
-    });
+    const query = request.query.q;
+    User.findAndCountAll({
+      where: { email: { $ilike: `%${query}%` } },
+      attributes: { exclude: ['password'] }
+    })
+      .then((users) => {
+        if (!users.count) {
+          return response
+            .status(404)
+            .json({ error: unmatchedUserSearch });
+        }
+        return response.json({ matches: users.count, users: users.rows });
+      });
   }
 };

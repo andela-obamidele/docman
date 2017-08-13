@@ -35,7 +35,7 @@ export default {
       explain: 'find documents belonging to the user'
     });
   },
-  searchDocuments: (request, response) => {
+  searchDocuments(request, response) {
     response.send({
       endpoint: '/search/documents/',
       explain: 'search for a document'

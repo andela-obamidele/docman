@@ -94,15 +94,4 @@ export default {
       .compareSync(providedPassword, hashedPassword);
     return isPasswordCorrect;
   },
-  verifyAuthToken: (token, isTokenJWT, secret) =>
-    new Promise((resolve, reject) => {
-      jwt.verify(token, secret, (error, decode) => {
-        if (error || !token || !isTokenJWT) {
-          error = error || new Error();
-          error.message = userAuthErrors.unAuthorizedUserError;
-          return reject(error);
-        }
-        resolve(decode);
-      });
-    })
 };
