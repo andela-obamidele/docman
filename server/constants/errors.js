@@ -22,6 +22,7 @@ export default {
     action.
     please signup first or login if you have not`,
   },
+  unmatchedUserSearch: 'your query does not match any email in our database',
   voidUserDeleteError: 'the user you tried to delete is not on docman',
   userDeleteUnauthorizedError: `sorry! you are only authorized to 
   delete your own account`,

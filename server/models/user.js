@@ -63,7 +63,6 @@ module.exports = (sequelize, DataTypes) => {
     user.password = bcrypt.hashSync(user.password, 10);
   };
   User.associate = (models) => {
-    // associations can be defined here
     User.hasMany(models.Document, {
       foreignKey: 'userId',
       sourceKey: 'id',
