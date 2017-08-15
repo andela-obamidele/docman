@@ -22,6 +22,7 @@ export default {
     action.
     please signup first or login if you have not`,
   },
+  endOfPageReached: 'you have reached end of the page',
   unmatchedUserSearch: 'your query does not match any email in our database',
   voidUserDeleteError: 'the user you tried to delete is not on docman',
   userDeleteUnauthorizedError: `sorry! you are only authorized to 
@@ -41,9 +42,20 @@ export default {
   userNotFound: 'there is no user with that Id in the database',
   paginationQueryError: 'sorry, limit and offset shoud be numbers',
   wrongIdTypeError: 'param \'id\' should be a number',
+  duplicateDocTitleError: 'duplicate document title not allowed',
+  invalidDocAccessLevelError: 'access can either be public, private or role',
+  docTitleLimitError: 'document title should be between 1 to 30 characters',
+  docContentLimitError: `document content should be between 1 to 10000 
+  characters`,
+  genericCreateDocErrorMessage: `it seems you're trying to create a document.
+   Unfortunately, this action cannot be completed. Please help us make your 
+   experience with our app better by rainsing an issue at 
+   https://github.com/andela-obamidele/docman or contact an admin at 
+   admin@docman.com`,
   errorCodes: {
     errNoDefaultForField: '1364',
     erDupEntry: '23505',
-    notAnInt: '22P02'
+    notAnInt: '22P02',
+    invalidEnumInput: '22P02'
   },
 };

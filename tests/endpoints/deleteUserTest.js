@@ -19,11 +19,8 @@ const { userDeleteSuccessful } = successMessages;
  */
 describe('DELETE /api/v1/users/:id', () => {
   const usersJwt = [];
-  // eslint-disable-next-line
   let adminJwt;
   const admin = dummyAdmins[0];
-  // eslint-disable-next-line
-  const admin2 = dummyAdmins[1]
   before(() =>
     User.destroy({ where: {}, cascade: true, restartIdentity: true })
       .then(() => User.bulkCreate(dummyUsers))

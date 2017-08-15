@@ -35,23 +35,21 @@ export default {
    * @description - Return metadata for pagination
    * @param {number} limit number of data to per page
    * @param {number} offset represents steps away from starting point
-   * @param {number} count total number of data
+   * @param {object} queryResult total number of data
    * @returns {object} object containing metadata for pagination
    */
-  getPageMetadata(limit, offset, count) {
+  getPageMetadata(limit, offset, queryResult) {
+    const count = queryResult.count;
+    const queryHasNoData = !queryResult.rows[0];
     const metaData = {};
     limit = limit > count ? count : limit;
     offset = offset > count ? count : offset;
-
     metaData.totalCount = count;
     metaData.currentPage = Math.floor(offset / limit) + 1;
     metaData.pageCount = Math.ceil(count / limit);
     metaData.pageSize = Number(limit);
-
-    if (metaData.currentPage === metaData.pageCount && offset !== 0) {
-      metaData.pageSize = metaData.totalCount % offset === 0 ?
-        metaData.totalCount - offset : metaData.totalCount % offset;
-      metaData.pageSize = Number(metaData.pageSize);
+    if (queryHasNoData) {
+      metaData.message = errorMessages.endOfPageReached;
     }
     return metaData;
   },
@@ -117,6 +115,24 @@ export default {
     }
   },
   /**
+   * @description used by both document and users to
+   * routes to handle validation errors
+   * @param {Error[]} errors an array of sequelize validation errors
+   * @returns {object[]} an array of error messages and fields
+   */
+  handleValidationErrors(errors) {
+    const errorResponse = [];
+    errors.forEach((errorObject) => {
+      const message = errorObject.message.replace('null', 'empty');
+      errorResponse
+        .push({
+          message,
+          field: errorObject.path,
+        });
+    });
+    return errorResponse;
+  },
+  /**
    * @description help userController.updateUserInfo to handle possible errors
    * which might occur while updating
    * @param {object} error javascript error object
@@ -131,14 +147,7 @@ export default {
     const errors = error.errors;
 
     if (errors) {
-      const errorResponse = [];
-      errors.forEach((errorObject) => {
-        errorResponse
-          .push({
-            field: errorObject.path,
-            message: errorObject.message
-          });
-      });
+      const errorResponse = this.handleValidationErrors(errors);
       return HTTPResponse
         .status(403)
         .json({ errors: errorResponse });
@@ -162,5 +171,28 @@ export default {
     return HTTPResponse
       .status(404)
       .json({ error: genericUserUpdateError });
+  },
+  handleCreateDocumentError(error, response) {
+    const errorMessage = errorMessages.genericCreateDocErrorMessage;
+    if (error.original) {
+      const errorCode = error.original.code;
+      if (errorMessages.errorCodes.erDupEntry === errorCode) {
+        return response
+          .status(403)
+          .json({ error: errorMessages.duplicateDocTitleError });
+      } else if (errorMessages.errorCodes.invalidEnumInput === errorCode) {
+        return response
+          .status(403)
+          .json({ error: errorMessages.invalidDocAccessLevelError });
+      }
+    } else if (error.errors) {
+      const errors = this.handleValidationErrors(error.errors);
+      return response
+        .status(403)
+        .json({ errors });
+    }
+    return response
+      .status(400)
+      .json({ error: errorMessage });
   }
 };

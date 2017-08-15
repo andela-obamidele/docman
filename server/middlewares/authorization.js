@@ -24,12 +24,13 @@ export default (request, response, next) => {
         if (!queryResult) {
           throw authorizationError;
         }
+        response.locals.user = user;
         next();
       })
-      .catch(error => response.status(403).json({ error: error.message }));
+      .catch(error => response.status(401).json({ error: error.message }));
   } else {
     return response
-      .status(403)
+      .status(401)
       .json({ error: userAuthErrors.unAuthorizedUserError });
   }
 };

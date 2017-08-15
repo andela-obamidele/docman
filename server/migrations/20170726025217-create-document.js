@@ -18,17 +18,27 @@ module.exports = {
           as: 'author',
         }
       },
+      role: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Roles',
+          key: 'id',
+          as: 'role'
+        }
+      },
       title: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true
       },
-      body: {
+      content: {
         type: Sequelize.TEXT,
         allowNull: 'false'
       },
       access: {
         type: Sequelize.ENUM,
-        values: ['public', 'private', 'role']
+        values: ['public', 'private', 'role'],
       },
       createdAt: {
         allowNull: false,
