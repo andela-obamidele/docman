@@ -98,7 +98,7 @@ export default {
       return User.findAndCountAll({ limit, offset })
         .then((queryResult) => {
           const users = filterUsersResult(queryResult.rows);
-          const metaData = getPageMetadata(limit, offset, queryResult.count);
+          const metaData = getPageMetadata(limit, offset, queryResult);
           return response.json({ users, metaData });
         });
     }

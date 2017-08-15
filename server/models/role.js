@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       sourceKey: 'id',
       onDelete: 'CASCADE'
     });
+
+    Role.hasMany(models.Document, {
+      foreignKey: 'role',
+      sourceKey: 'id',
+      onDelete: 'CASCADE'
+    });
   };
   return Role;
 };

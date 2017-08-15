@@ -37,7 +37,8 @@ export default {
   generateJWT(userCredentials) {
     const secret = process.env.SECRET;
     let token = 'JWT ';
-    token += jwt.sign({ data: userCredentials }, secret, { expiresIn: '48h' });
+    const { password, ...otherCredentials } = userCredentials;
+    token += jwt.sign({ data: otherCredentials }, secret, { expiresIn: '48h' });
     return token;
   },
   /**
