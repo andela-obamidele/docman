@@ -52,6 +52,11 @@ export default {
    experience with our app better by rainsing an issue at 
    https://github.com/andela-obamidele/docman or contact an admin at 
    admin@docman.com`,
+  nullDocumentUpdateError: `the document you're trying to update does'nt,
+exist`,
+  emptyDocUpdateError: `you need to provide either access, title , content or 
+the three`,
+  unauthorizedDocumentUpdateError: 'sorry, you can only edit your own document',
   errorCodes: {
     errNoDefaultForField: '1364',
     erDupEntry: '23505',

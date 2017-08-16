@@ -57,10 +57,23 @@ export default {
       });
   },
   updateDocument: (request, response) => {
-    response.send({
-      endpoint: '/documents/:id',
-      explain: 'updates document'
-    });
+    const currentUserId = response.locals.user.id;
+    const documentId = request.params.id;
+    if (Number.isNaN(Number(documentId))) {
+      return response
+        .status(400).json({ error: errorMessages.wrongIdTypeError });
+    }
+    return Document.findById(request.params.id)
+      .then((doc) => {
+        const updateData = helpers.getTruthyDocUpdate(request.body);
+        console.log('ubldadferdatabasdfe', updateData);
+        helpers.terminateDocUpdateOnBadPayload(doc, currentUserId, updateData);
+
+        return doc.update(updateData);
+      })
+      .then(updatedDoc => response
+        .json({ document: updatedDoc.dataValues }))
+      .catch(error => helpers.handleDocumentUpdateErrors(error, response));
   },
   deleteDocument: (request, response) => {
     response.send({
