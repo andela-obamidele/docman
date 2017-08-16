@@ -85,31 +85,6 @@ export default {
       );
   },
   getUserDocuments: (request, response) => {
-    const id = request.params.id;
-    Document.findAll({ where:$or: [{ access: 'public' }, {
-      access: 'role',
-      $and: { role: response.locals.user.role }
-    }, {
-      access: 'private',
-      $and: { author: response.locals.user.id }
-    }] })
-      .then((documents) => {
-        if (documents.length === 0) {
-          response.status(404).send({
-            messaage: 'There are currently no user documents'
-          });
-        } else {
-          response.status(200).send({
-            message: 'Documents Found',
-            documents
-          });
-        }
-      }).catch((error => {
-        response.status(500).send({
-          message: 'There was an error',
-          error
-        });
-      });
     response.send({
       endpoint: '/users/:id/documents',
       explain: 'find documents belonging to the user'
