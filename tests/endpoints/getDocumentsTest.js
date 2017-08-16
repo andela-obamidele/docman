@@ -1,27 +1,17 @@
-// eslint-disable-next-line
 import { assert } from 'chai';
 import supertest from 'supertest';
 import { Document, User } from '../../server/models';
 import server from '../../server/server';
 import dummyAdmins from '../dummyData/dummyAdmins';
 import dummyUsers from '../dummyData/dummyUsers';
-// eslint-disable-next-line
 import errorMessages from '../../server/constants/errors';
 
 const request = supertest(server);
-// eslint-disable-next-line
-const allDummyUsers = [
-  ...dummyUsers,
-  ...dummyAdmins
-];
+
 describe('GET /api/v1/documents/', () => {
-  // eslint-disable-next-line
   const dummyAdmin = dummyAdmins[0];
-  // eslint-disable-next-line
   const dummyUser = dummyUsers[0];
-  // eslint-disable-next-line
   let adminAuthToken;
-  // eslint-disable-next-line
   let userAuthToken;
   before(() => Document
     .destroy({ where: {}, cascade: true, restartIdentity: true })

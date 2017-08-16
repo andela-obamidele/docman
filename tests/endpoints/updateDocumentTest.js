@@ -1,9 +1,7 @@
-// eslint-disable-next-line
 import { assert } from 'chai';
 import supertest from 'supertest';
 import server from '../../server/server';
 import { User, Document } from '../../server/models/';
-// eslint-disable-next-line
 import errorMessages from '../../server/constants/errors';
 import dummyUsers from '../dummyData/dummyUsers';
 
@@ -11,11 +9,8 @@ const request = supertest(server);
 
 describe('PUT /api/v1/documents', () => {
   const dummyUser1 = dummyUsers[0];
-  // eslint-disable-next-line
   const dummyUser2 = dummyUsers[1];
-  // eslint-disable-next-line
   let user1AuthorizationToken;
-  // eslint-disable-next-line
   let user2AuthorizationToken;
   let user1DocumentId;
   before(() => User

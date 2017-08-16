@@ -3,6 +3,7 @@ import express from 'express';
 import userController from '../controllers/userController';
 import documentController from '../controllers/documentController';
 import authorizationChecker from '../middlewares/authorization';
+import deleteDocAuthorization from '../middlewares/deleteDocumentAuthorization';
 import deleteUserAuthorization from '../middlewares/deleteUserAuthorization';
 
 const router = express.Router();
@@ -23,7 +24,10 @@ router.get('/documents/', documentController.getDocument);
 
 router.put('/documents/:id', documentController.updateDocument);
 
-router.delete('/documents/:id', documentController.deleteDocument);
+router.delete(
+  '/documents/:id',
+  deleteDocAuthorization,
+  documentController.deleteDocument);
 
 router.get('/users/:id/documents', documentController.getUserDocuments);
 
