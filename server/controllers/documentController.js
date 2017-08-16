@@ -1,5 +1,6 @@
 import { Document } from '../models';
 import errorMessages from '../constants/errors';
+import successMessages from '../constants/successes';
 import helpers from '../helpers/helpers';
 
 const getPageMetadata = helpers.getPageMetadata;
@@ -66,7 +67,6 @@ export default {
     return Document.findById(request.params.id)
       .then((doc) => {
         const updateData = helpers.getTruthyDocUpdate(request.body);
-        console.log('ubldadferdatabasdfe', updateData);
         helpers.terminateDocUpdateOnBadPayload(doc, currentUserId, updateData);
 
         return doc.update(updateData);
@@ -76,10 +76,13 @@ export default {
       .catch(error => helpers.handleDocumentUpdateErrors(error, response));
   },
   deleteDocument: (request, response) => {
-    response.send({
-      endpoint: '/document/:id',
-      explain: 'delete document'
-    });
+    const id = request.params.id;
+    return Document
+      .destroy({ where: { id }, cascade: true, restartIdentity: true })
+      .then(() => response.send({
+        message: successMessages.docDeleteSuccessful
+      })
+      );
   },
   getUserDocuments: (request, response) => {
     response.send({

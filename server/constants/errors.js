@@ -57,6 +57,10 @@ exist`,
   emptyDocUpdateError: `you need to provide either access, title , content or 
 the three`,
   unauthorizedDocumentUpdateError: 'sorry, you can only edit your own document',
+  voidDocumentDeleteError: `we could not find the document you wanted to
+  delete.`,
+  docDeleteUnauthorizedError: `you must own this document or be an admin
+to be able to delete it`,
   errorCodes: {
     errNoDefaultForField: '1364',
     erDupEntry: '23505',

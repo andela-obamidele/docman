@@ -10,4 +10,5 @@ export default {
     userUpdatedPassword: 'you also updated your password'
   },
   userDeleteSuccessful: 'user deleted successfully',
+  docDeleteSuccessful: 'document deleted successfully'
 };
