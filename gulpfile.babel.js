@@ -2,10 +2,8 @@ import eslint from 'gulp-eslint';
 import gulp from 'gulp';
 import mocha from 'gulp-spawn-mocha';
 import babel from 'gulp-babel';
-import uglify from 'gulp-uglify';
 import nodemon from 'gulp-nodemon';
 import sourcemaps from 'gulp-sourcemaps';
-import concat from 'gulp-concat';
 import dotenv from 'dotenv';
 
 
@@ -21,18 +19,6 @@ gulp.task('lint', () => {
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
   return gulpStream;
-});
-
-gulp.task('build', () => {
-  gulp.src([
-    'server/**/*.js',
-    '!node_modules/**',
-    '!gulpfile.js',
-    '!dist/**'])
-    .pipe(babel())
-    .pipe(concat('all.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('build-dev', () => {
