@@ -58,18 +58,18 @@ export default {
    * gets email, username, password, fullName and bio from object
    * if any of this value is falsy, they are eliminated from the returned
    * object
-   * @param {object} object user object
+   * @param {object} payload user object
    * @returns {object} new user object containing truthy values only
    */
-  getOnlyTruthyAttributes(object) {
+  getOnlyTruthyAttributes(payload) {
     const {
       email,
       username,
       password,
       fullName,
       bio
-    } = object;
-    object = {
+    } = payload;
+    payload = {
       email,
       username,
       password,
@@ -77,15 +77,15 @@ export default {
       bio
     };
     const fetchKeys = Object.keys;
-    const keys = fetchKeys(object);
-    let filteredObject = {};
+    const keys = fetchKeys(payload);
+    let filteredPayload = {};
     keys.forEach((key) => {
-      if (object[key]) {
-        filteredObject[key] = object[key];
+      if (payload[key]) {
+        filteredPayload[key] = payload[key];
       }
     });
-    filteredObject = fetchKeys(filteredObject)[0] ? filteredObject : null;
-    return filteredObject;
+    filteredPayload = fetchKeys(filteredPayload)[0] ? filteredPayload : null;
+    return filteredPayload;
   },
 
   /**
@@ -123,7 +123,13 @@ export default {
   handleValidationErrors(errors) {
     const errorResponse = [];
     errors.forEach((errorObject) => {
-      const message = errorObject.message.replace('null', 'empty');
+      let message = errorObject.message.replace('null', 'empty');
+      if (!errorObject.message) {
+        message = `it appears that you are not providing
+${errorObject.path}`;
+        errorObject.message = message;
+      }
+
       errorResponse
         .push({
           message,
@@ -194,5 +200,67 @@ export default {
     return response
       .status(400)
       .json({ error: errorMessage });
+  },
+  /**
+   * @description throws error if current user is trying to update a
+   * document which doesn't belong to her or when document user is trying
+   * to update does not exist
+   * @param {object} doc Document query result by id
+   * @param {number} currentUserId  id for currently logged in user
+   * @param {object} updateData 
+   * @returns {void}
+   */
+  terminateDocUpdateOnBadPayload(doc, currentUserId, updateData) {
+    const error = new Error();
+    if (!doc) {
+      error.message = errorMessages.nullDocumentUpdateError;
+      throw error;
+    } else if (!updateData) {
+      error.message = errorMessages.emptyDocUpdateError;
+      throw error;
+    } else if (doc.dataValues.author !== currentUserId) {
+      error.message = errorMessages.unauthorizedDocumentUpdateError;
+      throw error;
+    }
+  },
+  handleDocumentUpdateErrors(error, response) {
+    const {
+      nullDocumentUpdateError,
+      unauthorizedDocumentUpdateError,
+      emptyDocUpdateError } = errorMessages;
+    if (error.errors) {
+      const errors = this.handleValidationErrors(error.errors);
+      return response.status(400).json({ errors });
+    } else if (error.message === nullDocumentUpdateError) {
+      return response.status(403).json({ error: nullDocumentUpdateError });
+    } else if (error.message === unauthorizedDocumentUpdateError) {
+      return response
+        .status(403)
+        .json({ error: unauthorizedDocumentUpdateError });
+    } else if (error.message === emptyDocUpdateError) {
+      return response
+        .status(400).json({ error: emptyDocUpdateError });
+    } else if (error.original) {
+      const errorCode = error.original.code;
+      if (errorMessages.errorCodes.invalidEnumInput === errorCode) {
+        return response
+          .status(403)
+          .json({ error: errorMessages.invalidDocAccessLevelError });
+      }
+    }
+  },
+  getTruthyDocUpdate(payload) {
+    const { access, title, content } = payload;
+    payload = { access, title, content };
+    const fetchKeys = Object.keys;
+    const keys = fetchKeys(payload);
+    let filteredPayload = {};
+    keys.forEach((key) => {
+      if (payload[key]) {
+        filteredPayload[key] = payload[key];
+      }
+    });
+    filteredPayload = fetchKeys(filteredPayload)[0] ? filteredPayload : null;
+    return filteredPayload;
   }
 };
