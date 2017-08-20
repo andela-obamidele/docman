@@ -1,6 +1,5 @@
 import { assert } from 'chai';
 import supertest from 'supertest';
-// eslint-disable-next-line 
 import jwtDriver from 'jsonwebtoken';
 import { User, Document } from '../../server/models/';
 import server from '../../server/server';
