@@ -61,6 +61,8 @@ the three`,
   delete.`,
   docDeleteUnauthorizedError: `you must own this document or be an admin
 to be able to delete it`,
+  noDocumentFoundError: 'no document found',
+  docNotFound: 'no document found',
   errorCodes: {
     errNoDefaultForField: '1364',
     erDupEntry: '23505',

@@ -85,10 +85,41 @@ export default {
       );
   },
   getUserDocuments: (request, response) => {
-    response.send({
-      endpoint: '/users/:id/documents',
-      explain: 'find documents belonging to the user'
-    });
+    const loggedInUser = response.locals.user;
+    let userToSearchId = request.params.id;
+    userToSearchId = Number.parseInt(userToSearchId, 10);
+    if (Number.isNaN(userToSearchId)) {
+      return response.status(400).json({ error: 'id must be a number' });
+    }
+    const queryOptions = { where: {} };
+    queryOptions.where = { author: userToSearchId };
+
+    if (loggedInUser.role === 1) {
+      queryOptions.where.$or = [
+        { access: 'public' },
+        {
+          access: 'role',
+        },
+      ];
+    } else if (loggedInUser.role === 2 && loggedInUser.id !== userToSearchId) {
+      queryOptions.where.$or = [
+        { access: 'public' },
+        {
+          access: 'role',
+        },
+      ];
+      queryOptions.where.$and = { role: 2 };
+    }
+
+    return Document.findAll(queryOptions)
+      .then((doc) => {
+        if (!doc[0]) {
+          return response
+            .status(404)
+            .json({ error: errorMessages.noDocumentFoundError });
+        }
+        return response.json({ documents: doc });
+      });
   },
   searchDocuments(request, response) {
     response.send({
