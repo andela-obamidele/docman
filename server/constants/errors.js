@@ -1,6 +1,6 @@
 export default {
-  genericErrorMessage: `an error occured while trying to assess this endpoint.
-  please check the documentatioin for proper use`,
+  genericErrorMessage: 'an error occured while trying to assess this endpoint' +
+  ' please check the documentatioin for proper use',
   userAuthErrors: {
     conflictingPasswordError: `the confirmation password and new password
     doesn't match`,
@@ -61,6 +61,7 @@ the three`,
   delete.`,
   docDeleteUnauthorizedError: `you must own this document or be an admin
 to be able to delete it`,
+  fileQueryForbiddenError: 'sorry, you are not permitted to view this file',
   noDocumentFoundError: 'no document found',
   docNotFound: 'no document found',
   errorCodes: {

@@ -1,10 +1,8 @@
 import supertest from 'supertest';
 import jwt from 'jsonwebtoken';
-// eslint-disable-next-line
 import { assert } from 'chai';
 import server from '../../server/server';
 import { User, Document } from '../../server/models';
-// eslint-disable-next-line
 import errorMessages from '../../server/constants/errors';
 import dummyUsers from '../dummyData/dummyUsers';
 import dummyAdmins from '../dummyData/dummyAdmins';
@@ -13,15 +11,9 @@ const request = supertest(server);
 
 describe('GET /api/v1/users/:id/documents', () => {
   const dummyUser1 = dummyUsers[0];
-  // eslint-disable-next-line
-  const dummyUser2 = dummyUsers[1];
   const dummyAdmin = dummyAdmins[0];
-  // eslint-disable-next-line
   let adminAuthorizationToken;
-  // eslint-disable-next-line
   let user1AuthorizationToken;
-  // eslint-disable-next-line
-  let user2AuthorizationToken
   before(() => Document
     .destroy({ where: {}, cascade: true, restartIdentity: true })
     .then(() => User
@@ -47,16 +39,6 @@ describe('GET /api/v1/users/:id/documents', () => {
       .expect(200)
       .then((response) => {
         user1AuthorizationToken = response.body.token;
-      }))
-    .then(() => request
-      .post('/api/v1/users')
-      .send({
-        ...dummyUser2,
-        confirmationPassword: dummyUser2.password
-      })
-      .expect(200)
-      .then((response) => {
-        user2AuthorizationToken = response.body.token;
       }))
     .then(() => request
       .get('/api/v1/users/')
