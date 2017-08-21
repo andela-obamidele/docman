@@ -262,5 +262,13 @@ ${errorObject.path}`;
     });
     filteredPayload = fetchKeys(filteredPayload)[0] ? filteredPayload : null;
     return filteredPayload;
+  },
+  isUserCanAccessDocument(user, doc) {
+    if (doc.access === 'private' && doc.author !== user.id) {
+      return false;
+    } else if (doc.access === 'role' && user.role > doc.role) {
+      return false;
+    }
+    return true;
   }
 };

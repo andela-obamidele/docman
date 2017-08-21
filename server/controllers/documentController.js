@@ -16,7 +16,7 @@ export default {
       )
       .catch(error => helpers.handleCreateDocumentError(error, response));
   },
-  getDocument: (request, response) => {
+  getDocuments: (request, response) => {
     const options = {};
     const { limit, offset } = request.query;
     const isPaginationRequired = limit && offset;
@@ -38,7 +38,6 @@ export default {
         $and: { author: response.locals.user.id }
       }]
     };
-
     return Document.findAndCountAll(options)
       .then((docs) => {
         let statusCode = 200;
@@ -53,8 +52,34 @@ export default {
             statusCode = 404;
           }
           responseData.pageMetadata = pageMetadata;
+        } else if (!docs.rows[0]) {
+          return response
+            .status(404).json({ error: errorMessages.noDocumentFoundError });
         }
         return response.status(statusCode).json(responseData);
+      });
+  },
+  getDocument(request, response) {
+    const currentUser = response.locals.user;
+    let documentId = request.params.id;
+    documentId = Number.parseInt(documentId, 10);
+    if (Number.isNaN(documentId)) {
+      return response
+        .status(400).json(errorMessages.wrongIdTypeError);
+    }
+    Document.findById(documentId)
+      .then((doc) => {
+        if (!doc) {
+          return response
+            .status(404)
+            .json({ error: errorMessages.noDocumentFoundError });
+        } else if (!helpers.isUserCanAccessDocument(currentUser, doc)) {
+          return response
+            .status(403)
+            .json({ error: errorMessages.fileQueryForbiddenError });
+        }
+        return response
+          .json({ document: doc });
       });
   },
   updateDocument: (request, response) => {
@@ -68,7 +93,6 @@ export default {
       .then((doc) => {
         const updateData = helpers.getTruthyDocUpdate(request.body);
         helpers.terminateDocUpdateOnBadPayload(doc, currentUserId, updateData);
-
         return doc.update(updateData);
       })
       .then(updatedDoc => response

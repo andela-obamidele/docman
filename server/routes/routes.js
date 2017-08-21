@@ -20,8 +20,8 @@ router.delete('/users/:id', deleteUserAuthorization, userController.deleteUser);
 
 router.post('/documents/', documentController.createDocument);
 
-router.get('/documents/', documentController.getDocument);
-
+router.get('/documents/', documentController.getDocuments);
+router.get('/documents/:id', documentController.getDocument);
 router.put('/documents/:id', documentController.updateDocument);
 
 router.delete(
