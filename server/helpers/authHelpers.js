@@ -47,9 +47,7 @@ const authHelpers = {
    * @returns {Promise} javascript promise from http response
    */
   sendUniqueJWT(userCredentials, HTTPResponse, isSignup) {
-    console.log(isSignup);
     const statusCode = isSignup ? 201 : 200;
-    console.log(statusCode);
     const token = this.generateJWT(userCredentials);
     return HTTPResponse.status(statusCode).json({ token });
   },

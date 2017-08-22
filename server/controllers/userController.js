@@ -2,12 +2,12 @@ import { User } from '../models';
 import errorMessages from '../constants/errors';
 import successMessages from '../constants/successes';
 import authHelpers from '../helpers/authHelpers';
-import helpers from '../helpers/helpers';
+import userHelpers from '../helpers/userHelpers';
 
 const { userAuthErrors, unmatchedUserSearch } = errorMessages;
 
 const { userAuthSuccess, userDeleteSuccessful } = successMessages;
-const { filterUsersResult, getPageMetadata } = helpers;
+const { filterUsersResult, getPageMetadata } = userHelpers;
 
 export default {
   /**
@@ -143,10 +143,10 @@ export default {
   * @returns {Promise} Promise object from express HTTP response
   */
   updateUserInfo: (request, response) => {
-    const updateData = helpers.getOnlyTruthyAttributes(request.body);
+    const updateData = userHelpers.getOnlyTruthyAttributes(request.body);
     return User.findById(request.params.id)
       .then((user) => {
-        helpers.terminateUserUpdateOnBadPayload(
+        userHelpers.terminateUserUpdateOnBadPayload(
           updateData,
           request.body,
           user);
@@ -166,7 +166,7 @@ export default {
               });
           });
       })
-      .catch(error => helpers.handleUserUpdateError(error, response));
+      .catch(error => userHelpers.handleUserUpdateError(error, response));
   },
   /**
   * @description deletes a user from the database. responds with a success

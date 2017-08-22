@@ -1,10 +1,10 @@
 import { Document } from '../models';
 import errorMessages from '../constants/errors';
 import successMessages from '../constants/successes';
-import helpers from '../helpers/helpers';
+import documentHelpers from '../helpers/documentHelpers';
 
-const getPageMetadata = helpers.getPageMetadata;
-export default {
+const getPageMetadata = documentHelpers.getPageMetadata;
+const documentControllers = {
   createDocument: (request, response) => {
     const { title, content, access } = request.body;
     const { id, role } = response.locals.user;
@@ -14,7 +14,8 @@ export default {
           document: doc.dataValues
         })
       )
-      .catch(error => helpers.handleCreateDocumentError(error, response));
+      .catch(error => documentHelpers
+        .handleCreateDocumentError(error, response));
   },
   getDocuments: (request, response) => {
     const options = {};
@@ -73,7 +74,7 @@ export default {
           return response
             .status(404)
             .json({ error: errorMessages.noDocumentFoundError });
-        } else if (!helpers.isUserCanAccessDocument(currentUser, doc)) {
+        } else if (!documentHelpers.isUserCanAccessDocument(currentUser, doc)) {
           return response
             .status(403)
             .json({ error: errorMessages.fileQueryForbiddenError });
@@ -91,13 +92,15 @@ export default {
     }
     return Document.findById(request.params.id)
       .then((doc) => {
-        const updateData = helpers.getTruthyDocUpdate(request.body);
-        helpers.terminateDocUpdateOnBadPayload(doc, currentUserId, updateData);
+        const updateData = documentHelpers.getTruthyDocUpdate(request.body);
+        documentHelpers
+          .terminateDocUpdateOnBadPayload(doc, currentUserId, updateData);
         return doc.update(updateData);
       })
       .then(updatedDoc => response
         .json({ document: updatedDoc.dataValues }))
-      .catch(error => helpers.handleDocumentUpdateErrors(error, response));
+      .catch(error => documentHelpers
+        .handleDocumentUpdateErrors(error, response));
   },
   deleteDocument: (request, response) => {
     const id = request.params.id;
@@ -161,7 +164,7 @@ export default {
             .json({ error: errorMessages.noDocumentFoundError });
         }
         const currentUser = response.locals.user;
-        docs = helpers
+        docs = documentHelpers
           .removeRestrictedDocuments(currentUser, docs.rows);
         if (!docs[0]) {
           return response.status(404).json({
@@ -172,3 +175,4 @@ export default {
       });
   }
 };
+export default documentControllers;
