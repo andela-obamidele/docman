@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { assert } from 'chai';
 import server from '../../server/server';
 import { User, Document } from '../../server/models';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 import dummyUsers from '../dummyData/dummyUsers';
 import dummyAdmins from '../dummyData/dummyAdmins';
 
@@ -63,7 +63,8 @@ describe('GET /api/v1/users/:id/documents', () => {
         .set('Authorization', adminAuthorizationToken)
         .expect(404)
         .expect((response) => {
-          assert.equal(response.body.error, errorMessages.noDocumentFoundError);
+          assert
+            .equal(response.body.error, errorConstants.noDocumentFoundError);
         });
     })
   );

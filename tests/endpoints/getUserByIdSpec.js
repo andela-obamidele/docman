@@ -5,7 +5,7 @@ import supertest from 'supertest';
 import { User } from '../../server/models';
 import dummyUsers from '../dummyData/dummyUsers';
 import server from '../../server/server';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 
 const request = supertest(server);
 
@@ -29,25 +29,25 @@ describe('GET /api/v1/users/:id', () => {
     })
     .catch(error => error));
 
-  it(`should respond with '${errorMessages.userNotFound}' 
+  it(`should respond with '${errorConstants.userNotFound}' 
     userId is used`, () => {
       const supertestPromise = request
         .get('/api/v1/users/92342343')
         .set('Authorization', jwt)
         .expect(404)
         .expect((response) => {
-          assert.equal(response.body.error, errorMessages.userNotFound);
+          assert.equal(response.body.error, errorConstants.userNotFound);
         });
       return supertestPromise;
     });
-  it(`should respond with '${errorMessages.wrongIdTypeError}' when id 
+  it(`should respond with '${errorConstants.wrongIdTypeError}' when id 
     provided is not of type number`, () => {
       const supertestPromise = request
         .get('/api/v1/users/onehundred')
         .set('Authorization', jwt)
         .expect(400)
         .expect((response) => {
-          assert.equal(response.body.error, errorMessages.wrongIdTypeError);
+          assert.equal(response.body.error, errorConstants.wrongIdTypeError);
         });
       return supertestPromise;
     });

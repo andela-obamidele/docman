@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
-import errorMessages from '../constants/errors';
+import errorConstants from '../constants/errorConstants';
 import { User } from '../models';
 import constants from '../constants/constants';
 
 const {
   userDeleteUnauthorizedError,
   voidUserDeleteError,
-} = errorMessages;
+} = errorConstants;
 /**
  * @description allows users to delete only his account. 
  * Allows admin to delete all accounts
@@ -16,7 +16,7 @@ const {
  * it passes control to the next middleware
  * @returns {Promise | void} Promise from express HTTP response
  */
-export default (request, response, next) => {
+const deleteUserAuthorization = (request, response, next) => {
   let token = request.headers.authorization;
   token = token.split(' ')[1];
   const user = jwt.decode(token).data;
@@ -40,3 +40,4 @@ export default (request, response, next) => {
       .json({ error: error.message })
     );
 };
+export default deleteUserAuthorization;

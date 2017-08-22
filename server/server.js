@@ -3,6 +3,7 @@ import logger from 'morgan';
 import http from 'http';
 import bodyParser from 'body-parser';
 import router from './routes/routes';
+import jsonErrorHandler from './middlewares/jsonErrorHandler';
 
 const app = express();
 app.set('PORT', process.env.PORT || 3000);
@@ -11,6 +12,7 @@ app.use(logger('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/api/v1/', router);
+app.use(jsonErrorHandler);
 app.use('*', (request, response, next) => {
   response
     .status(404)

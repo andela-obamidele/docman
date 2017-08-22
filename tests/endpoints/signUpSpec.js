@@ -1,8 +1,7 @@
 import supertest from 'supertest';
 import { assert } from 'chai';
 import { User } from '../../server/models/';
-import errorMessages from '../../server/constants/errors';
-import successMessages from '../../server/constants/successes';
+import errorConstants from '../../server/constants/errorConstants';
 import server from '../../server/server';
 
 const request = supertest(server);
@@ -12,9 +11,8 @@ describe('POST /api/v1/users/', () => {
     badEmailError,
     incompleteCredentialsError,
     conflictingPasswordError
-  } = errorMessages.userAuthErrors;
+  } = errorConstants.userAuthErrors;
 
-  const { successfulSignup } = successMessages.userAuthSuccess;
 
   beforeEach(() => {
     after(() => User
@@ -63,7 +61,7 @@ describe('POST /api/v1/users/', () => {
         });
       return supertestPromise;
     });
-  it(`should respond with  ${successfulSignup} and a token when provided 
+  it(`should respond with  a token when provided 
   with the right credentials`, () => {
       const supertestPromise = request.post('/api/v1/users')
         .send({

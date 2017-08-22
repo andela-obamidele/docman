@@ -4,7 +4,7 @@ import { Document, User } from '../../server/models';
 import server from '../../server/server';
 import dummyAdmins from '../dummyData/dummyAdmins';
 import dummyUsers from '../dummyData/dummyUsers';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 
 const request = supertest(server);
 
@@ -130,7 +130,7 @@ describe('GET /api/v1/documents/', () => {
       .expect(404)
       .expect((response) => {
         const message = response.body.pageMetadata.message;
-        assert.equal(message, errorMessages.endOfPageReached);
+        assert.equal(message, errorConstants.endOfPageReached);
       })
   );
 });

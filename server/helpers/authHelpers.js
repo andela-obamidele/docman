@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import errorMessages from '../constants/errors';
+import errorConstants from '../constants/errorConstants';
 
-const { conflictingPasswordError } = errorMessages.userAuthErrors;
-const { errorCodes, userAuthErrors } = errorMessages;
+const { conflictingPasswordError } = errorConstants.userAuthErrors;
+const { errorCodes, userAuthErrors } = errorConstants;
 
 const authHelpers = {
   /**
@@ -59,7 +59,7 @@ const authHelpers = {
    * @returns {Promise} Promise from express http response
    */
   handleSignupError(error, HTTPResponse) {
-    let errorMessage = errorMessages.genericErrorMessage;
+    let errorMessage = errorConstants.genericErrorMessage;
     let status = 400;
     const { original } = error;
     if (original) {

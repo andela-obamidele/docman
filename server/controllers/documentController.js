@@ -1,6 +1,6 @@
 import { Document } from '../models';
-import errorMessages from '../constants/errors';
-import successMessages from '../constants/successes';
+import errorConstants from '../constants/errorConstants';
+import successConstants from '../constants/successConstants';
 import documentHelpers from '../helpers/documentHelpers';
 
 const getPageMetadata = documentHelpers.getPageMetadata;
@@ -25,7 +25,7 @@ const documentControllers = {
       if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
         return response
           .status(406)
-          .json({ error: errorMessages.paginationQueryError });
+          .json({ error: errorConstants.paginationQueryError });
       }
       options.limit = Number.parseInt(limit, 10);
       options.offset = Number.parseInt(offset, 10);
@@ -49,13 +49,13 @@ const documentControllers = {
             options.offset,
             docs);
           if (!docs.rows[0]) {
-            pageMetadata.message = errorMessages.endOfPageReached;
+            pageMetadata.message = errorConstants.endOfPageReached;
             statusCode = 404;
           }
           responseData.pageMetadata = pageMetadata;
         } else if (!docs.rows[0]) {
           return response
-            .status(404).json({ error: errorMessages.noDocumentFoundError });
+            .status(404).json({ error: errorConstants.noDocumentFoundError });
         }
         return response.status(statusCode).json(responseData);
       });
@@ -66,18 +66,18 @@ const documentControllers = {
     documentId = Number.parseInt(documentId, 10);
     if (Number.isNaN(documentId)) {
       return response
-        .status(400).json(errorMessages.wrongIdTypeError);
+        .status(400).json(errorConstants.wrongIdTypeError);
     }
     Document.findById(documentId)
       .then((doc) => {
         if (!doc) {
           return response
             .status(404)
-            .json({ error: errorMessages.noDocumentFoundError });
+            .json({ error: errorConstants.noDocumentFoundError });
         } else if (!documentHelpers.isUserCanAccessDocument(currentUser, doc)) {
           return response
             .status(403)
-            .json({ error: errorMessages.fileQueryForbiddenError });
+            .json({ error: errorConstants.fileQueryForbiddenError });
         }
         return response
           .json({ document: doc });
@@ -88,7 +88,7 @@ const documentControllers = {
     const documentId = request.params.id;
     if (Number.isNaN(Number(documentId))) {
       return response
-        .status(400).json({ error: errorMessages.wrongIdTypeError });
+        .status(400).json({ error: errorConstants.wrongIdTypeError });
     }
     return Document.findById(request.params.id)
       .then((doc) => {
@@ -107,7 +107,7 @@ const documentControllers = {
     return Document
       .destroy({ where: { id }, cascade: true, restartIdentity: true })
       .then(() => response.send({
-        message: successMessages.docDeleteSuccessful
+        message: successConstants.docDeleteSuccessful
       })
       );
   },
@@ -143,7 +143,7 @@ const documentControllers = {
         if (!doc[0]) {
           return response
             .status(404)
-            .json({ error: errorMessages.noDocumentFoundError });
+            .json({ error: errorConstants.noDocumentFoundError });
         }
         return response.json({ documents: doc });
       });
@@ -152,7 +152,7 @@ const documentControllers = {
     const query = request.query.q;
     if (!query) {
       return response
-        .status(400).json({ error: errorMessages.badDocumentsQuery });
+        .status(400).json({ error: errorConstants.badDocumentsQuery });
     }
     return Document.findAndCountAll({
       where: { title: { $ilike: `%${query}%` } },
@@ -161,14 +161,14 @@ const documentControllers = {
         if (!docs.count) {
           return response
             .status(404)
-            .json({ error: errorMessages.noDocumentFoundError });
+            .json({ error: errorConstants.noDocumentFoundError });
         }
         const currentUser = response.locals.user;
         docs = documentHelpers
           .removeRestrictedDocuments(currentUser, docs.rows);
         if (!docs[0]) {
           return response.status(404).json({
-            error: errorMessages.noDocumentFoundError
+            error: errorConstants.noDocumentFoundError
           });
         }
         return response.json({ documents: docs });

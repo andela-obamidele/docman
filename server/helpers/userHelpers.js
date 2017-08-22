@@ -1,8 +1,8 @@
 import authHelpers from './authHelpers';
-import errorMessages from '../constants/errors';
+import errorConstants from '../constants/errorConstants';
 import helpers from './helpers';
 
-const { userAuthErrors, errorCodes } = errorMessages;
+const { userAuthErrors, errorCodes } = errorConstants;
 const userHelpers = {
   /**
    * @description returns a new user object containing
@@ -104,7 +104,7 @@ const userHelpers = {
     const {
       passwordUpdateError,
       genericUserUpdateError
-    } = errorMessages;
+    } = errorConstants;
     const errors = error.errors;
 
     if (errors) {
@@ -123,11 +123,11 @@ const userHelpers = {
     } else if (error.toString().indexOf('unassigned id') > -1) {
       return HTTPResponse
         .status(404)
-        .json(({ error: errorMessages.userNotFound }));
+        .json(({ error: errorConstants.userNotFound }));
     } else if (error.original && error.original.code === errorCodes.notAnInt) {
       return HTTPResponse
         .status(400)
-        .json({ error: errorMessages.wrongIdTypeError });
+        .json({ error: errorConstants.wrongIdTypeError });
     }
     return HTTPResponse
       .status(404)

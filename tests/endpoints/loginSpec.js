@@ -3,17 +3,16 @@ import supertest from 'supertest';
 import { assert } from 'chai';
 import { User } from '../../server/models';
 import server from '../../server/server';
-import errorMessages from '../../server/constants/errors';
-import successMessages from '../../server/constants/successes';
+import errorConstants from '../../server/constants/errorConstants';
+import successConstants from '../../server/constants/successConstants';
 
 
 const request = supertest(server);
 const {
   wrongEmailOrPassword,
   unAuthorizedUserError
-} = errorMessages.userAuthErrors;
+} = errorConstants.userAuthErrors;
 
-const { userAuthSuccess } = successMessages;
 
 describe('/api/v1/users/login', () => {
   const email = 'test@testDomain.com';
@@ -71,7 +70,7 @@ describe('/api/v1/users/login', () => {
         });
     });
 
-  it(`should respond with '${userAuthSuccess.successfulLogin}' 
+  it(`should respond with '${successConstants.successfulLogin}' 
   and a jwt token when user logs in successfully`, () => {
       const supertestPromise = request
         .post('/api/v1/users/login/')

@@ -1,4 +1,4 @@
-import errorMessages from '../constants/errors';
+import errorConstants from '../constants/errorConstants';
 
 module.exports = (sequelize, DataTypes) => {
   const Document = sequelize.define('Document', {
@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [1, 30],
-          msg: errorMessages.docTitleLimitError
+          msg: errorConstants.docTitleLimitError
         }
       }
     },
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [1, 10000],
-          msg: errorMessages.docContentLimitError
+          msg: errorConstants.docContentLimitError
         }
       }
     },

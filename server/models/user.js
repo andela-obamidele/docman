@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
-import errorMessages from '../constants/errors';
+import errorConstants from '../constants/errorConstants';
 
-const { userAuthErrors } = errorMessages;
+const { userAuthErrors } = errorConstants;
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [2, 15],
-          msg: errorMessages.usernameLimitError
+          msg: errorConstants.usernameLimitError
         }
       }
     },
@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           arg: [0, 25],
-          msg: errorMessages.fullNameLimitError
+          msg: errorConstants.fullNameLimitError
         }
       }
     },
@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [0, 240],
-          msg: errorMessages.bioLimitError
+          msg: errorConstants.bioLimitError
         }
       }
     }

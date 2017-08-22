@@ -1,15 +1,15 @@
 import { assert } from 'chai';
 import supertest from 'supertest';
 import server from '../../server/server';
-import errorMessages from '../../server/constants/errors';
-import successMessages from '../../server/constants/successes';
+import errorConstants from '../../server/constants/errorConstants';
+import successConstants from '../../server/constants/successConstants';
 import dummyUsers from '../dummyData/dummyUsers';
 import { User } from '../../server/models';
 
 const request = supertest(server);
-const { userAuthErrors } = errorMessages;
+const { userAuthErrors } = errorConstants;
 
-describe('PUT /ap/v1/users/id', () => {
+describe('PUT /ap/v1/users/:id', () => {
   let jwt;
   let sampleUserId;
   const sampleUser = dummyUsers[0];
@@ -35,7 +35,7 @@ describe('PUT /ap/v1/users/id', () => {
   it(`should respond with an array of error objects when validation
   error occurs`, () => {
       const { password, username } = sampleUser;
-      const { badEmailError } = errorMessages.userAuthErrors;
+      const { badEmailError } = errorConstants.userAuthErrors;
       return request
         .put(`/api/v1/users/${sampleUserId}`)
         .send({
@@ -66,7 +66,8 @@ describe('PUT /ap/v1/users/id', () => {
           assert.equal(response.body.error, userAuthErrors.wrongPasswordError);
         });
     });
-  it(`should respond with '${errorMessages.userNotFound}' when provided route is
+  it(`should respond with '${errorConstants.userNotFound}' when 
+  provided route is
     called with a none existing id`, () => request
       .put('/api/v1/users/9999999')
       .set('Authorization', jwt)
@@ -77,10 +78,10 @@ describe('PUT /ap/v1/users/id', () => {
       })
       .expect(404)
       .expect((response) => {
-        assert.equal(response.body.error, errorMessages.userNotFound);
+        assert.equal(response.body.error, errorConstants.userNotFound);
       }));
 
-  it(`should respond with '${errorMessages.wrongIdTypeError}' when the id 
+  it(`should respond with '${errorConstants.wrongIdTypeError}' when the id 
   provided in the request url is not a number`, () => request
       .put('/api/v1/users/somejargon')
       .set('Authorization', jwt)
@@ -91,9 +92,9 @@ describe('PUT /ap/v1/users/id', () => {
       })
       .expect(400)
       .expect((response) => {
-        assert.equal(response.body.error, errorMessages.wrongIdTypeError);
+        assert.equal(response.body.error, errorConstants.wrongIdTypeError);
       }));
-  it(`should respond with '${errorMessages.passwordUpdateError}' 
+  it(`should respond with '${errorConstants.passwordUpdateError}' 
   new password and confirmation password doesn't match`, () => {
       const { username, password, email } = sampleUser;
       return request
@@ -109,7 +110,7 @@ describe('PUT /ap/v1/users/id', () => {
         .expect(403)
         .expect((response) => {
           const errorMessage = response.body.error;
-          assert.equal(errorMessage, errorMessages.passwordUpdateError);
+          assert.equal(errorMessage, errorConstants.passwordUpdateError);
         });
     });
   it(`should respond with a success message and the new user profile when 
@@ -127,7 +128,7 @@ describe('PUT /ap/v1/users/id', () => {
         .expect(200)
         .expect((response) => {
           const { message, user } = response.body;
-          const { userSuccessfullyUpdated } = successMessages.userAuthSuccess;
+          const { userSuccessfullyUpdated } = successConstants;
           assert.equal(message, userSuccessfullyUpdated);
           assert.equal(user.bio, 'this is a new bio');
         });

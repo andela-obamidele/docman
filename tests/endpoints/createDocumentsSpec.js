@@ -4,13 +4,13 @@ import jwtDriver from 'jsonwebtoken';
 import { User, Document } from '../../server/models/';
 import server from '../../server/server';
 import dummyUsers from '../dummyData/dummyUsers';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 
 
 const {
   invalidDocAccessLevelError,
   duplicateDocTitleError
-} = errorMessages;
+} = errorConstants;
 
 const request = supertest(server);
 

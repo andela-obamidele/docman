@@ -1,4 +1,4 @@
-import errorConstants from '../constants/errors';
+import errorConstants from '../constants/errorConstants';
 import helpers from './helpers';
 
 const documentHelpers = {

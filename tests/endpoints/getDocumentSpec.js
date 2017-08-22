@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { assert } from 'chai';
 import server from '../../server/server';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 import dummyUsers from '../dummyData/dummyUsers';
 import dummyAdmins from '../dummyData/dummyAdmins';
 import { User, Document } from '../../server/models';
@@ -75,7 +75,7 @@ describe('GET /api/v1/documents/:id', () => {
       .expect((response) => {
         assert.equal(
           response.body.error,
-          errorMessages.fileQueryForbiddenError
+          errorConstants.fileQueryForbiddenError
         );
       }))
   );
@@ -87,7 +87,7 @@ describe('GET /api/v1/documents/:id', () => {
       .expect((response) => {
         assert.equal(
           response.body.error,
-          errorMessages.fileQueryForbiddenError);
+          errorConstants.fileQueryForbiddenError);
       })
   );
   it('should get user private document for the user that owns it',
@@ -160,7 +160,7 @@ describe('GET /api/v1/documents/:id', () => {
         .expect(403)
         .expect((response) => {
           assert
-            .equal(response.body.error, errorMessages.fileQueryForbiddenError);
+            .equal(response.body.error, errorConstants.fileQueryForbiddenError);
         }))
   );
 

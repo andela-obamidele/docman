@@ -1,12 +1,12 @@
 import { User } from '../models';
-import errorMessages from '../constants/errors';
-import successMessages from '../constants/successes';
+import errorConstants from '../constants/errorConstants';
+import successConstants from '../constants/successConstants';
 import authHelpers from '../helpers/authHelpers';
 import userHelpers from '../helpers/userHelpers';
 
-const { userAuthErrors, unmatchedUserSearch } = errorMessages;
+const { userAuthErrors, unmatchedUserSearch } = errorConstants;
 
-const { userAuthSuccess, userDeleteSuccessful } = successMessages;
+const { userDeleteSuccessful } = successConstants;
 const { filterUsersResult, getPageMetadata } = userHelpers;
 
 export default {
@@ -91,7 +91,7 @@ export default {
       if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
         return response
           .status(406)
-          .json({ error: errorMessages.paginationQueryError });
+          .json({ error: errorConstants.paginationQueryError });
       }
       limit = Number.parseInt(limit, 10);
       offset = Number.parseInt(offset, 10);
@@ -123,14 +123,14 @@ export default {
         if (!user) {
           return response
             .status(404)
-            .json({ error: errorMessages.userNotFound });
+            .json({ error: errorConstants.userNotFound });
         }
         const { password, ...userData } = user.dataValues;
         return response.json(userData);
       })
       .catch(() => response
         .status(400)
-        .json({ error: errorMessages.wrongIdTypeError }));
+        .json({ error: errorConstants.wrongIdTypeError }));
     return userQueryPromise;
   },
   /**
@@ -150,10 +150,10 @@ export default {
           updateData,
           request.body,
           user);
-        let { userSuccessfullyUpdated } = userAuthSuccess;
+        let { userSuccessfullyUpdated } = successConstants;
         if (request.body.newPassword) {
           updateData.password = request.body.newPassword;
-          userSuccessfullyUpdated += ` ${userAuthSuccess.userUpdatedPassword}`;
+          userSuccessfullyUpdated += ` ${successConstants.userUpdatedPassword}`;
         }
         return user
           .update(updateData)

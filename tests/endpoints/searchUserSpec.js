@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { assert } from 'chai';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 import server from '../../server/server';
 import { User } from '../../server/models';
 import dummyUsers from '../dummyData/dummyUsers';
@@ -23,9 +23,9 @@ describe('GET /api/v1/search', () => {
     .catch(error => error)
   );
 
-  it(`should respond with error '${errorMessages.unmatchedUserSearch}'
+  it(`should respond with error '${errorConstants.unmatchedUserSearch}'
   query(q) does not match any email in the database`, () => {
-      const { unmatchedUserSearch } = errorMessages;
+      const { unmatchedUserSearch } = errorConstants;
       return request
         .get('/api/v1/search/users/?q=kilimanjaro@mountain.com')
         .set('Authorization', jwt)

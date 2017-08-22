@@ -6,9 +6,7 @@ import Sequelize from 'sequelize';
 const basename = path.basename(module.filename);
 const env = process.env.NODE_ENV || 'development';
 const db = {};
-// eslint-disable-next-line import/no-dynamic-require
-const config = require(path
-  .resolve(`${process.cwd()}/server/config/config.json`))[env];
+const config = require('../../server/config/config.json')[env];
 
 let sequelize;
 if (config.use_env_variable) {
