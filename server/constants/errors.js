@@ -64,6 +64,7 @@ to be able to delete it`,
   fileQueryForbiddenError: 'sorry, you are not permitted to view this file',
   noDocumentFoundError: 'no document found',
   docNotFound: 'no document found',
+  badDocumentsQuery: 'query string q cannot be empty',
   errorCodes: {
     errNoDefaultForField: '1364',
     erDupEntry: '23505',

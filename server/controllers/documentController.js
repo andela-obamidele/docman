@@ -146,9 +146,29 @@ export default {
       });
   },
   searchDocuments(request, response) {
-    response.send({
-      endpoint: '/search/documents/',
-      explain: 'search for a document'
-    });
+    const query = request.query.q;
+    if (!query) {
+      return response
+        .status(400).json({ error: errorMessages.badDocumentsQuery });
+    }
+    return Document.findAndCountAll({
+      where: { title: { $ilike: `%${query}%` } },
+    })
+      .then((docs) => {
+        if (!docs.count) {
+          return response
+            .status(404)
+            .json({ error: errorMessages.noDocumentFoundError });
+        }
+        const currentUser = response.locals.user;
+        docs = helpers
+          .removeRestrictedDocuments(currentUser, docs.rows);
+        if (!docs[0]) {
+          return response.status(404).json({
+            error: errorMessages.noDocumentFoundError
+          });
+        }
+        return response.json({ documents: docs });
+      });
   }
 };
