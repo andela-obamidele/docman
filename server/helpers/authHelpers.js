@@ -1,18 +1,13 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import errorMessages from '../constants/errors';
-import successMessages from '../constants/successes';
 
 const { conflictingPasswordError } = errorMessages.userAuthErrors;
 const { errorCodes, userAuthErrors } = errorMessages;
 
-const { successfulSignup } = successMessages.userAuthSuccess;
-
 const authHelpers = {
   /**
-   * @description Checks if two passwords are the same. It takes
-   * one optional parameter which is an any object that can create
-   * http response
+   * @description compares two passwords. sends  http response if provided
    * @param {string} password1 - first user password to be compared
    * @param {string} password2 - second password to be compared
    * @param {Response} [HTTPResponse] express http response object
@@ -49,9 +44,9 @@ const authHelpers = {
    * @param {string} message - response message wished to be displayed
    * @returns {Promise} javascript promise from http response
    */
-  sendUniqueJWT(userCredentials, HTTPResponse, message = successfulSignup) {
+  sendUniqueJWT(userCredentials, HTTPResponse) {
     const token = this.generateJWT(userCredentials);
-    return HTTPResponse.json({ message, token });
+    return HTTPResponse.json({ token });
   },
   /**
    * @description makes sure server respond with appropriate error message

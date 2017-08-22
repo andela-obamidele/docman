@@ -81,8 +81,7 @@ describe('/api/v1/users/login', () => {
         })
         .expect(200)
         .expect((response) => {
-          const { token, message } = response.body;
-          assert.equal(message, userAuthSuccess.successfulLogin);
+          const { token } = response.body;
           assert.typeOf(token, 'string');
           assert.equal(token.split(' ')[0], 'JWT');
         });
