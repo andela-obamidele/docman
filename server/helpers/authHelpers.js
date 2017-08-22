@@ -8,7 +8,7 @@ const { errorCodes, userAuthErrors } = errorMessages;
 
 const { successfulSignup } = successMessages.userAuthSuccess;
 
-export default {
+const authHelpers = {
   /**
    * @description Checks if two passwords are the same. It takes
    * one optional parameter which is an any object that can create
@@ -62,6 +62,7 @@ export default {
    */
   handleSignupError(error, HTTPResponse) {
     let errorMessage = errorMessages.genericErrorMessage;
+    let status = 400;
     const { original } = error;
     if (original) {
       if (original.code === errorCodes.errNoDefaultForField) {
@@ -69,8 +70,10 @@ export default {
       } else if (original.code === errorCodes.erDupEntry) {
         const { constraint } = original;
         if (constraint.indexOf('email') > -1) {
+          status = 409;
           errorMessage = userAuthErrors.duplicateEmailError;
         } else {
+          status = 409;
           errorMessage = userAuthErrors.duplicateUsernameError;
         }
       }
@@ -81,13 +84,12 @@ export default {
       errorMessage = message ? message
         .replace('null', 'empty') : incompleteCredentialsError;
     }
-    return HTTPResponse.status(400).json({
+    return HTTPResponse.status(status).json({
       error: errorMessage
     });
   },
   /**
-   * @description - Compares the password provided by client to
-   * the one stored in database. It returns true if they match and false if not
+   * @description - Compares the password in the database to the one provided
    * @param {string} providedPassword - Password provided by client
    * @param {*} hashedPassword - User password stored in the database
    * @returns {boolean} true if password match. false if they don't
@@ -98,3 +100,4 @@ export default {
     return isPasswordCorrect;
   },
 };
+export default authHelpers;
