@@ -72,7 +72,7 @@ describe('POST /api/v1/users/', () => {
           confirmationPassword: 'password',
           username: 'andela1'
         })
-        .expect(200)
+        .expect(201)
         .expect((response) => {
           const { token } = response.body;
           assert.typeOf(token, 'string');

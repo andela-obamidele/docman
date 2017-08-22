@@ -24,7 +24,7 @@ describe('PUT /api/v1/documents', () => {
         ...dummyUser1,
         confirmationPassword: dummyUser1.password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user1AuthorizationToken = response.body.token;
       })
@@ -35,7 +35,7 @@ describe('PUT /api/v1/documents', () => {
         ...dummyUser2,
         confirmationPassword: dummyUser2.password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user2AuthorizationToken = response.body.token;
       })

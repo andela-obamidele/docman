@@ -36,7 +36,7 @@ describe('GET /api/v1/users/:id/documents', () => {
         ...dummyUser1,
         confirmationPassword: dummyUser1.password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user1AuthorizationToken = response.body.token;
       }))

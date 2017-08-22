@@ -28,7 +28,7 @@ describe('DELETE /api/v1/documents/:Id', () => {
         ...dummyUser,
         confirmationPassword: dummyUser.password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         userAuthToken = response.body.token;
       }))
@@ -38,7 +38,7 @@ describe('DELETE /api/v1/documents/:Id', () => {
         ...dummyUser2,
         confirmationPassword: dummyUser2.password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user2AuthToken = response.body.token;
       }))
@@ -56,7 +56,7 @@ describe('DELETE /api/v1/documents/:Id', () => {
         assert.equal(errorMessage, errorMessages.voidDocumentDeleteError);
       })
   );
-  it(`should respond with ${errorMessages.docDeleteUnauthorizedError}
+  it(`should respond with '${errorMessages.docDeleteUnauthorizedError}'
   when user tries to delete document that does not 
   belong to her`, () => request
       .post('/api/v1/documents')
@@ -79,7 +79,7 @@ describe('DELETE /api/v1/documents/:Id', () => {
           assert.equal(error, errorMessages.docDeleteUnauthorizedError);
         }))
   );
-  it(`should respond with ${successMessages.docDeleteSuccessful}
+  it(`should respond with '${successMessages.docDeleteSuccessful}'
   when user tries to delete her own document`, () => request
       .delete(`/api/v1/documents/${docToBeDeletedId}`)
       .set('Authorization', user2AuthToken)

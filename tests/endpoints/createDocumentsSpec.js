@@ -34,7 +34,7 @@ describe('POST /api/v1/documents/', () => {
     .then(() => request
       .post('/api/v1/users/')
       .send(dummyUser)
-      .expect(200)
+      .expect(201)
       .then((response) => {
         jwt = response.body.token;
       }))

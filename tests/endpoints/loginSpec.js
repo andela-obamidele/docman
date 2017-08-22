@@ -29,7 +29,7 @@ describe('/api/v1/users/login', () => {
         confirmationPassword: password,
         username
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         jwt = response.body.token;
       })

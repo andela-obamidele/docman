@@ -1,5 +1,4 @@
 import supertest from 'supertest';
-// eslint-disable-next-line
 import { assert } from 'chai';
 import { User, Document } from '../../server/models';
 import server from '../../server/server';
@@ -9,11 +8,8 @@ import errorMessages from '../../server/constants/errors';
 
 const request = supertest(server);
 describe('GET /api/v1/documents/?q', () => {
-  // eslint-disable-next-line
   let user1AuthToken;
-  // eslint-disable-next-line
   let user2AuthToken;
-  // eslint-disable-next-line
   let adminAuthToken;
   before(() => Document
     .destroy({ where: {}, cascade: true, restartIdentity: true })
@@ -33,7 +29,7 @@ describe('GET /api/v1/documents/?q', () => {
         ...dummyUsers[0],
         confirmationPassword: dummyUsers[0].password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user1AuthToken = response.body.token;
       }))
@@ -43,7 +39,7 @@ describe('GET /api/v1/documents/?q', () => {
         ...dummyUsers[1],
         confirmationPassword: dummyUsers[1].password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user2AuthToken = response.body.token;
       }))

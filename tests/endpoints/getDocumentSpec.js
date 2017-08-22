@@ -1,12 +1,8 @@
 import supertest from 'supertest';
-// eslint-disable-next-line
 import { assert } from 'chai';
 import server from '../../server/server';
-// eslint-disable-next-line
 import errorMessages from '../../server/constants/errors';
-// eslint-disable-next-line
 import dummyUsers from '../dummyData/dummyUsers';
-// eslint-disable-next-line
 import dummyAdmins from '../dummyData/dummyAdmins';
 import { User, Document } from '../../server/models';
 
@@ -14,11 +10,8 @@ const request = supertest(server);
 
 describe('GET /api/v1/documents/:id', () => {
   const admin = dummyAdmins[0];
-  // eslint-disable-next-line
   let adminAuthToken;
-  // eslint-disable-next-line
   let user1AuthToken;
-  // eslint-disable-next-line
   let user2AuthToken;
   let user1PrivateDocumentId;
   let user1RoleDocumentId;
@@ -47,7 +40,7 @@ describe('GET /api/v1/documents/:id', () => {
         ...dummyUsers[1],
         confirmationPassword: dummyUsers[1].password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user1AuthToken = response.body.token;
       }))
@@ -57,7 +50,7 @@ describe('GET /api/v1/documents/:id', () => {
         ...dummyUsers[0],
         confirmationPassword: dummyUsers[0].password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user2AuthToken = response.body.token;
       }))

@@ -24,10 +24,9 @@ export default {
       .then((user) => {
         const hashedPassword = user.dataValues.password;
         const userCredentials = user.dataValues;
-        const successMessage = userAuthSuccess.successfulLogin;
         authHelpers.isPasswordCorrect(password, hashedPassword);
         return authHelpers
-          .sendUniqueJWT(userCredentials, response, successMessage);
+          .sendUniqueJWT(userCredentials, response, false);
       })
       .catch(() => {
         response.status(401).json({
@@ -55,13 +54,14 @@ export default {
       confirmationPassword,
       response)) {
       return User.create({ email, password, username })
-        .then(user => authHelpers.sendUniqueJWT(user.dataValues, response))
+        .then(user =>
+          authHelpers.sendUniqueJWT(user.dataValues, response, true))
         .catch(error => authHelpers.handleSignupError(error, response))
         .catch(() => User.findOne({ where: { email } }))
         .then((user) => {
           const { dataValues } = user;
           if (dataValues) {
-            return authHelpers.sendUniqueJWT(dataValues, response);
+            return authHelpers.sendUniqueJWT(dataValues, response, true);
           }
         })
         .catch(() => {

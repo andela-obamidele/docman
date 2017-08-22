@@ -23,7 +23,7 @@ describe('GET /api/v1/documents/', () => {
         ...dummyUser,
         confirmationPassword: dummyUsers[0].password
       })
-      .expect(200)
+      .expect(201)
       .expect((response) => {
         userAuthToken = response.body.token;
       }))
@@ -33,33 +33,34 @@ describe('GET /api/v1/documents/', () => {
         ...dummyAdmin,
         confirmationPassword: dummyAdmin.password
       })
-      .expect(200)
+      .expect(201)
       .expect((response) => {
         adminAuthToken = response.body.token;
       }))
     .catch(error => error)
   );
 
-  it('should get a list when endpoint is reached', () => request
-    .post('/api/v1/documents')
-    .send({
-      title: 'title',
-      content: 'content',
-      access: 'public'
-    })
-    .set('Authorization', userAuthToken)
-    .expect(201)
-    .then(() => request
-      .get('/api/v1/documents')
-      .set('Authorization', userAuthToken)
-      .expect(200)
-      .expect((response) => {
-        const { title, content, access } = response.body.documents[0];
-        assert.equal(title, 'title');
-        assert.equal(content, 'content');
-        assert.equal(access, 'public');
+  it('should get an array of created documents when endpoint is reached',
+    () => request
+      .post('/api/v1/documents')
+      .send({
+        title: 'title',
+        content: 'content',
+        access: 'public'
       })
-    ));
+      .set('Authorization', userAuthToken)
+      .expect(201)
+      .then(() => request
+        .get('/api/v1/documents')
+        .set('Authorization', userAuthToken)
+        .expect(200)
+        .expect((response) => {
+          const { title, content, access } = response.body.documents[0];
+          assert.equal(title, 'title');
+          assert.equal(content, 'content');
+          assert.equal(access, 'public');
+        })
+      ));
   it('should not get private document of other users', () => request
     .post('/api/v1/documents')
     .send({

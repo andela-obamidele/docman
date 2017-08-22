@@ -41,12 +41,17 @@ const authHelpers = {
    * @param {object} userCredentials object containing user credentials
    * @param {Response} HTTPResponse any object capable of sending http response
    * (express preferrably)
+   *  @param {boolean} isSignup expected to be true when method is called
    * @param {string} message - response message wished to be displayed
+   * from signup controller
    * @returns {Promise} javascript promise from http response
    */
-  sendUniqueJWT(userCredentials, HTTPResponse) {
+  sendUniqueJWT(userCredentials, HTTPResponse, isSignup) {
+    console.log(isSignup);
+    const statusCode = isSignup ? 201 : 200;
+    console.log(statusCode);
     const token = this.generateJWT(userCredentials);
-    return HTTPResponse.json({ token });
+    return HTTPResponse.status(statusCode).json({ token });
   },
   /**
    * @description makes sure server respond with appropriate error message

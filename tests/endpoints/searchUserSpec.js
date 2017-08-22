@@ -1,7 +1,5 @@
 import supertest from 'supertest';
-// eslint-disable-next-line
 import { assert } from 'chai';
-// eslint-disable-next-line
 import errorMessages from '../../server/constants/errors';
 import server from '../../server/server';
 import { User } from '../../server/models';
@@ -10,9 +8,6 @@ import dummyUsers from '../dummyData/dummyUsers';
 const request = supertest(server);
 
 describe('GET /api/v1/search', () => {
-  // eslint-disable-next-line
-  let sampleUserId;
-  // eslint-disable-next-line
   let jwt;
   before(() => User
     .destroy({ where: {}, cascade: true, restartIdentity: true })
@@ -25,9 +20,6 @@ describe('GET /api/v1/search', () => {
         jwt = response.body.token;
         return User.findOne({ where: { email: dummyUsers[0].email } });
       }))
-    .then((queryResult) => {
-      sampleUserId = queryResult.dataValues.id;
-    })
     .catch(error => error)
   );
 
