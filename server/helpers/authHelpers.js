@@ -77,7 +77,9 @@ export default {
     } else {
       const { errors } = error;
       const { incompleteCredentialsError } = userAuthErrors;
-      errorMessage = errors[0].message || incompleteCredentialsError;
+      const message = errors[0].message;
+      errorMessage = message ? message
+        .replace('null', 'empty') : incompleteCredentialsError;
     }
     return HTTPResponse.status(400).json({
       error: errorMessage

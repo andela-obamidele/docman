@@ -37,10 +37,11 @@ describe('POST /api/v1/users/', () => {
   });
   it(`should respond with '${incompleteCredentialsError}' when 1 or all fields are omitted`, () => {
     const supertestPromise = request.post('/api/v1/users/')
-      .send({ password: 'password', confirmationPassword: 'password' })
+      .send({ email: null, password: 'password', confirmationPassword: 'password' })
       .expect(400)
       .expect((response) => {
-        assert.equal(response.body.error, incompleteCredentialsError);
+        const error = response.body.error;
+        assert(error === incompleteCredentialsError || error === 'email cannot be empty');
       });
     return supertestPromise;
   });

@@ -264,13 +264,9 @@ ${errorObject.path}`;
     return filteredPayload;
   },
   isUserCanAccessDocument(user, doc) {
-    console.log(doc);
-    console.log(user.role, doc.role);
-    console.log('called this and got here......');
     if (doc.access === 'private' && doc.author !== user.id) {
       return false;
     } else if (doc.access === 'role' && user.role > doc.role) {
-      console.log('this runs');
       return false;
     }
     return true;

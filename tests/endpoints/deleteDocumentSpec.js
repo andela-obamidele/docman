@@ -1,10 +1,7 @@
-// eslint-disable-next-line
 import { assert } from 'chai';
 import supertest from 'supertest';
 import { User, Document } from '../../server/models';
-// eslint-disable-next-line
 import errorMessages from '../../server/constants/errors';
-// eslint-disable-next-line
 import successMessages from '../../server/constants/successes';
 import server from '../../server/server';
 import dummyUsers from '../dummyData/dummyUsers';
@@ -14,11 +11,8 @@ const request = supertest(server);
 describe('DELETE /api/v1/documents/:Id', () => {
   const dummyUser = dummyUsers[0];
   const dummyUser2 = dummyUsers[1];
-  // eslint-disable-next-line
   let userAuthToken;
-  // eslint-disable-next-line
   let user2AuthToken;
-  // eslint-disable-next-line
   let docToBeDeletedId;
   before(() => User
     .destroy({ where: {}, cascade: true, restartIdentity: true })
