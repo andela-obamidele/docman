@@ -69,6 +69,7 @@ gulp.task('test', ['lint'], () => {
         },
         x: [
           '**/server/middlewares/jsonErrorHandler.js**',
+          '**/server/middlewares/serverErrorHandler.js**',
           '**/dist/**',
           '**/node_modules**/',
           '**/migrations/**',

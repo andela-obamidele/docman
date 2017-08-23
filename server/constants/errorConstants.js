@@ -1,5 +1,6 @@
 const errorConstants = {
   badJSONRequest: 'you are sending an invalid json object',
+  invalidEndpointError: 'the endpoint you are trying to use is not availabe',
   genericErrorMessage: 'an error occured while trying to assess this endpoint' +
   ' please check the documentatioin for proper use',
   userAuthErrors: {
@@ -60,6 +61,8 @@ const errorConstants = {
   noDocumentFoundError: 'no document found',
   docNotFound: 'no document found',
   badDocumentsQuery: 'query string q cannot be empty',
+  badMethodError: 'sorry! this api only takes one POST, PUT,' +
+  ' DELETE AND GET methods',
   errorCodes: {
     errNoDefaultForField: '1364',
     erDupEntry: '23505',
