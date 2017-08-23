@@ -5,9 +5,10 @@ import documentController from '../controllers/documentController';
 import authorizationChecker from '../middlewares/authorization';
 import deleteDocAuthorization from '../middlewares/deleteDocumentAuthorization';
 import deleteUserAuthorization from '../middlewares/deleteUserAuthorization';
+import idParameterValidator from '../middlewares/idParameterValidator';
 
 const router = express.Router();
-
+router.use(idParameterValidator);
 router.post('/users/login', userController.loginUser);
 
 router.post('/users/', userController.signupUser);

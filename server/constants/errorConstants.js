@@ -67,5 +67,4 @@ const errorConstants = {
     invalidEnumInput: '22P02'
   },
 };
-
 export default errorConstants;
