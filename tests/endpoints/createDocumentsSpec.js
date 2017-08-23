@@ -128,7 +128,7 @@ describe('POST /api/v1/documents/', () => {
         access: 'public'
       })
       .set('Authorization', jwt)
-      .expect(403)
+      .expect(409)
       .expect((response) => {
         const error = response.body.error;
         assert.equal(error, duplicateDocTitleError);

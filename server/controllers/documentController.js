@@ -64,10 +64,6 @@ const documentControllers = {
     const currentUser = response.locals.user;
     let documentId = request.params.id;
     documentId = Number.parseInt(documentId, 10);
-    if (Number.isNaN(documentId)) {
-      return response
-        .status(400).json(errorConstants.wrongIdTypeError);
-    }
     Document.findById(documentId)
       .then((doc) => {
         if (!doc) {
@@ -115,9 +111,9 @@ const documentControllers = {
     const loggedInUser = response.locals.user;
     let userToSearchId = request.params.id;
     userToSearchId = Number.parseInt(userToSearchId, 10);
-    if (Number.isNaN(userToSearchId)) {
-      return response.status(400).json({ error: 'id must be a number' });
-    }
+    // if (Number.isNaN(userToSearchId)) {
+    //   return response.status(400).json({ error: 'id must be a number' });
+    // }
     const queryOptions = { where: {} };
     queryOptions.where = { author: userToSearchId };
 

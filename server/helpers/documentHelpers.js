@@ -8,7 +8,7 @@ const documentHelpers = {
       const errorCode = error.original.code;
       if (errorConstants.errorCodes.erDupEntry === errorCode) {
         return response
-          .status(403)
+          .status(409)
           .json({ error: errorConstants.duplicateDocTitleError });
       } else if (errorConstants.errorCodes.invalidEnumInput === errorCode) {
         return response
