@@ -17,9 +17,15 @@ const documentHelpers = {
       }
     } else if (error.errors) {
       const errors = this.handleValidationErrors(error.errors);
+      const errorResponse = {};
+      if (errors.length === 1) {
+        errorResponse.error = errors.pop();
+      } else {
+        errorResponse.errors = errors;
+      }
       return response
         .status(403)
-        .json({ errors });
+        .json(errorResponse);
     }
     return response
       .status(400)

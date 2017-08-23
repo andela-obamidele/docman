@@ -54,12 +54,29 @@ describe('POST /api/v1/documents/', () => {
         assert.equal(response.body.error, invalidDocAccessLevelError);
       })
   );
-
-  it('should respond with an array of errors if any validation error occurs',
+  it('should respond with error message when there is a validation error',
     () => request
       .post('/api/v1/documents')
       .send({
-        title: 'some title',
+        title: null,
+        content: 'user public content',
+        access: 'public'
+      })
+      .set('Authorization', jwt)
+      .expect(403)
+      .expect((response) => {
+        const error = response.body.error;
+        assert
+          .equal(
+            error.message,
+            'it appears that you are not providing title'
+          );
+      }));
+  it('should respond with an array of errors multiple validation error occurs',
+    () => request
+      .post('/api/v1/documents')
+      .send({
+        title: null,
         content: null,
         access: 'public'
       })
@@ -68,8 +85,18 @@ describe('POST /api/v1/documents/', () => {
       .expect((response) => {
         const errors = response.body.errors;
         assert.typeOf(errors, 'Array');
-        assert.lengthOf(errors, 1);
+        assert.lengthOf(errors, 2);
         assert.typeOf(errors[0].message, 'string');
+        assert
+          .equal(
+            errors[0].message,
+            'it appears that you are not providing title'
+          );
+        assert
+          .equal(
+            errors[1].message,
+            'it appears that you are not providing content'
+          );
       }));
 
   it(`should respond with the created user object when valid  payload
