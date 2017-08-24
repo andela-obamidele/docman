@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import errorConstants from '../constants/errorConstants';
 
 const { userAuthErrors } = errorConstants;
