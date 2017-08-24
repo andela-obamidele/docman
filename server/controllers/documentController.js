@@ -5,6 +5,14 @@ import documentHelpers from '../helpers/documentHelpers';
 
 const getPageMetadata = documentHelpers.getPageMetadata;
 const documentControllers = {
+  /**
+   * @description creates a document. accepts title, content
+   * and access. responds with a created document object if 
+   * document creation succeeds
+   * @param {object} request http request object from express
+   * @param {object} response http response object  from expressjs
+   * @returns {Promise} promise from express http response
+   */
   createDocument: (request, response) => {
     const { title, content, access } = request.body;
     const { id, role } = response.locals.user;
@@ -17,33 +25,22 @@ const documentControllers = {
       .catch(error => documentHelpers
         .handleCreateDocumentError(error, response));
   },
+  /**
+  * @description gets an array of documents available in the database
+  * @param {object} request http request object from express
+  * @param {object} response http response object  from expressjs
+  * @returns {Promise} promise from express http response
+  */
   getDocuments: (request, response) => {
-    const options = {};
-    const { limit, offset } = request.query;
-    const isPaginationRequired = limit && offset;
-    if (isPaginationRequired) {
-      if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
-        return response
-          .status(406)
-          .json({ error: errorConstants.paginationQueryError });
-      }
-      options.limit = Number.parseInt(limit, 10);
-      options.offset = Number.parseInt(offset, 10);
-    }
-    options.where = {
-      $or: [{ access: 'public' }, {
-        access: 'role',
-        $and: { role: response.locals.user.role }
-      }, {
-        access: 'private',
-        $and: { author: response.locals.user.id }
-      }]
-    };
+    const paginationQueryStrings = response.locals.paginationQueryStrings;
+    const currentUser = response.locals.user;
+    const options = documentHelpers
+      .generateFindDocumentsOptions(currentUser, paginationQueryStrings);
     return Document.findAndCountAll(options)
       .then((docs) => {
         let statusCode = 200;
         const responseData = { documents: docs.rows, count: docs.count };
-        if (isPaginationRequired) {
+        if (paginationQueryStrings) {
           const pageMetadata = getPageMetadata(
             options.limit,
             options.offset,
@@ -60,14 +57,16 @@ const documentControllers = {
         return response.status(statusCode).json(responseData);
       });
   },
+  /**
+   * @description gets one document from database
+   * @param {object} request expressjs request object
+   * @param {object} response  expressjs response object
+   * @returns {Promise} promise from express http resonse object
+   */
   getDocument(request, response) {
     const currentUser = response.locals.user;
-    const documentId = request.params.id;
-    // documentId = Number.parseInt(documentId, 10);
-    // if (Number.isNaN(documentId)) {
-    //   return response
-    //     .status(400).json(errorConstants.wrongIdTypeError);
-    // }
+    let documentId = request.params.id;
+    documentId = Number.parseInt(documentId, 10);
     Document.findById(documentId)
       .then((doc) => {
         if (!doc) {
@@ -83,13 +82,14 @@ const documentControllers = {
           .json({ document: doc });
       });
   },
+  /**
+   * @description update password, username, email but not id
+   * @param {object} request expressjs http request object
+   * @param {object} response expressjs http response object
+   * @returns {Promise} Promise returned from expressjs response object
+   */
   updateDocument: (request, response) => {
     const currentUserId = response.locals.user.id;
-    const documentId = request.params.id;
-    if (Number.isNaN(Number(documentId))) {
-      return response
-        .status(400).json({ error: errorConstants.wrongIdTypeError });
-    }
     return Document.findById(request.params.id)
       .then((doc) => {
         const updateData = documentHelpers.getTruthyDocUpdate(request.body);
@@ -102,42 +102,32 @@ const documentControllers = {
       .catch(error => documentHelpers
         .handleDocumentUpdateErrors(error, response));
   },
+  /**
+   * @description delete a document using its id
+   * @param {object} request expressjs request object
+   * @param {object} response expressjs reponse object
+   * @returns {Promise} promise from expressjs response object
+   */
   deleteDocument: (request, response) => {
     const id = request.params.id;
     return Document
       .destroy({ where: { id }, cascade: true, restartIdentity: true })
-      .then(() => response.send({
+      .then(() => response.json({
         message: successConstants.docDeleteSuccessful
       })
       );
   },
+  /**
+   * @description gets documents that belongs to a particular user
+   * @param {object} request expressjs request object
+   * @param {object} response expressjs response object
+   * @return {Promise} Promise from expressjs response object
+   */
   getUserDocuments: (request, response) => {
-    const loggedInUser = response.locals.user;
-    let userToSearchId = request.params.id;
-    userToSearchId = Number.parseInt(userToSearchId, 10);
-    // if (Number.isNaN(userToSearchId)) {
-    //   return response.status(400).json({ error: 'id must be a number' });
-    // }
-    const queryOptions = { where: {} };
-    queryOptions.where = { author: userToSearchId };
-
-    if (loggedInUser.role === 1) {
-      queryOptions.where.$or = [
-        { access: 'public' },
-        {
-          access: 'role',
-        },
-      ];
-    } else if (loggedInUser.role === 2 && loggedInUser.id !== userToSearchId) {
-      queryOptions.where.$or = [
-        { access: 'public' },
-        {
-          access: 'role',
-        },
-      ];
-      queryOptions.where.$and = { role: 2 };
-    }
-
+    const currentUser = response.locals.user;
+    const userToSearchId = request.params.id;
+    const queryOptions = documentHelpers
+      .generateFindUserDocumentsOptions(currentUser, userToSearchId);
     return Document.findAll(queryOptions)
       .then((doc) => {
         if (!doc[0]) {
@@ -148,6 +138,13 @@ const documentControllers = {
         return response.json({ documents: doc });
       });
   },
+  /**
+   * @description search through document title and sends http
+   * response of an array containing matched objects
+   * @param {object} request expressjs request object
+   * @param {object} response expressjs response object
+   * @returns {Promise} Promise from expressjs response ojectb
+   */
   searchDocuments(request, response) {
     const query = request.query.q;
     if (!query) {

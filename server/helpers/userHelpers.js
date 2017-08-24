@@ -108,9 +108,12 @@ const userHelpers = {
     const errors = error.errors;
 
     if (errors) {
-      const errorResponse = this.handleValidationErrors(errors);
+      let errorResponse = this.handleValidationErrors(errors);
+      if (errorResponse.length === 1) {
+        errorResponse = errorResponse.pop();
+      }
       return HTTPResponse
-        .status(403)
+        .status(400)
         .json({ errors: errorResponse });
     } else if (error.toString().indexOf('hash') > -1) {
       return HTTPResponse
@@ -118,7 +121,7 @@ const userHelpers = {
         .json({ error: userAuthErrors.wrongPasswordError });
     } else if (error.toString().indexOf('unmatched passwords') > -1) {
       return HTTPResponse
-        .status(403)
+        .status(409)
         .json({ error: passwordUpdateError });
     } else if (error.toString().indexOf('unassigned id') > -1) {
       return HTTPResponse

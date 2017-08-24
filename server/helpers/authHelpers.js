@@ -18,7 +18,7 @@ const authHelpers = {
     if (password1 !== password2) {
       if (HTTPResponse) {
         const error = conflictingPasswordError;
-        return !HTTPResponse.status(400).json({ error });
+        return !HTTPResponse.status(409).json({ error });
       }
       return false;
     }

@@ -1,4 +1,4 @@
-import errorConstants from '../../server/constants/errorConstants';
+import errorConstants from '../constants/errorConstants';
 /**
  * @description validate that id param is a number
  * @param {object} request express http request object
@@ -7,12 +7,10 @@ import errorConstants from '../../server/constants/errorConstants';
  * @returns {void|Promise} express http response promise
  */
 const idParameterValidator = (request, response, next) => {
-  let documentId = request.params.id;
-  documentId = Number.parseInt(documentId, 10);
-  const indexOfId = request.originalUrl.indexOf(':id');
-  if (indexOfId > -1 && Number.isNaN(documentId)) {
+  const iD = request.params.id;
+  if (Number.isNaN(Number.parseInt(iD, 10))) {
     return response
-      .status(400).json(errorConstants.wrongIdTypeError);
+      .status(400).json({ error: errorConstants.wrongIdTypeError });
   }
   next();
 };

@@ -4,6 +4,9 @@ import http from 'http';
 import bodyParser from 'body-parser';
 import router from './routes/routes';
 import jsonErrorHandler from './middlewares/jsonErrorHandler';
+import serverErrorHandler from './middlewares/serverErrorHandler';
+import methodValidator from './middlewares/methodValidator';
+import invalidEndpointReporter from './middlewares/invalidEndpointReporter';
 
 const app = express();
 app.set('PORT', process.env.PORT || 3000);
@@ -11,14 +14,11 @@ const server = http.createServer(app);
 app.use(logger('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use('/api/v1/', router);
 app.use(jsonErrorHandler);
-app.use('*', (request, response, next) => {
-  response
-    .status(404)
-    .send('the resource you\'re trying to access is not available');
-  next();
-});
+app.use(serverErrorHandler);
+app.use(methodValidator);
+app.use('/api/v1/', router);
+app.use('*', invalidEndpointReporter);
 
 server.listen(app.get('PORT'));
 

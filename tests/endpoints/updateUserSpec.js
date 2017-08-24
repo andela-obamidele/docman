@@ -32,7 +32,7 @@ describe('PUT /ap/v1/users/:id', () => {
     })
     .catch(error => error)
   );
-  it(`should respond with an array of error objects when validation
+  it(`should respond with an error objects when validation
   error occurs`, () => {
       const { password, username } = sampleUser;
       const { badEmailError } = errorConstants.userAuthErrors;
@@ -46,12 +46,11 @@ describe('PUT /ap/v1/users/:id', () => {
           confirmationPassword: 'password'
         })
         .set('Authorization', jwt)
-        .expect(403)
+        .expect(400)
         .expect((response) => {
-          const errors = response.body.errors;
-          assert.typeOf(errors, 'Array');
-          assert.equal(errors[0].field, 'email');
-          assert.equal(errors[0].message, badEmailError);
+          const error = response.body.errors;
+          assert.equal(error.field, 'email');
+          assert.equal(error.message, badEmailError);
         });
     });
   it(`should respond with '${userAuthErrors.wrongEmailOrPassword}' when
@@ -107,7 +106,7 @@ describe('PUT /ap/v1/users/:id', () => {
           confirmationPassword: 'password1'
         })
         .set('Authorization', jwt)
-        .expect(403)
+        .expect(409)
         .expect((response) => {
           const errorMessage = response.body.error;
           assert.equal(errorMessage, errorConstants.passwordUpdateError);
