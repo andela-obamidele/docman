@@ -70,7 +70,7 @@ describe('POST /api/v1/documents/', () => {
         assert
           .equal(
             error.message,
-            'it appears that you are not providing title'
+            'title cannot be empty'
           );
       }));
   it('should respond with an array of errors multiple validation error occurs',
@@ -91,12 +91,12 @@ describe('POST /api/v1/documents/', () => {
         assert
           .equal(
             errors[0].message,
-            'it appears that you are not providing title'
+            'title cannot be empty'
           );
         assert
           .equal(
             errors[1].message,
-            'it appears that you are not providing content'
+            'content cannot be empty'
           );
       }));
 

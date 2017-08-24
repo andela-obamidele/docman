@@ -12,7 +12,7 @@ const helpers = {
     errors.forEach((errorObject) => {
       let message = errorObject.message.replace('null', 'empty');
       if (!errorObject.message) {
-        message = `it appears that you are not providing ${errorObject.path}`;
+        message = `${errorObject.path} cannot be empty`;
         errorObject.message = message;
       }
 
