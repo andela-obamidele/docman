@@ -63,7 +63,7 @@ describe('POST /api/v1/documents/', () => {
         access: 'public'
       })
       .set('Authorization', jwt)
-      .expect(403)
+      .expect(400)
       .expect((response) => {
         const error = response.body.error;
         assert
@@ -81,7 +81,7 @@ describe('POST /api/v1/documents/', () => {
         access: 'public'
       })
       .set('Authorization', jwt)
-      .expect(403)
+      .expect(400)
       .expect((response) => {
         const errors = response.body.errors;
         assert.typeOf(errors, 'Array');

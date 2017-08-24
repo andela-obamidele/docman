@@ -2,6 +2,12 @@ import errorConstants from '../constants/errorConstants';
 import helpers from './helpers';
 
 const documentHelpers = {
+  /**
+   * @description  create handle potential errors from createDocuemtn controller
+   * @param {Error} error error from create documents controller 
+   * @param {object} response expressjs response object
+   * @returns {Promise} promise from expressjs response
+   */
   handleCreateDocumentError(error, response) {
     const errorMessage = errorConstants.genericCreateDocErrorMessage;
     if (error.original) {
@@ -24,7 +30,7 @@ const documentHelpers = {
         errorResponse.errors = errors;
       }
       return response
-        .status(403)
+        .status(400)
         .json(errorResponse);
     }
     return response
@@ -105,6 +111,62 @@ const documentHelpers = {
     docs = docs.filter(doc =>
       this.isUserCanAccessDocument(user, doc));
     return docs;
+  },
+  /**
+   * @description generates query constraint based on current user
+   * used in getDocuments
+   * @param {object}  currentUser currently logged in user data
+   * @param {object} paginationQueryStrings optional argument: 
+   * it should contain limit and offset
+   * @return {object} query options to be used in documents
+   */
+  generateFindDocumentsOptions(currentUser, paginationQueryStrings) {
+    const queryOptions = {};
+    if (paginationQueryStrings) {
+      queryOptions.limit = paginationQueryStrings.limit;
+      queryOptions.offset = paginationQueryStrings.offset;
+    }
+    queryOptions.where = {
+      $or: [{ access: 'public' }, {
+        access: 'role',
+        $and: { role: currentUser.role }
+      }, {
+        access: 'private',
+        $and: { author: currentUser.id }
+      }]
+    };
+    return queryOptions;
+  },
+  /**
+   * @description  generates query constraint based on current user
+   * used in getUserDocuments controller
+   * @param {object} currentUser currently logged in user
+   * @param {number} userToSearchId id of the user whose documents is to be
+   * searched
+   * @return {object} query options to be used in getDocumentsController
+   */
+  generateFindUserDocumentsOptions(currentUser, userToSearchId) {
+    userToSearchId = Number.parseInt(userToSearchId, 10);
+    const queryOptions = { where: {} };
+    queryOptions.where = { author: userToSearchId };
+
+    if (currentUser.role === 1) {
+      queryOptions.where.$or = [
+        { access: 'public' },
+        {
+          access: 'role',
+        },
+      ];
+    } else if (currentUser.role === 2 && currentUser.id !== userToSearchId) {
+      queryOptions.where.$or = [
+        { access: 'public' },
+        {
+          access: 'role',
+        },
+      ];
+      queryOptions.where.$and = { role: 2 };
+    }
+    return queryOptions;
   }
 };
 documentHelpers.handleValidationErrors = helpers.handleValidationErrors;

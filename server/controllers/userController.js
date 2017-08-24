@@ -86,30 +86,26 @@ export default {
   * @returns {Promise} Promise object from express HTTP response
   */
   getUsers: (request, response) => {
-    let { limit, offset } = request.query;
-    if (limit && offset) {
-      if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
-        return response
-          .status(406)
-          .json({ error: errorConstants.paginationQueryError });
-      }
-      limit = Number.parseInt(limit, 10);
-      offset = Number.parseInt(offset, 10);
-      return User.findAndCountAll({ limit, offset })
-        .then((queryResult) => {
-          const users = filterUsersResult(queryResult.rows);
-          const metaData = getPageMetadata(limit, offset, queryResult);
-          return response.json({ users, metaData });
-        });
+    const options = {};
+    if (response.locals.paginationQueryStrings) {
+      const { limit, offset } = response.locals.paginationQueryStrings;
+      options.limit = limit;
+      options.offset = offset;
     }
-    return User.findAndCountAll()
-      .then(queryResult => response
-        .json({
-          users: filterUsersResult(queryResult.rows),
-          metaData: {
-            count: queryResult.count
-          }
-        }));
+    return User.findAndCountAll(options)
+      .then((queryResult) => {
+        let metaData;
+        if (response.locals.paginationQueryStrings) {
+          metaData = getPageMetadata(options.limit,
+            options.offset,
+            queryResult);
+        }
+        return response
+          .json({
+            metaData,
+            users: filterUsersResult(queryResult.rows)
+          });
+      });
   },
   /**
   * @description responds with a simgle user object from the

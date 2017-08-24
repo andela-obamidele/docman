@@ -1,18 +1,17 @@
 import express from 'express';
-
 import userController from '../controllers/userController';
 import documentController from '../controllers/documentController';
 import authorizationChecker from '../middlewares/authorization';
 import deleteDocAuthorization from '../middlewares/deleteDocumentAuthorization';
 import deleteUserAuthorization from '../middlewares/deleteUserAuthorization';
 import idParameterValidator from '../middlewares/idParameterValidator';
-
+import limitAndOffsetValidator from '../middlewares/limitOffsetValidator';
 
 const router = express.Router();
 router.post('/users/login', userController.loginUser);
 router.post('/users/', userController.signupUser);
 router.use(authorizationChecker);
-router.get('/users/', userController.getUsers);
+router.get('/users/', limitAndOffsetValidator, userController.getUsers);
 router.get('/users/:id/', idParameterValidator, userController.getUserById);
 router.put('/users/:id', idParameterValidator, userController.updateUserInfo);
 router
@@ -21,7 +20,8 @@ router
     [idParameterValidator, deleteUserAuthorization],
     userController.deleteUser);
 router.post('/documents/', documentController.createDocument);
-router.get('/documents/', documentController.getDocuments);
+router
+  .get('/documents/', limitAndOffsetValidator, documentController.getDocuments);
 router
   .get('/documents/:id', idParameterValidator, documentController.getDocument);
 router

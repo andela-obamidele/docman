@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import errorConstants from '../constants/errorConstants';
 /**
  * @description validate that id param is a number
@@ -9,7 +8,7 @@ import errorConstants from '../constants/errorConstants';
  */
 const idParameterValidator = (request, response, next) => {
   const iD = request.params.id;
-  if (Number.isNaN(iD)) {
+  if (Number.isNaN(Number.parseInt(iD, 10))) {
     return response
       .status(400).json({ error: errorConstants.wrongIdTypeError });
   }
