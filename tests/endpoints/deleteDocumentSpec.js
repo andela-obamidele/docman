@@ -50,7 +50,7 @@ describe('DELETE /api/v1/documents/:Id', () => {
   database`, () => request
       .delete('/api/v1/documents/1')
       .set('Authorization', userAuthToken)
-      .expect(403)
+      .expect(404)
       .expect((response) => {
         const errorMessage = response.body.error;
         assert.equal(errorMessage, errorConstants.voidDocumentDeleteError);

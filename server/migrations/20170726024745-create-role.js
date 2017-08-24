@@ -1,4 +1,10 @@
 module.exports = {
+  /**
+   * @description creates Roles table
+   * @param {object} queryInterface sequelize orm object
+   * @param {object} Sequelize Class that contains Sequelize
+   * @returns {function} sequelize query promise
+   */
   up: (queryInterface, Sequelize) => {
     const query = queryInterface.createTable('Roles', {
       id: {

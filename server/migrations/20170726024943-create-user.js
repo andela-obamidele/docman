@@ -1,4 +1,10 @@
 module.exports = {
+  /**
+    * @description creates Users table
+    * @param {object} queryInterface sequelize orm object
+    * @param {object} Sequelize Class that contains Sequelize
+    * @returns {Promise} sequelize query promise
+    */
   up: (queryInterface, Sequelize) => {
     const query = queryInterface.createTable('Users', {
       id: {
@@ -7,7 +13,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      role: {
+      roleId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         onDelete: 'CASCADE',
@@ -48,6 +54,10 @@ module.exports = {
     });
     return query;
   },
+  /**
+   * @param {object} queryInterface sequelize query interface
+   * @return {Promise} sequelize query Promise
+   */
   down: (queryInterface) => {
     const query = queryInterface.dropTable('Users');
     return query;

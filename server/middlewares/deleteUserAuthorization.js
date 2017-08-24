@@ -20,23 +20,26 @@ const deleteUserAuthorization = (request, response, next) => {
   let token = request.headers.authorization;
   token = token.split(' ')[1];
   const user = jwt.decode(token).data;
+  let statusCode = 400;
   const idToBeDeleted = request.params.id;
   User.findById(idToBeDeleted)
     .then((queryResult) => {
       const error = new Error();
       if (!queryResult) {
+        statusCode = 404;
         error.message = voidUserDeleteError;
         throw error;
       }
       const expectedUserId = queryResult.dataValues.id;
-      if (expectedUserId !== user.id && user.role !== constants.adminRole) {
+      if (expectedUserId !== user.id && user.roleId !== constants.adminRole) {
         error.message = userDeleteUnauthorizedError;
+        statusCode = 403;
         throw error;
       }
       next();
     })
     .catch(error => response
-      .status(403)
+      .status(statusCode)
       .json({ error: error.message })
     );
 };

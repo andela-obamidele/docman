@@ -54,7 +54,7 @@ const documentHelpers = {
     } else if (!updateData) {
       error.message = errorConstants.emptyDocUpdateError;
       throw error;
-    } else if (doc.dataValues.author !== currentUserId) {
+    } else if (doc.dataValues.authorId !== currentUserId) {
       error.message = errorConstants.unauthorizedDocumentUpdateError;
       throw error;
     }
@@ -100,9 +100,9 @@ const documentHelpers = {
     return filteredPayload;
   },
   isUserCanAccessDocument(user, doc) {
-    if (doc.access === 'private' && doc.author !== user.id) {
+    if (doc.access === 'private' && doc.authorId !== user.id) {
       return false;
-    } else if (doc.access === 'role' && user.role > doc.role) {
+    } else if (doc.access === 'role' && user.roleId > doc.roleId) {
       return false;
     }
     return true;
@@ -129,10 +129,10 @@ const documentHelpers = {
     queryOptions.where = {
       $or: [{ access: 'public' }, {
         access: 'role',
-        $and: { role: currentUser.role }
+        $and: { roleId: currentUser.roleId }
       }, {
         access: 'private',
-        $and: { author: currentUser.id }
+        $and: { authorId: currentUser.id }
       }]
     };
     return queryOptions;
@@ -148,23 +148,23 @@ const documentHelpers = {
   generateFindUserDocumentsOptions(currentUser, userToSearchId) {
     userToSearchId = Number.parseInt(userToSearchId, 10);
     const queryOptions = { where: {} };
-    queryOptions.where = { author: userToSearchId };
+    queryOptions.where = { authorId: userToSearchId };
 
-    if (currentUser.role === 1) {
+    if (currentUser.roleId === 1) {
       queryOptions.where.$or = [
         { access: 'public' },
         {
           access: 'role',
         },
       ];
-    } else if (currentUser.role === 2 && currentUser.id !== userToSearchId) {
+    } else if (currentUser.roleId === 2 && currentUser.id !== userToSearchId) {
       queryOptions.where.$or = [
         { access: 'public' },
         {
           access: 'role',
         },
       ];
-      queryOptions.where.$and = { role: 2 };
+      queryOptions.where.$and = { roleId: 2 };
     }
     return queryOptions;
   }

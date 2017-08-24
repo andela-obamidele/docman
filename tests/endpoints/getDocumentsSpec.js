@@ -102,8 +102,8 @@ describe('GET /api/v1/documents/', () => {
           const documents = response.body.documents;
           const [doc1, doc2] = documents;
           assert.lengthOf(documents, 2);
-          assert.equal(doc1.role, 2);
-          assert.equal(doc2.role, 2);
+          assert.equal(doc1.roleId, 2);
+          assert.equal(doc2.roleId, 2);
         }))
   );
   it(`should respond with documents, counts and pages pageMetadata

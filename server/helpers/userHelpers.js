@@ -6,7 +6,7 @@ const { userAuthErrors, errorCodes } = errorConstants;
 const userHelpers = {
   /**
    * @description returns a new user object containing
-   * id, email, createdAt, updatedAt, and role.
+   * id, email, createdAt, updatedAt, and roleId.
    * Helps eleminate noise from user objects
    * @param {object[]} users - sequelize queried result
    * @returns {object[]} - New object containing only specified props
@@ -17,7 +17,7 @@ const userHelpers = {
         email,
         createdAt,
         updatedAt,
-        role,
+        roleId,
         username,
         bio } = user.dataValues;
       return {
@@ -25,7 +25,7 @@ const userHelpers = {
         email,
         createdAt,
         updatedAt,
-        role,
+        roleId,
         username,
         bio
       };

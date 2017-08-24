@@ -1,5 +1,11 @@
 
 module.exports = {
+  /**
+  * @description creates Documents table
+  * @param {object} queryInterface sequelize orm object
+  * @param {object} Sequelize Class that contains Sequelize
+  * @returns {function} sequelize query promise
+  */
   up: (queryInterface, Sequelize) => {
     const query = queryInterface.createTable('Documents', {
       id: {
@@ -8,23 +14,23 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      author: {
+      authorId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         onDelete: 'CASCADE',
         references: {
           model: 'Users',
           key: 'id',
-          as: 'author',
+          as: 'authorId',
         }
       },
-      role: {
+      roleId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'Roles',
           key: 'id',
-          as: 'role'
+          as: 'roleId'
         }
       },
       title: {

@@ -117,7 +117,7 @@ describe('POST /api/v1/documents/', () => {
         assert.equal(doc.title, 'some title');
         assert.equal(doc.content, 'some content');
         assert.equal(doc.access, 'public');
-        assert.equal(doc.author, expectedAuthorId);
+        assert.equal(doc.authorId, expectedAuthorId);
       })
   );
   it(`should respond with '${duplicateDocTitleError}' when document

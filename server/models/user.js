@@ -2,7 +2,13 @@ import bcrypt from 'bcryptjs';
 import errorConstants from '../constants/errorConstants';
 
 const { userAuthErrors } = errorConstants;
-
+/**
+ * @description defines User model
+ * @param {object} sequelize sequelize orm object
+ * @param {object} DataTypes Class that contains Sequelize
+ * @returns {function} Constructor function that describes
+ * Role model and queries that are possible with it
+ */
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     email: {
@@ -64,13 +70,13 @@ module.exports = (sequelize, DataTypes) => {
   };
   User.associate = (models) => {
     User.hasMany(models.Document, {
-      foreignKey: 'author',
+      foreignKey: 'authorId',
       sourceKey: 'id',
-      as: 'author',
+      as: 'authorId',
       onDelete: 'CASCADE'
     });
     User.belongsTo(models.Role, {
-      foreignKey: 'role',
+      foreignKey: 'roleId',
       targetKey: 'id',
       defaultValue: 2,
       onDelete: 'CASCADE',

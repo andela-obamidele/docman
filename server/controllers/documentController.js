@@ -15,8 +15,8 @@ const documentControllers = {
    */
   createDocument: (request, response) => {
     const { title, content, access } = request.body;
-    const { id, role } = response.locals.user;
-    return Document.create({ title, content, access, role, author: id })
+    const { id, roleId } = response.locals.user;
+    return Document.create({ title, content, access, roleId, authorId: id })
       .then(doc =>
         response.status(201).json({
           document: doc.dataValues

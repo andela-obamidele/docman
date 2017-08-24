@@ -1,5 +1,11 @@
 import errorConstants from '../constants/errorConstants';
-
+/**
+ * @description defines Document model
+ * @param {object} sequelize sequelize orm object
+ * @param {object} DataTypes Class that contains Sequelize
+ * @returns {function} Constructor function that describes
+ * Document model and queries that are possible with it
+ */
 module.exports = (sequelize, DataTypes) => {
   const Document = sequelize.define('Document', {
     title: {
@@ -31,13 +37,13 @@ module.exports = (sequelize, DataTypes) => {
   });
   Document.associate = (models) => {
     Document.belongsTo(models.User, {
-      foreignKey: 'author',
+      foreignKey: 'authorId',
       targetKey: 'id',
       onDelete: 'CASCADE',
     });
 
     Document.belongTo = (models.Role, {
-      foreignKey: 'role',
+      foreignKey: 'roleId',
       targetKey: 'id',
       onDelete: 'CASCADE'
     });
