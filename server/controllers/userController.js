@@ -54,16 +54,13 @@ export default {
       confirmationPassword,
       response)) {
       return User.create({ email, password, username })
-        .then(user =>
-          authHelpers.sendUniqueJWT(user.dataValues, response, true))
-        .catch(error => authHelpers.handleSignupError(error, response))
-        .catch(() => User.findOne({ where: { email } }))
         .then((user) => {
-          const { dataValues } = user;
-          if (dataValues) {
-            return authHelpers.sendUniqueJWT(dataValues, response, true);
-          }
+          authHelpers.sendUniqueJWT(user.dataValues, response, true);
         })
+        .catch((error) => {
+          authHelpers.handleSignupError(error, response);
+        })
+        .catch(() => User.findOne({ where: { email } }))
         .catch(() => {
           response
             .status(503)

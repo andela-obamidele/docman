@@ -37,7 +37,8 @@ describe('POST /api/v1/documents/', () => {
       .expect(201)
       .then((response) => {
         jwt = response.body.token;
-      }))
+      })
+    )
   );
 
   it(`should respond with '${invalidDocAccessLevelError}'

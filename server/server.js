@@ -4,6 +4,7 @@ import http from 'http';
 import bodyParser from 'body-parser';
 import router from './routes/routes';
 import jsonErrorHandler from './middlewares/jsonErrorHandler';
+// eslint-disable-next-line
 import serverErrorHandler from './middlewares/serverErrorHandler';
 import methodValidator from './middlewares/methodValidator';
 import invalidEndpointReporter from './middlewares/invalidEndpointReporter';
@@ -15,7 +16,7 @@ app.use(logger('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(jsonErrorHandler);
-app.use(serverErrorHandler);
+// app.use(serverErrorHandler);
 app.use(methodValidator);
 app.use('/api/v1/', router);
 app.use('*', invalidEndpointReporter);
