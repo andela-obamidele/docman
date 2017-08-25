@@ -12,7 +12,7 @@ import errorConstants from '../constants/errorConstants';
 const serverErrorHandler = (error, request, response, next) => {
   if (error) {
     return response
-      .status(503).json({ error: errorConstants.genericErrorMessage });
+      .status(500).json({ error: errorConstants.genericErrorMessage });
   }
   next();
 };

@@ -121,9 +121,14 @@ const documentHelpers = {
     return true;
   },
   removeRestrictedDocuments(user, docs) {
-    docs = docs.filter(doc =>
-      this.isUserCanAccessDocument(user, doc));
-    return docs;
+    const newDocuments = [];
+    docs.forEach((doc) => {
+      if (this.isUserCanAccessDocument(user, doc)) {
+        const { roleId, ...otherDocumentData } = doc.dataValues;
+        newDocuments.push(otherDocumentData);
+      }
+    });
+    return newDocuments;
   },
   /**
    * @description generates query constraint based on current user
@@ -180,7 +185,6 @@ const documentHelpers = {
       ];
       queryOptions.where.$and = { roleId: 2 };
     }
-    queryOptions.attributes = { exclude: ['roleId'] };
     return queryOptions;
   }
 };

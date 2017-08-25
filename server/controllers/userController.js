@@ -217,7 +217,7 @@ export default {
     const query = request.query.q;
     User.findAndCountAll({
       where: { email: { $ilike: `%${query}%` } },
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password', 'email'] }
     })
       .then((users) => {
         if (!users.count) {
