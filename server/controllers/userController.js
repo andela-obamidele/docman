@@ -169,10 +169,18 @@ export default {
         return user
           .update(updateData)
           .then((updatedUser) => {
-            user.dataValues.password = '********';
+            const {
+              password,
+              bio,
+              fullName,
+              ...otherUserData } = updatedUser.dataValues;
             return response
               .json({
-                user: updatedUser.dataValues,
+                user: {
+                  ...otherUserData,
+                  bio: !bio ? 'not set' : bio,
+                  fullName: !fullName ? 'not set' : fullName
+                },
                 message: userSuccessfullyUpdated
               });
           });
@@ -209,7 +217,7 @@ export default {
     const query = request.query.q;
     User.findAndCountAll({
       where: { email: { $ilike: `%${query}%` } },
-      attributes: { exclude: ['password', 'email'] }
+      attributes: { exclude: ['password'] }
     })
       .then((users) => {
         if (!users.count) {
