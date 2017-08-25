@@ -89,6 +89,7 @@ export default {
       options.limit = limit;
       options.offset = offset;
     }
+    options.attributes = { exclude: ['roleId', 'updatedAt'] };
     return User.findAndCountAll(options)
       .then((queryResult) => {
         let metaData;
@@ -118,8 +119,18 @@ export default {
             .status(404)
             .json({ error: errorConstants.userNotFound });
         }
-        const { password, ...userData } = user.dataValues;
-        return response.json(userData);
+        const { password,
+          bio,
+          updatedAt,
+          fullName,
+          roleId,
+          ...userData
+        } = user.dataValues;
+        return response.json({
+          ...userData,
+          fullName: !fullName ? 'not set' : fullName,
+          bio: !bio ? 'not set' : bio
+        });
       })
       .catch(() => response
         .status(400)
@@ -199,7 +210,8 @@ export default {
             .status(404)
             .json({ error: unmatchedUserSearch });
         }
-        return response.json({ matches: users.count, users: users.rows });
+        return response
+          .json({ matches: users.count, users: filterUsersResult(users.rows) });
       });
   }
 };

@@ -16,18 +16,16 @@ const userHelpers = {
       const { id,
         email,
         createdAt,
-        updatedAt,
-        roleId,
         username,
+        fullName,
         bio } = user.dataValues;
       return {
         id,
         email,
         createdAt,
-        updatedAt,
-        roleId,
         username,
-        bio
+        fullName: !fullName ? 'not set' : fullName,
+        bio: !bio ? 'not set' : bio
       };
     });
     return filteredUsers;

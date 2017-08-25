@@ -59,6 +59,13 @@ const documentHelpers = {
       throw error;
     }
   },
+  /**
+   * @description sends response to the client based on the type of error
+   * that occured
+   * @param {Error} error - Error which occured during Document update
+   * @param {object} response - Response object from expressjs
+   * @return {Promise} Promise object from expressjs server response
+   */
   handleDocumentUpdateErrors(error, response) {
     const {
       nullDocumentUpdateError,
@@ -85,6 +92,12 @@ const documentHelpers = {
       }
     }
   },
+  /**
+   * @description gets needed properties from document update payload
+   * and remove falsy data from it
+   * @param {object} payload object containing document update data
+   * @returns {object} new payload data to be used for update
+   */
   getTruthyDocUpdate(payload) {
     const { access, title, content } = payload;
     payload = { access, title, content };
@@ -135,6 +148,7 @@ const documentHelpers = {
         $and: { authorId: currentUser.id }
       }]
     };
+    queryOptions.attributes = { exclude: ['roleId'] };
     return queryOptions;
   },
   /**
@@ -166,6 +180,7 @@ const documentHelpers = {
       ];
       queryOptions.where.$and = { roleId: 2 };
     }
+    queryOptions.attributes = { exclude: ['roleId'] };
     return queryOptions;
   }
 };

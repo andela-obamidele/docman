@@ -6,6 +6,7 @@ import deleteDocAuthorization from '../middlewares/deleteDocumentAuthorization';
 import deleteUserAuthorization from '../middlewares/deleteUserAuthorization';
 import idParameterValidator from '../middlewares/idParameterValidator';
 import limitAndOffsetValidator from '../middlewares/limitOffsetValidator';
+import searchValidator from '../middlewares/searchValidator';
 
 const router = express.Router();
 router.post('/users/login', userController.loginUser);
@@ -38,7 +39,10 @@ router
     '/users/:id/documents',
     idParameterValidator,
     documentController.getUserDocuments);
-router.get('/search/users/', userController.searchUser);
-router.get('/search/documents/', documentController.searchDocuments);
+router.get('/search/users/', searchValidator, userController.searchUser);
+router
+  .get('/search/documents/',
+    searchValidator,
+    documentController.searchDocuments);
 
 export default router;

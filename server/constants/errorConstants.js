@@ -1,8 +1,9 @@
 const errorConstants = {
   badJSONRequest: 'you are sending an invalid json object',
-  invalidEndpointError: 'the endpoint you are trying to use is not availabe',
+  invalidEndpointError: 'the endpoint you are trying to use is not available',
   genericErrorMessage: 'an error occured while trying to assess this endpoint' +
   ' please check the documentatioin for proper use',
+  emptySearchString: 'please provide queryString \'q\'',
   userAuthErrors: {
     conflictingPasswordError: 'the confirmation password and new password' +
     ' doesn\'t match',

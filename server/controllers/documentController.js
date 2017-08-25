@@ -15,12 +15,16 @@ const documentControllers = {
    */
   createDocument: (request, response) => {
     const { title, content, access } = request.body;
-    const { id, roleId } = response.locals.user;
-    return Document.create({ title, content, access, roleId, authorId: id })
-      .then(doc =>
-        response.status(201).json({
-          document: doc.dataValues
-        })
+    const user = response.locals.user;
+    const authorId = response.locals.user.id;
+    return Document
+      .create({ title, authorId, content, access, roleId: user.roleId })
+      .then((doc) => {
+        const { roleId, ...documentData } = doc.dataValues;
+        return response.status(201).json({
+          document: documentData
+        });
+      }
       )
       .catch(error => documentHelpers
         .handleCreateDocumentError(error, response));
@@ -78,8 +82,9 @@ const documentControllers = {
             .status(403)
             .json({ error: errorConstants.fileQueryForbiddenError });
         }
+        const { roleId, ...document } = doc.dataValues;
         return response
-          .json({ document: doc });
+          .json({ document });
       });
   },
   /**
@@ -97,8 +102,11 @@ const documentControllers = {
           .terminateDocUpdateOnBadPayload(doc, currentUserId, updateData);
         return doc.update(updateData);
       })
-      .then(updatedDoc => response
-        .json({ document: updatedDoc.dataValues }))
+      .then((updatedDoc) => {
+        const { roleId, ...newDocument } = updatedDoc.dataValues;
+        return response
+          .json({ document: newDocument });
+      })
       .catch(error => documentHelpers
         .handleDocumentUpdateErrors(error, response));
   },
