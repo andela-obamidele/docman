@@ -1,5 +1,3 @@
-/* eslint max-len: 0 */
-
 import { assert } from 'chai';
 import supertest from 'supertest';
 import { User } from '../../server/models';

@@ -89,7 +89,7 @@ export default {
       options.limit = limit;
       options.offset = offset;
     }
-    options.attributes = { exclude: ['roleId', 'updatedAt'] };
+    options.attributes = { exclude: ['roleId', 'updatedAt', 'email'] };
     return User.findAndCountAll(options)
       .then((queryResult) => {
         let metaData;
@@ -124,8 +124,15 @@ export default {
           updatedAt,
           fullName,
           roleId,
+          email,
           ...userData
         } = user.dataValues;
+        const currentUserId = response.locals.user.id;
+        const isUserIdOwner = currentUserId === Number
+          .parseInt(request.params.id, 10);
+        if (isUserIdOwner) {
+          userData.email = email;
+        }
         return response.json({
           ...userData,
           fullName: !fullName ? 'not set' : fullName,
@@ -202,7 +209,7 @@ export default {
     const query = request.query.q;
     User.findAndCountAll({
       where: { email: { $ilike: `%${query}%` } },
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password', 'email'] }
     })
       .then((users) => {
         if (!users.count) {

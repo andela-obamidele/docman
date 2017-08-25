@@ -43,7 +43,6 @@ describe('GET /api/v1/search', () => {
       .expect((response) => {
         const user = response.body.users.pop();
         assert.equal(response.body.matches, 1);
-        assert.equal(user.email, dummyUsers[0].email);
         assert.equal(user.bio, 'not set');
         assert.equal(user.username, dummyUsers[0].username);
         assert.equal(user.fullName, 'not set');
