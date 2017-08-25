@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { assert } from 'chai';
 import supertest from 'supertest';
 import { Document, User } from '../../server/models';
@@ -15,8 +16,9 @@ describe('GET /api/v1/documents/', () => {
   let userAuthToken;
   before(() => Document
     .destroy({ where: {}, cascade: true, restartIdentity: true })
-    .then(() => User
-      .destroy({ where: {}, cascade: true, restartIdentity: true }))
+    .then(() =>
+      User.destroy({ where: {}, cascade: true, restartIdentity: true }))
+    .then(() => User.bulkCreate(dummyAdmins))
     .then(() => request
       .post('/api/v1/users/')
       .send({
@@ -28,12 +30,12 @@ describe('GET /api/v1/documents/', () => {
         userAuthToken = response.body.token;
       }))
     .then(() => request
-      .post('/api/v1/users/')
+      .post('/api/v1/users/login')
       .send({
-        ...dummyAdmin,
-        confirmationPassword: dummyAdmin.password
+        email: dummyAdmin.email,
+        password: 'password'
       })
-      .expect(201)
+      .expect(200)
       .expect((response) => {
         adminAuthToken = response.body.token;
       }))
@@ -99,11 +101,11 @@ describe('GET /api/v1/documents/', () => {
         .set('Authorization', userAuthToken)
         .expect(200)
         .expect((response) => {
+          const user = jwt.decode(userAuthToken.split(' ')[1]).data;
           const documents = response.body.documents;
-          const [doc1, doc2] = documents;
-          assert.lengthOf(documents, 2);
-          assert.equal(doc1.roleId, 2);
-          assert.equal(doc2.roleId, 2);
+          const [doc] = documents;
+          assert.lengthOf(documents, 1);
+          assert.equal(doc.authorId, user.id);
         }))
   );
   it(`should respond with documents, counts and pages pageMetadata

@@ -51,7 +51,7 @@ describe('GET /api/v1/documents/?q', () => {
       .set('Authorization', user1AuthToken)
       .expect(400)
       .expect((response) => {
-        assert.equal(response.body.error, errorConstants.badDocumentsQuery);
+        assert.equal(response.body.error, errorConstants.emptySearchString);
       })
   );
   it('should not find private document of other users for admins',

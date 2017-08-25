@@ -99,7 +99,6 @@ describe('GET /api/v1/documents/:id', () => {
         const doc = response.body.document;
         assert.equal(doc.id, user1PrivateDocumentId);
         assert.equal(doc.access, 'private');
-        assert.equal(doc.roleId, 2);
         assert.equal(doc.title, 'user document 1');
         assert.equal(doc.content, 'user document 1 content');
       }));
