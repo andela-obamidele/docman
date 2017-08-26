@@ -1,15 +1,15 @@
 import { assert } from 'chai';
 import supertest from 'supertest';
 import { User } from '../../server/models';
-import errorMessages from '../../server/constants/errors';
-import successMessages from '../../server/constants/successes';
+import errorConstants from '../../server/constants/errorConstants';
+import successConstants from '../../server/constants/successConstants';
 import dummyUsers from '../dummyData/dummyUsers';
 import dummyAdmins from '../dummyData/dummyAdmins';
 import server from '../../server/server';
 
 const request = supertest(server);
-const { userDeleteUnauthorizedError } = errorMessages;
-const { userDeleteSuccessful } = successMessages;
+const { userDeleteUnauthorizedError } = errorConstants;
+const { userDeleteSuccessful } = successConstants;
 
 /**
  * What the before block is meant to do is

@@ -1,10 +1,11 @@
+import jwt from 'jsonwebtoken';
 import { assert } from 'chai';
 import supertest from 'supertest';
 import { Document, User } from '../../server/models';
 import server from '../../server/server';
 import dummyAdmins from '../dummyData/dummyAdmins';
 import dummyUsers from '../dummyData/dummyUsers';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 
 const request = supertest(server);
 
@@ -15,23 +16,24 @@ describe('GET /api/v1/documents/', () => {
   let userAuthToken;
   before(() => Document
     .destroy({ where: {}, cascade: true, restartIdentity: true })
-    .then(() => User
-      .destroy({ where: {}, cascade: true, restartIdentity: true }))
+    .then(() =>
+      User.destroy({ where: {}, cascade: true, restartIdentity: true }))
+    .then(() => User.bulkCreate(dummyAdmins))
     .then(() => request
       .post('/api/v1/users/')
       .send({
         ...dummyUser,
         confirmationPassword: dummyUsers[0].password
       })
-      .expect(200)
+      .expect(201)
       .expect((response) => {
         userAuthToken = response.body.token;
       }))
     .then(() => request
-      .post('/api/v1/users/')
+      .post('/api/v1/users/login')
       .send({
-        ...dummyAdmin,
-        confirmationPassword: dummyAdmin.password
+        email: dummyAdmin.email,
+        password: 'password'
       })
       .expect(200)
       .expect((response) => {
@@ -40,26 +42,27 @@ describe('GET /api/v1/documents/', () => {
     .catch(error => error)
   );
 
-  it('should get a list when endpoint is reached', () => request
-    .post('/api/v1/documents')
-    .send({
-      title: 'title',
-      content: 'content',
-      access: 'public'
-    })
-    .set('Authorization', userAuthToken)
-    .expect(201)
-    .then(() => request
-      .get('/api/v1/documents')
-      .set('Authorization', userAuthToken)
-      .expect(200)
-      .expect((response) => {
-        const { title, content, access } = response.body.documents[0];
-        assert.equal(title, 'title');
-        assert.equal(content, 'content');
-        assert.equal(access, 'public');
+  it('should get an array of created documents when endpoint is reached',
+    () => request
+      .post('/api/v1/documents')
+      .send({
+        title: 'title',
+        content: 'content',
+        access: 'public'
       })
-    ));
+      .set('Authorization', userAuthToken)
+      .expect(201)
+      .then(() => request
+        .get('/api/v1/documents')
+        .set('Authorization', userAuthToken)
+        .expect(200)
+        .expect((response) => {
+          const { title, content, access } = response.body.documents[0];
+          assert.equal(title, 'title');
+          assert.equal(content, 'content');
+          assert.equal(access, 'public');
+        })
+      ));
   it('should not get private document of other users', () => request
     .post('/api/v1/documents')
     .send({
@@ -80,6 +83,9 @@ describe('GET /api/v1/documents/', () => {
         assert.notEqual(title, 'some title');
         assert.notEqual(content, 'some content');
         assert.notEqual(access, 'private');
+        assert.equal(title, 'title');
+        assert.equal(content, 'content');
+        assert.equal(access, 'public');
       })
     )
   );
@@ -98,11 +104,11 @@ describe('GET /api/v1/documents/', () => {
         .set('Authorization', userAuthToken)
         .expect(200)
         .expect((response) => {
+          const user = jwt.decode(userAuthToken.split(' ')[1]).data;
           const documents = response.body.documents;
-          const [doc1, doc2] = documents;
-          assert.lengthOf(documents, 2);
-          assert.equal(doc1.role, 2);
-          assert.equal(doc2.role, 2);
+          const [doc] = documents;
+          assert.lengthOf(documents, 1);
+          assert.equal(doc.authorId, user.id);
         }))
   );
   it(`should respond with documents, counts and pages pageMetadata
@@ -129,7 +135,7 @@ describe('GET /api/v1/documents/', () => {
       .expect(404)
       .expect((response) => {
         const message = response.body.pageMetadata.message;
-        assert.equal(message, errorMessages.endOfPageReached);
+        assert.equal(message, errorConstants.endOfPageReached);
       })
   );
 });

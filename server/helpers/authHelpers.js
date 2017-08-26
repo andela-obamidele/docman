@@ -1,18 +1,13 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import errorMessages from '../constants/errors';
-import successMessages from '../constants/successes';
+import bcrypt from 'bcryptjs';
+import errorConstants from '../constants/errorConstants';
 
-const { conflictingPasswordError } = errorMessages.userAuthErrors;
-const { errorCodes, userAuthErrors } = errorMessages;
+const { conflictingPasswordError } = errorConstants.userAuthErrors;
+const { errorCodes, userAuthErrors } = errorConstants;
 
-const { successfulSignup } = successMessages.userAuthSuccess;
-
-export default {
+const authHelpers = {
   /**
-   * @description Checks if two passwords are the same. It takes
-   * one optional parameter which is an any object that can create
-   * http response
+   * @description compares two passwords. sends  http response if provided
    * @param {string} password1 - first user password to be compared
    * @param {string} password2 - second password to be compared
    * @param {Response} [HTTPResponse] express http response object
@@ -23,7 +18,7 @@ export default {
     if (password1 !== password2) {
       if (HTTPResponse) {
         const error = conflictingPasswordError;
-        return !HTTPResponse.status(400).json({ error });
+        return !HTTPResponse.status(409).json({ error });
       }
       return false;
     }
@@ -46,12 +41,15 @@ export default {
    * @param {object} userCredentials object containing user credentials
    * @param {Response} HTTPResponse any object capable of sending http response
    * (express preferrably)
+   *  @param {boolean} isSignup expected to be true when method is called
    * @param {string} message - response message wished to be displayed
+   * from signup controller
    * @returns {Promise} javascript promise from http response
    */
-  sendUniqueJWT(userCredentials, HTTPResponse, message = successfulSignup) {
+  sendUniqueJWT(userCredentials, HTTPResponse, isSignup) {
+    const statusCode = isSignup ? 201 : 200;
     const token = this.generateJWT(userCredentials);
-    return HTTPResponse.json({ message, token });
+    return HTTPResponse.status(statusCode).json({ token });
   },
   /**
    * @description makes sure server respond with appropriate error message
@@ -61,7 +59,8 @@ export default {
    * @returns {Promise} Promise from express http response
    */
   handleSignupError(error, HTTPResponse) {
-    let errorMessage = errorMessages.genericErrorMessage;
+    let errorMessage = errorConstants.genericErrorMessage;
+    let status = 400;
     const { original } = error;
     if (original) {
       if (original.code === errorCodes.errNoDefaultForField) {
@@ -69,23 +68,26 @@ export default {
       } else if (original.code === errorCodes.erDupEntry) {
         const { constraint } = original;
         if (constraint.indexOf('email') > -1) {
+          status = 409;
           errorMessage = userAuthErrors.duplicateEmailError;
         } else {
+          status = 409;
           errorMessage = userAuthErrors.duplicateUsernameError;
         }
       }
     } else {
       const { errors } = error;
       const { incompleteCredentialsError } = userAuthErrors;
-      errorMessage = errors[0].message || incompleteCredentialsError;
+      const message = errors[0].message;
+      errorMessage = message ? message
+        .replace('null', 'empty') : incompleteCredentialsError;
     }
-    return HTTPResponse.status(400).json({
+    return HTTPResponse.status(status).json({
       error: errorMessage
     });
   },
   /**
-   * @description - Compares the password provided by client to
-   * the one stored in database. It returns true if they match and false if not
+   * @description - Compares the password in the database to the one provided
    * @param {string} providedPassword - Password provided by client
    * @param {*} hashedPassword - User password stored in the database
    * @returns {boolean} true if password match. false if they don't
@@ -96,3 +98,4 @@ export default {
     return isPasswordCorrect;
   },
 };
+export default authHelpers;

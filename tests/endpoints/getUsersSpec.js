@@ -5,7 +5,7 @@ import { assert } from 'chai';
 import { User } from '../../server/models';
 import server from '../../server/server';
 import dummyUsers from '../dummyData/dummyUsers';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 
 const request = supertest(server);
 
@@ -38,15 +38,26 @@ describe('GET /api/v1/users', () => {
       .set('Authorization', jwt)
       .expect(200)
       .expect((response) => {
-        assert.equal(response.body.users.length, 5);
+        const randomUserIndex = Number
+          .parseInt(Math
+            .random() * (3), 10);
+        const users = response.body.users;
+        assert.equal(users.length, 5);
+        assert
+          .equal(dummyUsers[randomUserIndex].username, users[randomUserIndex].username);
+        const pageMetaData = response.body.metaData;
+        assert.equal(pageMetaData.totalCount, dummyUsers.length);
+        assert.equal(pageMetaData.currentPage, 1);
+        assert.equal(pageMetaData.pageCount, 3);
+        assert.equal(pageMetaData.pageSize, 5);
       }));
 
-  it(`should respond with '${errorMessages.paginationQueryError}'
+  it(`should respond with '${errorConstants.paginationQueryError}'
      limit or query is not number`, () => request
       .get('/api/v1/users/?limit=one&offset=0')
       .set('Authorization', jwt)
       .expect(406)
       .expect(response => assert
-        .equal(errorMessages.paginationQueryError, response.body.error))
+        .equal(errorConstants.paginationQueryError, response.body.error))
   );
 });

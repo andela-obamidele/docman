@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models';
-import errorMessages from '../constants/errors';
+import errorConstants from '../constants/errorConstants';
 
-const { userAuthErrors } = errorMessages;
+const { userAuthErrors } = errorConstants;
 /**
  * @description Uses jason web token to authorize users to access other routes
  * @param {Request} request http request from express
@@ -11,7 +11,7 @@ const { userAuthErrors } = errorMessages;
  * @return {Promise | void} Promise from http response or void if payload 
  * passes the middleware without error
  */
-export default (request, response, next) => {
+const authorization = (request, response, next) => {
   const authorizationError = new Error();
   authorizationError.message = userAuthErrors.unAuthorizedUserError;
   let token = request.headers.authorization || '';
@@ -34,3 +34,4 @@ export default (request, response, next) => {
       .json({ error: userAuthErrors.unAuthorizedUserError });
   }
 };
+export default authorization;

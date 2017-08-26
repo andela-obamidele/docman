@@ -1,19 +1,19 @@
 
 import supertest from 'supertest';
+import jwtRunner from 'jsonwebtoken';
 import { assert } from 'chai';
 import { User } from '../../server/models';
 import server from '../../server/server';
-import errorMessages from '../../server/constants/errors';
-import successMessages from '../../server/constants/successes';
+import errorConstants from '../../server/constants/errorConstants';
+import successConstants from '../../server/constants/successConstants';
 
 
 const request = supertest(server);
 const {
   wrongEmailOrPassword,
   unAuthorizedUserError
-} = errorMessages.userAuthErrors;
+} = errorConstants.userAuthErrors;
 
-const { userAuthSuccess } = successMessages;
 
 describe('/api/v1/users/login', () => {
   const email = 'test@testDomain.com';
@@ -29,7 +29,7 @@ describe('/api/v1/users/login', () => {
         confirmationPassword: password,
         username
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         jwt = response.body.token;
       })
@@ -71,7 +71,7 @@ describe('/api/v1/users/login', () => {
         });
     });
 
-  it(`should respond with '${userAuthSuccess.successfulLogin}' 
+  it(`should respond with '${successConstants.successfulLogin}' 
   and a jwt token when user logs in successfully`, () => {
       const supertestPromise = request
         .post('/api/v1/users/login/')
@@ -81,10 +81,13 @@ describe('/api/v1/users/login', () => {
         })
         .expect(200)
         .expect((response) => {
-          const { token, message } = response.body;
-          assert.equal(message, userAuthSuccess.successfulLogin);
+          const { token } = response.body;
           assert.typeOf(token, 'string');
           assert.equal(token.split(' ')[0], 'JWT');
+          const user = jwtRunner.decode(token.split(' ')[1]).data;
+          assert.equal(user.username, username);
+          assert.equal(user.email, email);
+          assert.equal(user.password, null);
         });
       return supertestPromise;
     });

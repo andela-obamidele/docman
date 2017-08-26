@@ -4,13 +4,13 @@ import jwtDriver from 'jsonwebtoken';
 import { User, Document } from '../../server/models/';
 import server from '../../server/server';
 import dummyUsers from '../dummyData/dummyUsers';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 
 
 const {
   invalidDocAccessLevelError,
   duplicateDocTitleError
-} = errorMessages;
+} = errorConstants;
 
 const request = supertest(server);
 
@@ -34,10 +34,11 @@ describe('POST /api/v1/documents/', () => {
     .then(() => request
       .post('/api/v1/users/')
       .send(dummyUser)
-      .expect(200)
+      .expect(201)
       .then((response) => {
         jwt = response.body.token;
-      }))
+      })
+    )
   );
 
   it(`should respond with '${invalidDocAccessLevelError}'
@@ -54,22 +55,49 @@ describe('POST /api/v1/documents/', () => {
         assert.equal(response.body.error, invalidDocAccessLevelError);
       })
   );
-
-  it('should respond with an array of errors if any validation error occurs',
+  it('should respond with error message when there is a validation error',
     () => request
       .post('/api/v1/documents')
       .send({
-        title: 'some title',
+        title: null,
+        content: 'user public content',
+        access: 'public'
+      })
+      .set('Authorization', jwt)
+      .expect(400)
+      .expect((response) => {
+        const error = response.body.error;
+        assert
+          .equal(
+            error.message,
+            'title cannot be empty'
+          );
+      }));
+  it('should respond with an array of errors multiple validation error occurs',
+    () => request
+      .post('/api/v1/documents')
+      .send({
+        title: null,
         content: null,
         access: 'public'
       })
       .set('Authorization', jwt)
-      .expect(403)
+      .expect(400)
       .expect((response) => {
         const errors = response.body.errors;
         assert.typeOf(errors, 'Array');
-        assert.lengthOf(errors, 1);
+        assert.lengthOf(errors, 2);
         assert.typeOf(errors[0].message, 'string');
+        assert
+          .equal(
+            errors[0].message,
+            'title cannot be empty'
+          );
+        assert
+          .equal(
+            errors[1].message,
+            'content cannot be empty'
+          );
       }));
 
   it(`should respond with the created user object when valid  payload
@@ -89,7 +117,7 @@ describe('POST /api/v1/documents/', () => {
         assert.equal(doc.title, 'some title');
         assert.equal(doc.content, 'some content');
         assert.equal(doc.access, 'public');
-        assert.equal(doc.author, expectedAuthorId);
+        assert.equal(doc.authorId, expectedAuthorId);
       })
   );
   it(`should respond with '${duplicateDocTitleError}' when document
@@ -101,7 +129,7 @@ describe('POST /api/v1/documents/', () => {
         access: 'public'
       })
       .set('Authorization', jwt)
-      .expect(403)
+      .expect(409)
       .expect((response) => {
         const error = response.body.error;
         assert.equal(error, duplicateDocTitleError);

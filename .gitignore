@@ -67,3 +67,5 @@ coverage
 
 # coveralls configuration
 .coveralls.yml
+
+**DS_Store**

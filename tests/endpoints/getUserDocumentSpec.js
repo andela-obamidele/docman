@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { assert } from 'chai';
 import server from '../../server/server';
 import { User, Document } from '../../server/models';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 import dummyUsers from '../dummyData/dummyUsers';
 import dummyAdmins from '../dummyData/dummyAdmins';
 
@@ -36,7 +36,7 @@ describe('GET /api/v1/users/:id/documents', () => {
         ...dummyUser1,
         confirmationPassword: dummyUser1.password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user1AuthorizationToken = response.body.token;
       }))
@@ -63,7 +63,8 @@ describe('GET /api/v1/users/:id/documents', () => {
         .set('Authorization', adminAuthorizationToken)
         .expect(404)
         .expect((response) => {
-          assert.equal(response.body.error, errorMessages.noDocumentFoundError);
+          assert
+            .equal(response.body.error, errorConstants.noDocumentFoundError);
         });
     })
   );
@@ -118,6 +119,10 @@ describe('GET /api/v1/users/:id/documents', () => {
             const docs = response.body.documents;
             assert.typeOf(docs, 'Array');
             assert.lengthOf(docs, 3);
+            assert.equal(docs[0].access, 'private');
+            assert.equal(docs[0].authorId, user.data.id);
+            assert.equal(docs[0].title, 'user document');
+            assert.containsAllKeys(docs[0], ['createdAt', 'updatedAt', 'id']);
           });
       }));
 });

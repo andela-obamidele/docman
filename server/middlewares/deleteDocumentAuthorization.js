@@ -1,11 +1,11 @@
-import errorMessages from '../constants/errors';
+import errorConstants from '../constants/errorConstants';
 import { Document } from '../models';
 import constants from '../constants/constants';
 
 const {
   docDeleteUnauthorizedError,
   voidDocumentDeleteError,
-} = errorMessages;
+} = errorConstants;
 /**
  * @description allows users to delete only his document. 
  * Allows admin to delete all documents
@@ -15,25 +15,29 @@ const {
  * it passes control to the next middleware
  * @returns {Promise | void} Promise from express HTTP response
  */
-export default (request, response, next) => {
+const deleteDocumentAuthorization = (request, response, next) => {
   const user = response.locals.user;
   const idToBeDeleted = request.params.id;
+  let statusCode = 400;
   Document.findById(idToBeDeleted)
     .then((queryResult) => {
       const error = new Error();
       if (!queryResult) {
         error.message = voidDocumentDeleteError;
+        statusCode = 404;
         throw error;
       }
-      const expectedUserId = queryResult.dataValues.author;
-      if (expectedUserId !== user.id && user.role !== constants.adminRole) {
+      const expectedUserId = queryResult.dataValues.authorId;
+      if (expectedUserId !== user.id && user.roleId !== constants.adminRole) {
         error.message = docDeleteUnauthorizedError;
+        statusCode = 403;
         throw error;
       }
       next();
     })
     .catch(error => response
-      .status(403)
+      .status(statusCode)
       .json({ error: error.message })
     );
 };
+export default deleteDocumentAuthorization;

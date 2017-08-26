@@ -1,12 +1,8 @@
 import supertest from 'supertest';
-// eslint-disable-next-line
 import { assert } from 'chai';
 import server from '../../server/server';
-// eslint-disable-next-line
-import errorMessages from '../../server/constants/errors';
-// eslint-disable-next-line
+import errorConstants from '../../server/constants/errorConstants';
 import dummyUsers from '../dummyData/dummyUsers';
-// eslint-disable-next-line
 import dummyAdmins from '../dummyData/dummyAdmins';
 import { User, Document } from '../../server/models';
 
@@ -14,11 +10,8 @@ const request = supertest(server);
 
 describe('GET /api/v1/documents/:id', () => {
   const admin = dummyAdmins[0];
-  // eslint-disable-next-line
   let adminAuthToken;
-  // eslint-disable-next-line
   let user1AuthToken;
-  // eslint-disable-next-line
   let user2AuthToken;
   let user1PrivateDocumentId;
   let user1RoleDocumentId;
@@ -47,7 +40,7 @@ describe('GET /api/v1/documents/:id', () => {
         ...dummyUsers[1],
         confirmationPassword: dummyUsers[1].password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user1AuthToken = response.body.token;
       }))
@@ -57,7 +50,7 @@ describe('GET /api/v1/documents/:id', () => {
         ...dummyUsers[0],
         confirmationPassword: dummyUsers[0].password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user2AuthToken = response.body.token;
       }))
@@ -82,7 +75,7 @@ describe('GET /api/v1/documents/:id', () => {
       .expect((response) => {
         assert.equal(
           response.body.error,
-          errorMessages.fileQueryForbiddenError
+          errorConstants.fileQueryForbiddenError
         );
       }))
   );
@@ -94,7 +87,7 @@ describe('GET /api/v1/documents/:id', () => {
       .expect((response) => {
         assert.equal(
           response.body.error,
-          errorMessages.fileQueryForbiddenError);
+          errorConstants.fileQueryForbiddenError);
       })
   );
   it('should get user private document for the user that owns it',
@@ -106,7 +99,6 @@ describe('GET /api/v1/documents/:id', () => {
         const doc = response.body.document;
         assert.equal(doc.id, user1PrivateDocumentId);
         assert.equal(doc.access, 'private');
-        assert.equal(doc.role, 2);
         assert.equal(doc.title, 'user document 1');
         assert.equal(doc.content, 'user document 1 content');
       }));
@@ -167,7 +159,7 @@ describe('GET /api/v1/documents/:id', () => {
         .expect(403)
         .expect((response) => {
           assert
-            .equal(response.body.error, errorMessages.fileQueryForbiddenError);
+            .equal(response.body.error, errorConstants.fileQueryForbiddenError);
         }))
   );
 

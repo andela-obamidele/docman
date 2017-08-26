@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import supertest from 'supertest';
 import server from '../../server/server';
 import { User, Document } from '../../server/models/';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 import dummyUsers from '../dummyData/dummyUsers';
 
 const request = supertest(server);
@@ -24,7 +24,7 @@ describe('PUT /api/v1/documents', () => {
         ...dummyUser1,
         confirmationPassword: dummyUser1.password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user1AuthorizationToken = response.body.token;
       })
@@ -35,7 +35,7 @@ describe('PUT /api/v1/documents', () => {
         ...dummyUser2,
         confirmationPassword: dummyUser2.password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user2AuthorizationToken = response.body.token;
       })
@@ -43,7 +43,7 @@ describe('PUT /api/v1/documents', () => {
     .catch(error => error)
   );
 
-  it(`should respond with ${errorMessages.emptyDocUpdateError} when 
+  it(`should respond with ${errorConstants.emptyDocUpdateError} when 
   user do not provide all of the fields that is 
   required to update`, () => request
       .post('/api/v1/documents')
@@ -66,21 +66,21 @@ describe('PUT /api/v1/documents', () => {
         .expect((response) => {
           assert.equal(
             response.body.error,
-            errorMessages.emptyDocUpdateError);
+            errorConstants.emptyDocUpdateError);
         })
       )
   );
-  it(`should respond with ${errorMessages.wrongIdTypeError} when a none number
+  it(`should respond with ${errorConstants.wrongIdTypeError} when a none number
 is provided as an id in parameters`, () => request
       .put('/api/v1/documents/someranomebullsh*t')
       .send({})
       .set('Authorization', user1AuthorizationToken)
       .expect(400)
       .expect((response) => {
-        assert.equal(response.body.error, errorMessages.wrongIdTypeError);
+        assert.equal(response.body.error, errorConstants.wrongIdTypeError);
       })
   );
-  it(`should respond with invalid ${errorMessages.invalidDocAccessLevelError}
+  it(`should respond with invalid ${errorConstants.invalidDocAccessLevelError}
 when you try to update with wrong input type`, () => request
       .put(`/api/v1/documents/${user1DocumentId}`)
       .send({ access: 'normal' })
@@ -89,7 +89,7 @@ when you try to update with wrong input type`, () => request
       .expect((response) => {
         assert.equal(
           response.body.error,
-          errorMessages.invalidDocAccessLevelError);
+          errorConstants.invalidDocAccessLevelError);
       }));
   it(`should respond with new updated data when legal payload 
   is provided to the endpoint`, () => request

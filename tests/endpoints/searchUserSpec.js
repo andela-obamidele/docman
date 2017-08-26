@@ -1,8 +1,6 @@
 import supertest from 'supertest';
-// eslint-disable-next-line
 import { assert } from 'chai';
-// eslint-disable-next-line
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 import server from '../../server/server';
 import { User } from '../../server/models';
 import dummyUsers from '../dummyData/dummyUsers';
@@ -10,9 +8,6 @@ import dummyUsers from '../dummyData/dummyUsers';
 const request = supertest(server);
 
 describe('GET /api/v1/search', () => {
-  // eslint-disable-next-line
-  let sampleUserId;
-  // eslint-disable-next-line
   let jwt;
   before(() => User
     .destroy({ where: {}, cascade: true, restartIdentity: true })
@@ -25,15 +20,12 @@ describe('GET /api/v1/search', () => {
         jwt = response.body.token;
         return User.findOne({ where: { email: dummyUsers[0].email } });
       }))
-    .then((queryResult) => {
-      sampleUserId = queryResult.dataValues.id;
-    })
     .catch(error => error)
   );
 
-  it(`should respond with error '${errorMessages.unmatchedUserSearch}'
+  it(`should respond with error '${errorConstants.unmatchedUserSearch}'
   query(q) does not match any email in the database`, () => {
-      const { unmatchedUserSearch } = errorMessages;
+      const { unmatchedUserSearch } = errorConstants;
       return request
         .get('/api/v1/search/users/?q=kilimanjaro@mountain.com')
         .set('Authorization', jwt)
@@ -51,9 +43,9 @@ describe('GET /api/v1/search', () => {
       .expect((response) => {
         const user = response.body.users.pop();
         assert.equal(response.body.matches, 1);
-        assert.equal(user.email, dummyUsers[0].email);
-        assert.equal(user.bio, dummyUsers[0].bio);
+        assert.equal(user.bio, 'not set');
         assert.equal(user.username, dummyUsers[0].username);
+        assert.equal(user.fullName, 'not set');
       })
   );
 });

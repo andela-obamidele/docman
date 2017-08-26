@@ -1,13 +1,13 @@
 import { User } from '../models';
-import errorMessages from '../constants/errors';
-import successMessages from '../constants/successes';
+import errorConstants from '../constants/errorConstants';
+import successConstants from '../constants/successConstants';
 import authHelpers from '../helpers/authHelpers';
-import helpers from '../helpers/helpers';
+import userHelpers from '../helpers/userHelpers';
 
-const { userAuthErrors, unmatchedUserSearch } = errorMessages;
+const { userAuthErrors, unmatchedUserSearch } = errorConstants;
 
-const { userAuthSuccess, userDeleteSuccessful } = successMessages;
-const { filterUsersResult, getPageMetadata } = helpers;
+const { userDeleteSuccessful } = successConstants;
+const { filterUsersResult, getPageMetadata } = userHelpers;
 
 export default {
   /**
@@ -24,10 +24,9 @@ export default {
       .then((user) => {
         const hashedPassword = user.dataValues.password;
         const userCredentials = user.dataValues;
-        const successMessage = userAuthSuccess.successfulLogin;
         authHelpers.isPasswordCorrect(password, hashedPassword);
         return authHelpers
-          .sendUniqueJWT(userCredentials, response, successMessage);
+          .sendUniqueJWT(userCredentials, response, false);
       })
       .catch(() => {
         response.status(401).json({
@@ -55,15 +54,13 @@ export default {
       confirmationPassword,
       response)) {
       return User.create({ email, password, username })
-        .then(user => authHelpers.sendUniqueJWT(user.dataValues, response))
-        .catch(error => authHelpers.handleSignupError(error, response))
-        .catch(() => User.findOne({ where: { email } }))
         .then((user) => {
-          const { dataValues } = user;
-          if (dataValues) {
-            return authHelpers.sendUniqueJWT(dataValues, response);
-          }
+          authHelpers.sendUniqueJWT(user.dataValues, response, true);
         })
+        .catch((error) => {
+          authHelpers.handleSignupError(error, response);
+        })
+        .catch(() => User.findOne({ where: { email } }))
         .catch(() => {
           response
             .status(503)
@@ -86,30 +83,27 @@ export default {
   * @returns {Promise} Promise object from express HTTP response
   */
   getUsers: (request, response) => {
-    let { limit, offset } = request.query;
-    if (limit && offset) {
-      if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
-        return response
-          .status(406)
-          .json({ error: errorMessages.paginationQueryError });
-      }
-      limit = Number.parseInt(limit, 10);
-      offset = Number.parseInt(offset, 10);
-      return User.findAndCountAll({ limit, offset })
-        .then((queryResult) => {
-          const users = filterUsersResult(queryResult.rows);
-          const metaData = getPageMetadata(limit, offset, queryResult);
-          return response.json({ users, metaData });
-        });
+    const options = {};
+    if (response.locals.paginationQueryStrings) {
+      const { limit, offset } = response.locals.paginationQueryStrings;
+      options.limit = limit;
+      options.offset = offset;
     }
-    return User.findAndCountAll()
-      .then(queryResult => response
-        .json({
-          users: filterUsersResult(queryResult.rows),
-          metaData: {
-            count: queryResult.count
-          }
-        }));
+    options.attributes = { exclude: ['roleId', 'updatedAt', 'email'] };
+    return User.findAndCountAll(options)
+      .then((queryResult) => {
+        let metaData;
+        if (response.locals.paginationQueryStrings) {
+          metaData = getPageMetadata(options.limit,
+            options.offset,
+            queryResult);
+        }
+        return response
+          .json({
+            metaData,
+            users: filterUsersResult(queryResult.rows)
+          });
+      });
   },
   /**
   * @description responds with a simgle user object from the
@@ -123,14 +117,31 @@ export default {
         if (!user) {
           return response
             .status(404)
-            .json({ error: errorMessages.userNotFound });
+            .json({ error: errorConstants.userNotFound });
         }
-        const { password, ...userData } = user.dataValues;
-        return response.json(userData);
+        const { password,
+          bio,
+          updatedAt,
+          fullName,
+          roleId,
+          email,
+          ...userData
+        } = user.dataValues;
+        const currentUserId = response.locals.user.id;
+        const isUserIdOwner = currentUserId === Number
+          .parseInt(request.params.id, 10);
+        if (isUserIdOwner) {
+          userData.email = email;
+        }
+        return response.json({
+          ...userData,
+          fullName: !fullName ? 'not set' : fullName,
+          bio: !bio ? 'not set' : bio
+        });
       })
       .catch(() => response
         .status(400)
-        .json({ error: errorMessages.wrongIdTypeError }));
+        .json({ error: errorConstants.wrongIdTypeError }));
     return userQueryPromise;
   },
   /**
@@ -143,30 +154,38 @@ export default {
   * @returns {Promise} Promise object from express HTTP response
   */
   updateUserInfo: (request, response) => {
-    const updateData = helpers.getOnlyTruthyAttributes(request.body);
+    const updateData = userHelpers.getOnlyTruthyAttributes(request.body);
     return User.findById(request.params.id)
       .then((user) => {
-        helpers.terminateUserUpdateOnBadPayload(
+        userHelpers.terminateUserUpdateOnBadPayload(
           updateData,
           request.body,
           user);
-        let { userSuccessfullyUpdated } = userAuthSuccess;
+        let { userSuccessfullyUpdated } = successConstants;
         if (request.body.newPassword) {
           updateData.password = request.body.newPassword;
-          userSuccessfullyUpdated += ` ${userAuthSuccess.userUpdatedPassword}`;
+          userSuccessfullyUpdated += ` ${successConstants.userUpdatedPassword}`;
         }
         return user
           .update(updateData)
           .then((updatedUser) => {
-            user.dataValues.password = '********';
+            const {
+              password,
+              bio,
+              fullName,
+              ...otherUserData } = updatedUser.dataValues;
             return response
               .json({
-                user: updatedUser.dataValues,
+                user: {
+                  ...otherUserData,
+                  bio: !bio ? 'not set' : bio,
+                  fullName: !fullName ? 'not set' : fullName
+                },
                 message: userSuccessfullyUpdated
               });
           });
       })
-      .catch(error => helpers.handleUserUpdateError(error, response));
+      .catch(error => userHelpers.handleUserUpdateError(error, response));
   },
   /**
   * @description deletes a user from the database. responds with a success
@@ -198,7 +217,7 @@ export default {
     const query = request.query.q;
     User.findAndCountAll({
       where: { email: { $ilike: `%${query}%` } },
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password', 'email'] }
     })
       .then((users) => {
         if (!users.count) {
@@ -206,7 +225,8 @@ export default {
             .status(404)
             .json({ error: unmatchedUserSearch });
         }
-        return response.json({ matches: users.count, users: users.rows });
+        return response
+          .json({ matches: users.count, users: filterUsersResult(users.rows) });
       });
   }
 };

@@ -1,19 +1,15 @@
 import supertest from 'supertest';
-// eslint-disable-next-line
 import { assert } from 'chai';
 import { User, Document } from '../../server/models';
 import server from '../../server/server';
 import dummyAdmins from '../dummyData/dummyAdmins';
 import dummyUsers from '../dummyData/dummyUsers';
-import errorMessages from '../../server/constants/errors';
+import errorConstants from '../../server/constants/errorConstants';
 
 const request = supertest(server);
 describe('GET /api/v1/documents/?q', () => {
-  // eslint-disable-next-line
   let user1AuthToken;
-  // eslint-disable-next-line
   let user2AuthToken;
-  // eslint-disable-next-line
   let adminAuthToken;
   before(() => Document
     .destroy({ where: {}, cascade: true, restartIdentity: true })
@@ -33,7 +29,7 @@ describe('GET /api/v1/documents/?q', () => {
         ...dummyUsers[0],
         confirmationPassword: dummyUsers[0].password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user1AuthToken = response.body.token;
       }))
@@ -43,19 +39,19 @@ describe('GET /api/v1/documents/?q', () => {
         ...dummyUsers[1],
         confirmationPassword: dummyUsers[1].password
       })
-      .expect(200)
+      .expect(201)
       .then((response) => {
         user2AuthToken = response.body.token;
       }))
   );
 
-  it(`should respond with ${errorMessages.badDocumentsQuery} when query
+  it(`should respond with ${errorConstants.badDocumentsQuery} when query
   string q is not provided`, () => request
       .get('/api/v1/search/documents/?j=rubish')
       .set('Authorization', user1AuthToken)
       .expect(400)
       .expect((response) => {
-        assert.equal(response.body.error, errorMessages.badDocumentsQuery);
+        assert.equal(response.body.error, errorConstants.emptySearchString);
       })
   );
   it('should not find private document of other users for admins',
@@ -73,7 +69,8 @@ describe('GET /api/v1/documents/?q', () => {
         .set('Authorization', adminAuthToken)
         .expect(404)
         .expect((response) => {
-          assert.equal(response.body.error, errorMessages.noDocumentFoundError);
+          assert
+            .equal(response.body.error, errorConstants.noDocumentFoundError);
         })
       )
   );
@@ -83,7 +80,7 @@ describe('GET /api/v1/documents/?q', () => {
       .set('Authorization', user2AuthToken)
       .expect(404)
       .expect((response) => {
-        assert.equal(response.body.error, errorMessages.noDocumentFoundError);
+        assert.equal(response.body.error, errorConstants.noDocumentFoundError);
       })
   );
   it('should find private documents for the owner of the document',
@@ -165,6 +162,10 @@ describe('GET /api/v1/documents/?q', () => {
         .set('Authorization', user1AuthToken)
         .expect(404)
         .expect((response) => {
-          assert.equal(response.body.error, errorMessages.noDocumentFoundError);
+          assert
+            .equal(
+              response.body.error,
+              errorConstants.noDocumentFoundError
+            );
         })));
 });
