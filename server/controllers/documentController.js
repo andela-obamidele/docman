@@ -67,7 +67,7 @@ const documentControllers = {
    * @param {object} response  expressjs response object
    * @returns {Promise} promise from express http resonse object
    */
-  getDocument(request, response) {
+  getDocument: (request, response) => {
     const currentUser = response.locals.user;
     let documentId = request.params.id;
     documentId = Number.parseInt(documentId, 10);
@@ -153,7 +153,7 @@ const documentControllers = {
    * @param {object} response expressjs response object
    * @returns {Promise} Promise from expressjs response ojectb
    */
-  searchDocuments(request, response) {
+  searchDocuments: (request, response) => {
     const query = request.query.q;
     if (!query) {
       return response

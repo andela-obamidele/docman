@@ -38,7 +38,18 @@ describe('GET /api/v1/users', () => {
       .set('Authorization', jwt)
       .expect(200)
       .expect((response) => {
-        assert.equal(response.body.users.length, 5);
+        const randomUserIndex = Number
+          .parseInt(Math
+            .random() * (3), 10);
+        const users = response.body.users;
+        assert.equal(users.length, 5);
+        assert
+          .equal(dummyUsers[randomUserIndex].username, users[randomUserIndex].username);
+        const pageMetaData = response.body.metaData;
+        assert.equal(pageMetaData.totalCount, dummyUsers.length);
+        assert.equal(pageMetaData.currentPage, 1);
+        assert.equal(pageMetaData.pageCount, 3);
+        assert.equal(pageMetaData.pageSize, 5);
       }));
 
   it(`should respond with '${errorConstants.paginationQueryError}'

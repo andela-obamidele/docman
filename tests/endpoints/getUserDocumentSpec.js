@@ -119,6 +119,10 @@ describe('GET /api/v1/users/:id/documents', () => {
             const docs = response.body.documents;
             assert.typeOf(docs, 'Array');
             assert.lengthOf(docs, 3);
+            assert.equal(docs[0].access, 'private');
+            assert.equal(docs[0].authorId, user.data.id);
+            assert.equal(docs[0].title, 'user document');
+            assert.containsAllKeys(docs[0], ['createdAt', 'updatedAt', 'id']);
           });
       }));
 });

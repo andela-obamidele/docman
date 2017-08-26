@@ -185,6 +185,7 @@ const documentHelpers = {
       ];
       queryOptions.where.$and = { roleId: 2 };
     }
+    queryOptions.attributes = { exclude: ['roleId'] };
     return queryOptions;
   }
 };

@@ -1,5 +1,6 @@
 
 import supertest from 'supertest';
+import jwtRunner from 'jsonwebtoken';
 import { assert } from 'chai';
 import { User } from '../../server/models';
 import server from '../../server/server';
@@ -83,6 +84,10 @@ describe('/api/v1/users/login', () => {
           const { token } = response.body;
           assert.typeOf(token, 'string');
           assert.equal(token.split(' ')[0], 'JWT');
+          const user = jwtRunner.decode(token.split(' ')[1]).data;
+          assert.equal(user.username, username);
+          assert.equal(user.email, email);
+          assert.equal(user.password, null);
         });
       return supertestPromise;
     });

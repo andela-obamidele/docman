@@ -83,6 +83,9 @@ describe('GET /api/v1/documents/', () => {
         assert.notEqual(title, 'some title');
         assert.notEqual(content, 'some content');
         assert.notEqual(access, 'private');
+        assert.equal(title, 'title');
+        assert.equal(content, 'content');
+        assert.equal(access, 'public');
       })
     )
   );
