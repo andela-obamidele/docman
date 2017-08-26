@@ -288,6 +288,9 @@
                   <li>
                     <a href="#search-documents" class="toc-h2 toc-link" data-title="Documents">Search Documents</a>
                   </li>
+                  <li>
+                    <a href="#list-docuemnts-by-pagination" class="toc-h2 toc-link" data-title="Documents">List Docuemnts By Pagination</a>
+                  </li>
               </ul>
           </li>
       </div>
@@ -927,6 +930,68 @@ The admin can see all documents except your private documents</p>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
 </ul>
+<h2 id='list-docuemnts-by-pagination'>List Docuemnts By Pagination</h2>
+<blockquote>
+<p>Sample JSON structured response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"metaData"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">"currentPage"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">},</span>
+ <span class="s2">"documents"</span><span class="p">:</span> <span class="p">[</span><span class="err">Ï</span>
+     <span class="p">{</span>   
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"this is a title"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"this is the content"</span><span class="p">,</span>
+            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25T17:36:53.962Z"</span><span class="p">,</span>
+            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25T17:36:53.962Z"</span><span class="p">,</span>
+            <span class="s2">"authorId"</span><span class="p">:</span> <span class="mi">39</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"this is a title"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"this is the content"</span><span class="p">,</span>
+            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25T17:36:53.962Z"</span><span class="p">,</span>
+            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25T17:36:53.962Z"</span><span class="p">,</span>
+            <span class="s2">"authorId"</span><span class="p">:</span> <span class="mi">39</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-8'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>api/v1/docuemts/?limit=2&amp;offset=0</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='query-parameters-2'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>limit</td>
+<td>none</td>
+<td>Sets the limit.</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>0</td>
+<td>Sets the offset.</td>
+</tr>
+</tbody></table>
+
+<p>&quot;metaData&quot;: {
+        &quot;totalCount&quot;: 2,
+        &quot;currentPage&quot;: 1,
+        &quot;pageCount&quot;: 1,
+        &quot;pageSize&quot;: 2
+}</p>
 
       </div>
       <div class="dark-box">
