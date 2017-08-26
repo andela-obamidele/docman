@@ -58,7 +58,7 @@ A document management application
 +  Install the app's dependencies
   +  `$ npm install`
 +  Run the app
-  +  `$ npm start`
+  +  `$ gulp serve-dev`
  
 ## Tests
 +  The tests were written using Supertest, Chai.
@@ -69,7 +69,7 @@ A document management application
 
 ## How to contribute
 In order to contribute, certain guidelines and style guides must be followed.
-More info is available on the repo's [wiki](https://github.com/andela-obamidele/document-manager/wiki).  
+More info is available on the repo's [wiki](https://github.com/andela-obamidele/docman/wiki).  
 To contribute, fork this repo to your private repository and create a pull request based on the feature you want to add.
 
 ## Disclaimer
