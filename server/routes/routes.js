@@ -11,7 +11,7 @@ import searchValidator from '../middlewares/searchValidator';
 const router = express.Router();
 router.post('/users/login', userController.loginUser);
 router.post('/users/', userController.signupUser);
-router.use(authorizationChecker);
+router.use('/', authorizationChecker);
 router.get('/users/', limitAndOffsetValidator, userController.getUsers);
 router.get('/users/:id/', idParameterValidator, userController.getUserById);
 router.put('/users/:id', idParameterValidator, userController.updateUserInfo);

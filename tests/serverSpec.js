@@ -15,7 +15,7 @@ describe('server errors', () => {
   it(`should return an error message when you are trying to access a 
   non-existing route`,
     () => request
-      .get('/free/style/on/my/api:/and/get/busted')
+      .post('/free/style/on/my/api:/and/get/busted')
       .expect(404)
       .expect((response) => {
         assert.equal(response.body.error,
