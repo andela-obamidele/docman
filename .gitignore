@@ -57,3 +57,15 @@ typings/
 # dotenv environment variables file
 .env
 
+# bundled files
+dist
+
+# store
+server/models/.DS_Store
+# coverage files 
+coverage
+
+# coveralls configuration
+.coveralls.yml
+
+**DS_Store**
