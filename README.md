@@ -28,7 +28,6 @@ A document management application
 +  **[dotenv](https://www.npmjs.com/package/dotenv)** - Loads environment variables
 +  **[express](https://www.npmjs.com/package/express)** - Used as the web server for this application
 +  **[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)** - Generates JWT tokens and can verify them
-+  **[lodash](https://www.npmjs.com/package/lodash)** - Provides utility functions
 +  **[pg](https://www.npmjs.com/package/pg)** - Non-blocking PostgreSQL client for node.js. Pure JavaScript and optional native libpq bindings
 +  **[sequelize](https://www.npmjs.com/package/sequelize)** - Sequelize is a promise-based Node.js ORM for Postgres, MySQL, SQLite and Microsoft SQL Server. It features solid transaction support, relations, read replication and more
 
