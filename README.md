@@ -28,7 +28,6 @@ A document management application
 +  **[dotenv](https://www.npmjs.com/package/dotenv)** - Loads environment variables
 +  **[express](https://www.npmjs.com/package/express)** - Used as the web server for this application
 +  **[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)** - Generates JWT tokens and can verify them
-+  **[lodash](https://www.npmjs.com/package/lodash)** - Provides utility functions
 +  **[pg](https://www.npmjs.com/package/pg)** - Non-blocking PostgreSQL client for node.js. Pure JavaScript and optional native libpq bindings
 +  **[sequelize](https://www.npmjs.com/package/sequelize)** - Sequelize is a promise-based Node.js ORM for Postgres, MySQL, SQLite and Microsoft SQL Server. It features solid transaction support, relations, read replication and more
 
@@ -59,7 +58,7 @@ A document management application
 +  Install the app's dependencies
   +  `$ npm install`
 +  Run the app
-  +  `$ npm start`
+  +  `$ gulp serve-dev`
  
 ## Tests
 +  The tests were written using Supertest, Chai.
@@ -70,7 +69,7 @@ A document management application
 
 ## How to contribute
 In order to contribute, certain guidelines and style guides must be followed.
-More info is available on the repo's [wiki](https://github.com/andela-obamidele/document-manager/wiki).  
+More info is available on the repo's [wiki](https://github.com/andela-obamidele/docman/wiki).  
 To contribute, fork this repo to your private repository and create a pull request based on the feature you want to add.
 
 ## Disclaimer
