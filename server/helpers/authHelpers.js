@@ -48,8 +48,16 @@ const authHelpers = {
    */
   sendUniqueJWT(userCredentials, HTTPResponse, isSignup) {
     const statusCode = isSignup ? 201 : 200;
+    const {
+      password,
+      updatedAt,
+      roleId,
+      fullName,
+      bio,
+      ...otherData
+    } = userCredentials;
     const token = this.generateJWT(userCredentials);
-    return HTTPResponse.status(statusCode).json({ token });
+    return HTTPResponse.status(statusCode).json({ user: otherData, token });
   },
   /**
    * @description makes sure server respond with appropriate error message
