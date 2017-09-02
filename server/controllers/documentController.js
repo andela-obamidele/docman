@@ -4,7 +4,7 @@ import successConstants from '../constants/successConstants';
 import documentHelpers from '../helpers/documentHelpers';
 
 const getPageMetadata = documentHelpers.getPageMetadata;
-const documentControllers = {
+const documentController = {
   /**
    * @description creates a document. accepts title, content
    * and access. responds with a created document object if 
@@ -180,4 +180,4 @@ const documentControllers = {
       });
   }
 };
-export default documentControllers;
+export default documentController;
