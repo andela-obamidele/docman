@@ -56,7 +56,7 @@ describe('POST /api/v1/users/', () => {
           confirmationPassword: 'passwskde',
           username: 'andela'
         })
-        .expect(409)
+        .expect(400)
         .expect((response) => {
           assert.equal(response.body.error, conflictingPasswordError);
         });
