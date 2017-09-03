@@ -3,6 +3,7 @@ import errorConstants from '../constants/errorConstants';
 const paginationQueryError = (request, response, next) => {
   let { limit, offset } = request.query;
   const isPaginationRequired = limit || offset;
+  offset = !offset ? 0 : offset;
   if (isPaginationRequired) {
     if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
       return response
