@@ -1,8 +1,8 @@
 const errorConstants = {
   badJSONRequest: 'you are sending an invalid json object',
   invalidEndpointError: 'the endpoint you are trying to use is not available',
-  genericErrorMessage: 'an error occured while trying to assess this endpoint' +
-  ' please check the documentatioin for proper use',
+  genericErrorMessage: 'an error occured while trying to access this endpoint' +
+  ' please try again later',
   emptySearchString: 'please provide queryString \'q\'',
   userAuthErrors: {
     conflictingPasswordError: 'the confirmation password and new password' +
@@ -46,7 +46,7 @@ const errorConstants = {
   characters`,
   genericCreateDocErrorMessage: 'it seems you\'re trying to ' +
   'create a document. Unfortunately, this action cannot be completed.' +
-  '  Please help us make your experience with our app better by rainsing an' +
+  '  Please help us make your experience with our app better by raising an' +
   'issue at  https://github.com/andela-obamidele/docman or contact an admin' +
   ' at admin@docman.com',
   nullDocumentUpdateError: 'the document you\'re trying to update does\'nt' +

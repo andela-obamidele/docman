@@ -9,17 +9,17 @@ const authHelpers = {
   /**
    * @description compares two passwords. sends  http response if provided
    * 
-   * @param {string} password1 - first user password to be compared
+   * @param {string} firstPassword - first user password to be compared
    * 
-   * @param {string} password2 - second password to be compared
+   * @param {string} secondPassword - second password to be compared
    * 
    * @param {Response} [HTTPResponse] express http response object
    * 
    * @returns {boolean} - returns true  if passwords match
    * or false if passwords doesn't match
    */
-  isTheTwoPasswordsSame(password1, password2, HTTPResponse) {
-    if (password1 !== password2) {
+  confirmPassword(firstPassword, secondPassword, HTTPResponse) {
+    if (firstPassword !== secondPassword) {
       if (HTTPResponse) {
         const error = conflictingPasswordError;
         return !HTTPResponse.status(400).json({ error });
@@ -69,7 +69,11 @@ const authHelpers = {
       ...otherData
     } = userCredentials;
     const token = this.generateJWT(userCredentials);
-    return HTTPResponse.status(statusCode).json({ user: otherData, token });
+    const responseData = { token };
+    if (isSignup) {
+      responseData.user = otherData;
+    }
+    return HTTPResponse.status(statusCode).json(responseData);
   },
 
   /**
@@ -121,6 +125,7 @@ const authHelpers = {
    * @returns {boolean} true if password match. false if they don't
    */
   isPasswordCorrect(providedPassword, hashedPassword) {
+    providedPassword = !providedPassword ? '' : providedPassword;
     const isPasswordCorrect = bcrypt
       .compareSync(providedPassword, hashedPassword);
     return isPasswordCorrect;

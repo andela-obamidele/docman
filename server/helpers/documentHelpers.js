@@ -34,16 +34,21 @@ const documentHelpers = {
         .json(errorResponse);
     }
     return response
-      .status(400)
+      .status(500)
       .json({ error: errorMessage });
   },
+
   /**
    * @description throws error if current user is trying to update a
    * document which doesn't belong to her or when document user is trying
    * to update does not exist
+   * 
    * @param {object} doc Document query result by id
+   * 
    * @param {number} currentUserId  id for currently logged in user
+   * 
    * @param {object} updateData 
+   * 
    * @returns {void}
    */
   terminateDocUpdateOnBadPayload(doc, currentUserId, updateData) {
@@ -91,11 +96,15 @@ const documentHelpers = {
           .json({ error: errorConstants.invalidDocAccessLevelError });
       }
     }
+    return response.status(500)
+      .json({ error: errorConstants.genericCreateDocErrorMessage });
   },
   /**
    * @description gets needed properties from document update payload
    * and remove falsy data from it
+   * 
    * @param {object} payload object containing document update data
+   * 
    * @returns {object} new payload data to be used for update
    */
   getTruthyDocUpdate(payload) {
