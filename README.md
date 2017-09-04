@@ -85,7 +85,7 @@ This app and its functions are limited by time constraint and is in no way at it
   + Raise an issue telling you what youu were trying to do when the error occured
   + and the error message
 ## License
-License included in the repository
+[License included in the repository ](LICENSE)
 
 ## Author
 Olufisayo Bamidele
