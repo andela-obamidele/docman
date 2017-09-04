@@ -117,8 +117,7 @@ when you try to update with wrong input type`, () => request
         .set('Authorization', user1AuthorizationToken)
         .expect(400)
         .expect((response) => {
-          assert.typeOf(response.body.errors, 'Array');
-          const affectedField = response.body.errors[0].field;
+          const affectedField = response.body.error.field;
           assert.equal(affectedField, 'title');
         })
       )

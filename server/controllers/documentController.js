@@ -89,7 +89,8 @@ const documentController = {
           return response
             .status(404)
             .json({ error: errorConstants.noDocumentFoundError });
-        } else if (!documentHelpers.isUserCanAccessDocument(currentUser, doc)) {
+        } else if (!documentHelpers
+          .checkDocumentAccessibility(currentUser, doc)) {
           return response
             .status(403)
             .json({ error: errorConstants.fileQueryForbiddenError });
