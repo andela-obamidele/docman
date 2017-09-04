@@ -1,4 +1,3 @@
-/* eslint max-len: 0 */
 
 import supertest from 'supertest';
 import { assert } from 'chai';
@@ -44,7 +43,9 @@ describe('GET /api/v1/users', () => {
         const users = response.body.users;
         assert.equal(users.length, 5);
         assert
-          .equal(dummyUsers[randomUserIndex].username, users[randomUserIndex].username);
+          .equal(
+            dummyUsers[randomUserIndex].username,
+            users[randomUserIndex].username);
         const pageMetaData = response.body.metaData;
         assert.equal(pageMetaData.totalCount, dummyUsers.length);
         assert.equal(pageMetaData.currentPage, 1);
