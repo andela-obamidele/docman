@@ -4,13 +4,16 @@ import successConstants from '../constants/successConstants';
 import documentHelpers from '../helpers/documentHelpers';
 
 const getPageMetadata = documentHelpers.getPageMetadata;
-const documentControllers = {
+const documentController = {
   /**
    * @description creates a document. accepts title, content
    * and access. responds with a created document object if 
    * document creation succeeds
+   * 
    * @param {object} request http request object from express
+   * 
    * @param {object} response http response object  from expressjs
+   * 
    * @returns {Promise} promise from express http response
    */
   createDocument: (request, response) => {
@@ -31,8 +34,11 @@ const documentControllers = {
   },
   /**
   * @description gets an array of documents available in the database
+` *
   * @param {object} request http request object from express
+  *
   * @param {object} response http response object  from expressjs
+  *
   * @returns {Promise} promise from express http response
   */
   getDocuments: (request, response) => {
@@ -59,25 +65,32 @@ const documentControllers = {
             .status(404).json({ error: errorConstants.noDocumentFoundError });
         }
         return response.status(statusCode).json(responseData);
-      });
+      })
+      .catch(() => response
+        .status(500).json({ error: errorConstants.genericErrorMessage }));
   },
+
   /**
    * @description gets one document from database
+   * 
    * @param {object} request expressjs request object
+   * 
    * @param {object} response  expressjs response object
+   * 
    * @returns {Promise} promise from express http resonse object
    */
   getDocument: (request, response) => {
     const currentUser = response.locals.user;
     let documentId = request.params.id;
     documentId = Number.parseInt(documentId, 10);
-    Document.findById(documentId)
+    return Document.findById(documentId)
       .then((doc) => {
         if (!doc) {
           return response
             .status(404)
             .json({ error: errorConstants.noDocumentFoundError });
-        } else if (!documentHelpers.isUserCanAccessDocument(currentUser, doc)) {
+        } else if (!documentHelpers
+          .checkDocumentAccessibility(currentUser, doc)) {
           return response
             .status(403)
             .json({ error: errorConstants.fileQueryForbiddenError });
@@ -85,12 +98,18 @@ const documentControllers = {
         const { roleId, ...document } = doc.dataValues;
         return response
           .json({ document });
-      });
+      })
+      .catch(() => response
+        .status(500).json({ error: errorConstants.genericErrorMessage }));
   },
+
   /**
    * @description update password, username, email but not id
+   * 
    * @param {object} request expressjs http request object
+   * 
    * @param {object} response expressjs http response object
+   * 
    * @returns {Promise} Promise returned from expressjs response object
    */
   updateDocument: (request, response) => {
@@ -110,10 +129,14 @@ const documentControllers = {
       .catch(error => documentHelpers
         .handleDocumentUpdateErrors(error, response));
   },
+
   /**
    * @description delete a document using its id
+   * 
    * @param {object} request expressjs request object
+   * 
    * @param {object} response expressjs reponse object
+   * 
    * @returns {Promise} promise from expressjs response object
    */
   deleteDocument: (request, response) => {
@@ -123,12 +146,18 @@ const documentControllers = {
       .then(() => response.json({
         message: successConstants.docDeleteSuccessful
       })
-      );
+      )
+      .catch(() => response
+        .status(500).json({ error: errorConstants.genericErrorMessage }));
   },
+
   /**
    * @description gets documents that belongs to a particular user
+   * 
    * @param {object} request expressjs request object
+   * 
    * @param {object} response expressjs response object
+   * 
    * @return {Promise} Promise from expressjs response object
    */
   getUserDocuments: (request, response) => {
@@ -144,13 +173,19 @@ const documentControllers = {
             .json({ error: errorConstants.noDocumentFoundError });
         }
         return response.json({ documents: doc });
-      });
+      })
+      .catch(() => response
+        .status(500).json({ error: errorConstants.genericErrorMessage }));
   },
+
   /**
    * @description search through document title and sends http
    * response of an array containing matched objects
+   * 
    * @param {object} request expressjs request object
+   * 
    * @param {object} response expressjs response object
+   * 
    * @returns {Promise} Promise from expressjs response ojectb
    */
   searchDocuments: (request, response) => {
@@ -177,7 +212,9 @@ const documentControllers = {
           });
         }
         return response.json({ documents: docs });
-      });
+      })
+      .catch(() => response
+        .status(500).json({ error: errorConstants.genericErrorMessage }));
   }
 };
-export default documentControllers;
+export default documentController;

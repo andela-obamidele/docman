@@ -22,7 +22,10 @@ router
     userController.deleteUser);
 router.post('/documents/', documentController.createDocument);
 router
-  .get('/documents/', limitAndOffsetValidator, documentController.getDocuments);
+  .get(
+    '/documents/',
+    limitAndOffsetValidator,
+    documentController.getDocuments);
 router
   .get('/documents/:id', idParameterValidator, documentController.getDocument);
 router

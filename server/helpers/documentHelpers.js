@@ -4,8 +4,11 @@ import helpers from './helpers';
 const documentHelpers = {
   /**
    * @description  create handle potential errors from createDocuemtn controller
+   * 
    * @param {Error} error error from create documents controller 
+   * 
    * @param {object} response expressjs response object
+   * 
    * @returns {Promise} promise from expressjs response
    */
   handleCreateDocumentError(error, response) {
@@ -34,16 +37,21 @@ const documentHelpers = {
         .json(errorResponse);
     }
     return response
-      .status(400)
+      .status(500)
       .json({ error: errorMessage });
   },
+
   /**
    * @description throws error if current user is trying to update a
    * document which doesn't belong to her or when document user is trying
    * to update does not exist
+   * 
    * @param {object} doc Document query result by id
+   * 
    * @param {number} currentUserId  id for currently logged in user
+   * 
    * @param {object} updateData 
+   * 
    * @returns {void}
    */
   terminateDocUpdateOnBadPayload(doc, currentUserId, updateData) {
@@ -71,9 +79,15 @@ const documentHelpers = {
       nullDocumentUpdateError,
       unauthorizedDocumentUpdateError,
       emptyDocUpdateError } = errorConstants;
+    let documentUpdateError;
     if (error.errors) {
       const errors = this.handleValidationErrors(error.errors);
-      return response.status(400).json({ errors });
+      if (errors.length === 1) {
+        documentUpdateError = { error: errors.pop() };
+      } else {
+        documentUpdateError = { errors };
+      }
+      return response.status(400).json(documentUpdateError);
     } else if (error.message === nullDocumentUpdateError) {
       return response.status(403).json({ error: nullDocumentUpdateError });
     } else if (error.message === unauthorizedDocumentUpdateError) {
@@ -91,11 +105,16 @@ const documentHelpers = {
           .json({ error: errorConstants.invalidDocAccessLevelError });
       }
     }
+    return response.status(500)
+      .json({ error: errorConstants.genericCreateDocErrorMessage });
   },
+
   /**
    * @description gets needed properties from document update payload
    * and remove falsy data from it
+   * 
    * @param {object} payload object containing document update data
+   * 
    * @returns {object} new payload data to be used for update
    */
   getTruthyDocUpdate(payload) {
@@ -112,7 +131,19 @@ const documentHelpers = {
     filteredPayload = fetchKeys(filteredPayload)[0] ? filteredPayload : null;
     return filteredPayload;
   },
-  isUserCanAccessDocument(user, doc) {
+
+  /**
+   * @description checks if a document is accessible by current
+   * user
+   * 
+   * @param {object} user object containing user detail
+   * 
+   * @param {object} doc document object
+   * 
+   * @returns {boolean} true if document is accessible by current user.
+   * False if otherwise
+   */
+  checkDocumentAccessibility(user, doc) {
     if (doc.access === 'private' && doc.authorId !== user.id) {
       return false;
     } else if (doc.access === 'role' && user.roleId > doc.roleId) {
@@ -120,22 +151,37 @@ const documentHelpers = {
     }
     return true;
   },
+
+  /**
+   * @description removes restricted documents from document
+   * query result
+   * 
+   * @param {object} user object containing user detail
+   * 
+   * @param {object} docs document object
+   * 
+   * @returns {object} array of unrestricted documents
+   */
   removeRestrictedDocuments(user, docs) {
     const newDocuments = [];
     docs.forEach((doc) => {
-      if (this.isUserCanAccessDocument(user, doc)) {
+      if (this.checkDocumentAccessibility(user, doc)) {
         const { roleId, ...otherDocumentData } = doc.dataValues;
         newDocuments.push(otherDocumentData);
       }
     });
     return newDocuments;
   },
+
   /**
    * @description generates query constraint based on current user
    * used in getDocuments
+   * 
    * @param {object}  currentUser currently logged in user data
+   * 
    * @param {object} paginationQueryStrings optional argument: 
    * it should contain limit and offset
+   * 
    * @return {object} query options to be used in documents
    */
   generateFindDocumentsOptions(currentUser, paginationQueryStrings) {
@@ -156,10 +202,13 @@ const documentHelpers = {
     queryOptions.attributes = { exclude: ['roleId'] };
     return queryOptions;
   },
+
   /**
    * @description  generates query constraint based on current user
    * used in getUserDocuments controller
+   * 
    * @param {object} currentUser currently logged in user
+   * 
    * @param {number} userToSearchId id of the user whose documents is to be
    * searched
    * @return {object} query options to be used in getDocumentsController

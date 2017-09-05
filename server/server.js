@@ -11,7 +11,7 @@ import invalidEndpointReporter from './middlewares/invalidEndpointReporter';
 
 const app = express();
 app.use(express.static('./public/'));
-app.set('PORT', process.env.PORT || 3000);
+app.set('PORT', process.env.PORT || 4001);
 app.use(logger('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

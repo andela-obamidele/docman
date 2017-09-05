@@ -2,7 +2,12 @@ import authHelpers from './authHelpers';
 import errorConstants from '../constants/errorConstants';
 import helpers from './helpers';
 
-const { userAuthErrors, errorCodes } = errorConstants;
+const {
+  userAuthErrors,
+  errorCodes,
+  genericUserUpdateError
+} = errorConstants;
+
 const userHelpers = {
   /**
    * @description returns a new user object containing
@@ -75,6 +80,8 @@ const userHelpers = {
    * @returns {void}
    */
   terminateUserUpdateOnBadPayload(expectedPayload, providedPayload, user) {
+    expectedPayload
+      .password = !expectedPayload.password ? '' : expectedPayload.password;
     if (!user) {
       throw new Error('unassigned id');
     }
@@ -86,7 +93,7 @@ const userHelpers = {
     }
     const { confirmationPassword, newPassword } = providedPayload;
     const isPasswordsMatch = authHelpers
-      .isTheTwoPasswordsSame(newPassword, confirmationPassword);
+      .confirmPassword(newPassword, confirmationPassword);
     if ((newPassword || confirmationPassword) && !isPasswordsMatch) {
       throw new Error('unmatched passwords');
     }
@@ -99,10 +106,7 @@ const userHelpers = {
    * @returns {Promise} from express http response object
    */
   handleUserUpdateError(error, HTTPResponse) {
-    const {
-      passwordUpdateError,
-      genericUserUpdateError
-    } = errorConstants;
+    const { passwordUpdateError } = errorConstants;
     const errors = error.errors;
 
     if (errors) {
@@ -113,7 +117,7 @@ const userHelpers = {
       return HTTPResponse
         .status(400)
         .json({ errors: errorResponse });
-    } else if (error.toString().indexOf('hash') > -1) {
+    } else if (error.toString().indexOf('hashedPassword and password') > -1) {
       return HTTPResponse
         .status(403)
         .json({ error: userAuthErrors.wrongPasswordError });
@@ -131,7 +135,7 @@ const userHelpers = {
         .json({ error: errorConstants.wrongIdTypeError });
     }
     return HTTPResponse
-      .status(404)
+      .status(500)
       .json({ error: genericUserUpdateError });
   },
 };
