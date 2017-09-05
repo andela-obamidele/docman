@@ -648,7 +648,7 @@ describe('Document controller', () => {
     );
     it('should find private documents for the owner of the document',
       () => request
-        .get('/api/v1/documents/?q=private')
+        .get('/api/v1/search/documents/?q=private')
         .set('Authorization', userAuthToken)
         .expect(200)
         .expect((response) => {
