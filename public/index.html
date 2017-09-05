@@ -233,9 +233,6 @@
               </ul>
           </li>
           <li>
-            <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
-          </li>
-          <li>
             <a href="#users" class="toc-h1 toc-link" data-title="Users">Users</a>
               <ul class="toc-list-h2">
                   <li>
@@ -277,7 +274,7 @@
                     <a href="#get-one-documents" class="toc-h2 toc-link" data-title="Documents">Get One Documents</a>
                   </li>
                   <li>
-                    <a href="#list-user-documents" class="toc-h2 toc-link" data-title="Documents">List User Documents</a>
+                    <a href="#list-user-39-s-documents" class="toc-h2 toc-link" data-title="Documents">List User's Documents</a>
                   </li>
                   <li>
                     <a href="#delete-document" class="toc-h2 toc-link" data-title="Documents">Delete Document</a>
@@ -292,6 +289,9 @@
                     <a href="#list-docuemnts-by-pagination" class="toc-h2 toc-link" data-title="Documents">List Docuemnts By Pagination</a>
                   </li>
               </ul>
+          </li>
+          <li>
+            <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
           </li>
       </div>
         <ul class="toc-footer">
@@ -324,7 +324,13 @@ Register and get a token to be insert in the header as <code>Authorization</code
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJrZW5wYWNoaSIsInJvbGVJZCI6MiwiaWF0IjoxNDk2MDAxNTE4LCJleHAiOjE0OTY2MDYzMTh9.GjmEBd_9LH9b_Gdabgdfit2HfkFBZfPshquUnAmRXV8"</span>
+  <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJrZW5wYWNoaSIsInJvbGVJZCI6MiwiaWF0IjoxNDk2MDAxNTE4LCJleHAiOjE0OTY2MDYzMTh9.GjmEBd_9LH9b_Gdabgdfit2HfkFBZfPshquUnAmRXV8"</span><span class="p">,</span>
+  <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">6914</span><span class="p">,</span>
+        <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"johndoe1@domain.com"</span><span class="p">,</span>
+        <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"johndoe1"</span><span class="p">,</span>
+        <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-09-05T08:28:42.628Z"</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request'>Request</h3>
 <ul>
@@ -365,43 +371,7 @@ Register and get a token to be insert in the header as <code>Authorization</code
 <aside class="notice">
 You must set the token at the header after login to access protected routes
 </aside>
-<pre class="highlight plaintext"><code></code></pre><h1 id='errors'>Errors</h1>
-<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files...just save them to the `includes` folder and add them to the top of your `index.md`'s frontmatter. Files are included in the order listed.</aside>
-
-<p>The Kittn API uses the following error codes:</p>
-
-<table><thead>
-<tr>
-<th>Error Code</th>
-<th>Meaning</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>400</td>
-<td>Bad Request -- You supplied an invalid payload.</td>
-</tr>
-<tr>
-<td>401</td>
-<td>Unauthorized -- You have not set your authorization header.</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Forbidden -- You tried to access an endpoint that you don&#39;t have permision to access.</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Not Found -- You tried to access something that is not available.</td>
-</tr>
-<tr>
-<td>409</td>
-<td>Conflict - You try to duplicate something that is not meant to be duplicated(i.e email, document title, username)</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Server Error -- This is our fault. The server is either going through maintenance. Less often, this might be from your side</td>
-</tr>
-</tbody></table>
-<h1 id='users'>Users</h1><h2 id='list-users'>List Users</h2>
+<pre class="highlight plaintext"><code></code></pre><h1 id='users'>Users</h1><h2 id='list-users'>List Users</h2>
 <blockquote>
 <p>Sample JSON structured response:</p>
 </blockquote>
@@ -409,7 +379,6 @@ You must set the token at the header after login to access protected routes
   <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"admin@admin.com"</span><span class="p">,</span>
       <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
       <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-24T15:06:01.977Z"</span><span class="p">,</span>
       <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"not set"</span>
@@ -417,7 +386,6 @@ You must set the token at the header after login to access protected routes
     <span class="p">},</span>
     <span class="p">{</span>
       <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-      <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"daniel@gmail.com"</span><span class="p">,</span>
       <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"daniel"</span><span class="p">,</span>
       <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-24T15:06:01.977Z"</span><span class="p">,</span>
       <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"john doe"</span>
@@ -448,7 +416,6 @@ You must set the token at the header after login to access protected routes
     <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">992</span><span class="p">,</span>
-            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"janejanet@mail.com"</span><span class="p">,</span>
             <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-24T15:52:02.119Z"</span><span class="p">,</span>
             <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"janejanet"</span><span class="p">,</span>
             <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"jane janet"</span>
@@ -456,14 +423,13 @@ You must set the token at the header after login to access protected routes
         <span class="p">},</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">993</span><span class="p">,</span>
-            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"johndoe@domain.com"</span><span class="p">,</span>
             <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-24T15:52:34.654Z"</span><span class="p">,</span>
             <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"johndoe"</span><span class="p">,</span>
             <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"john doe"</span>
             <span class="s2">"bio"</span><span class="p">:</span> <span class="s2">"not set"</span>
         <span class="p">}</span>
     <span class="p">]</span>
-<span class="p">}</span><span class="err">Ï</span>
+<span class="p">}</span>
 </code></pre><h3 id='request-2'>Request</h3>
 <ul>
 <li>Endpoint: GET: <code>api/v1/users/?limit=2&amp;offset=0</code></li>
@@ -508,7 +474,13 @@ You must set the token at the header after login to access protected routes
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJrZW5wYWNoaSIsInJvbGVJZCI6MiwiaWF0IjoxNDk2MDAxNTE4LCJleHAiOjE0OTY2MDYzMTh9.GjmEBd_9LH9b_Gdabgdfit2HfkFBZfPshquUnAmRXV8"</span>
+  <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJrZW5wYWNoaSIsInJvbGVJZCI6MiwiaWF0IjoxNDk2MDAxNTE4LCJleHAiOjE0OTY2MDYzMTh9.GjmEBd_9LH9b_Gdabgdfit2HfkFBZfPshquUnAmRXV8"</span><span class="p">,</span>
+  <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">6914</span><span class="p">,</span>
+        <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"johndoe1@domain.com"</span><span class="p">,</span>
+        <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"johndoe1"</span><span class="p">,</span>
+        <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-09-05T08:28:42.628Z"</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-3'>Request</h3>
 <ul>
@@ -561,7 +533,6 @@ You must set the token at the header after login to access protected routes
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
     <span class="s2">"id"</span><span class="p">:</span> <span class="mi">992</span><span class="p">,</span>
-    <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"sneakers@mail.com"</span><span class="p">,</span>
     <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"sneakers"</span><span class="p">,</span>
     <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-24T15:52:02.119Z"</span><span class="p">,</span>
     <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"not set"</span><span class="p">,</span>
@@ -637,7 +608,6 @@ Response:</p>
     <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">994</span><span class="p">,</span>
-            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"johndoe@domain.com"</span><span class="p">,</span>
             <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-24T16:53:15.000Z"</span><span class="p">,</span>
             <span class="s2">"username"</span><span class="p">:</span> <span class="s2">"johndoe"</span><span class="p">,</span>
             <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"not set"</span><span class="p">,</span>
@@ -787,7 +757,7 @@ The admin can see all documents except your private documents</p>
 <li>Status: <code>200: 0k</code></li>
 <li>Body <code>(application/json)</code></li>
 </ul>
-<h2 id='list-user-documents'>List User Documents</h2>
+<h2 id='list-user-39-s-documents'>List User&#39;s Documents</h2>
 <blockquote>
 <p>Response:</p>
 </blockquote>
@@ -992,6 +962,42 @@ The admin can see all documents except your private documents</p>
         &quot;pageCount&quot;: 1,
         &quot;pageSize&quot;: 2
 }</p>
+<h1 id='errors'>Errors</h1>
+<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files...just save them to the `includes` folder and add them to the top of your `index.md`'s frontmatter. Files are included in the order listed.</aside>
+
+<p>The Kittn API uses the following error codes:</p>
+
+<table><thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td>Bad Request -- You supplied an invalid payload.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized -- You have not set your authorization header.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden -- You tried to access an endpoint that you don&#39;t have permision to access.</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found -- You tried to access something that is not available.</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflict - You try to duplicate something that is not meant to be duplicated(i.e email, document title, username)</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Server Error -- This is our fault. The server is either going through maintenance. Less often, this might be from your side</td>
+</tr>
+</tbody></table>
 
       </div>
       <div class="dark-box">
