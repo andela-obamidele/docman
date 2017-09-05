@@ -5,9 +5,13 @@ import errorConstants from '../constants/errorConstants';
 const { userAuthErrors } = errorConstants;
 /**
  * @description Uses jason web token to authorize users to access other routes
+ * 
  * @param {Request} request http request from express
+ * 
  * @param {Response} response http response from express
+ * 
  * @param {function} next next function provided by express to middleware
+ * 
  * @return {Promise | void} Promise from http response or void if payload 
  * passes the middleware without error
  */

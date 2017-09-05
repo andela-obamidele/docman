@@ -1,5 +1,15 @@
 import errorConstants from '../constants/errorConstants';
-
+/**
+ * @description validate limit and offset
+ * 
+ * @param {object} request http request from expressjs
+ * 
+ * @param {object} response http response object from expressjs
+ * 
+ * @param {function} next passes controll to next middleware when called
+ * 
+ * @returns {Promise} promise from http response
+ */
 const limitAndOffsetValidator = (request, response, next) => {
   const { limit, offset, ...otherQueryStrings } = request.query;
   const queryStrings = Object.keys(request.query);

@@ -200,7 +200,6 @@ describe('User controller', () => {
           .expect(400)
           .expect((response) => {
             const error = response.body.errors;
-            assert.equal(error.field, 'email');
             assert.equal(error.message, badEmailError);
           });
       });

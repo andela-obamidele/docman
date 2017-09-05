@@ -839,8 +839,9 @@ describe('Document controller', () => {
           .set('Authorization', userAuthToken)
           .expect(400)
           .expect((response) => {
-            const affectedField = response.body.error.field;
-            assert.equal(affectedField, 'title');
+            const errorMessage = response.body.error.message;
+            assert
+              .equal(errorMessage, 'a document already exist with that title');
           })
         )
     );
