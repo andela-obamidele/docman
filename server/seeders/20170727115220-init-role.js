@@ -2,7 +2,9 @@
 module.exports = {
   /**
   * @description initializes roles table
+  *
   * @param {object} queryInterface sequelize orm object
+  *
   * @returns {function} sequelize query promise
   */
   up: (queryInterface) => {
@@ -14,7 +16,9 @@ module.exports = {
   },
   /**
    * @description deletes created seeds
+   * 
    * @param {object} queryInterface sequelize orm object
+   * 
    * @returns {function} sequelize query promise
    */
   down: (queryInterface) => {

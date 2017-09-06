@@ -1,4 +1,4 @@
-const errorConstants = {
+const ErrorConstants = {
   badJSONRequest: 'you are sending an invalid json object',
   invalidEndpointError: 'the endpoint you are trying to use is not available',
   genericErrorMessage: 'an error occured while trying to access this endpoint' +
@@ -71,4 +71,4 @@ const errorConstants = {
     invalidEnumInput: '22P02'
   },
 };
-export default errorConstants;
+export default ErrorConstants;

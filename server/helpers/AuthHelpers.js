@@ -1,18 +1,16 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 
-const { conflictingPasswordError } = errorConstants.userAuthErrors;
-const { errorCodes, userAuthErrors } = errorConstants;
+const { conflictingPasswordError } = ErrorConstants.userAuthErrors;
+const { errorCodes, userAuthErrors } = ErrorConstants;
 
-const authHelpers = {
+const AuthHelpers = {
   /**
    * @description compares two passwords. sends  http response if provided
    * 
    * @param {string} firstPassword - first user password to be compared
-   * 
    * @param {string} secondPassword - second password to be compared
-   * 
    * @param {Response} [HTTPResponse] express http response object
    * 
    * @returns {boolean} - returns true  if passwords match
@@ -48,11 +46,9 @@ const authHelpers = {
    * @description - sends jwt to client
    * 
    * @param {object} userCredentials object containing user credentials
-   * 
    * @param {Response} HTTPResponse any object capable of sending http response
    * (express preferrably)
    *  @param {boolean} isSignup expected to be true when method is called
-   * 
    * @param {string} message - response message wished to be displayed
    * from signup controller
    * 
@@ -80,14 +76,13 @@ const authHelpers = {
    * @description makes sure server respond with appropriate error message
    * during  signup
    * 
-   * @param {object} error - signup error
-   * 
+   * @param {object} error - signup error 
    * @param {Response} HTTPResponse - express http response
    * 
    * @returns {Promise} Promise from express http response
    */
   handleSignupError(error, HTTPResponse) {
-    let errorMessage = errorConstants.genericErrorMessage;
+    let errorMessage = ErrorConstants.genericErrorMessage;
     let status = 400;
     const { original } = error;
     if (original) {
@@ -119,7 +114,6 @@ const authHelpers = {
    * @description - Compares the password in the database to the one provided
    * 
    * @param {string} providedPassword - Password provided by client
-   * 
    * @param {*} hashedPassword - User password stored in the database
    * 
    * @returns {boolean} true if password match. false if they don't
@@ -131,4 +125,4 @@ const authHelpers = {
     return isPasswordCorrect;
   },
 };
-export default authHelpers;
+export default AuthHelpers;

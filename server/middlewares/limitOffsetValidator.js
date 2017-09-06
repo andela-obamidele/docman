@@ -1,11 +1,9 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description validate limit and offset
  * 
  * @param {object} request http request from expressjs
- * 
  * @param {object} response http response object from expressjs
- * 
  * @param {function} next passes controll to next middleware when called
  * 
  * @returns {Promise} promise from http response
@@ -34,7 +32,7 @@ const limitAndOffsetValidator = (request, response, next) => {
     if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
       return response
         .status(406)
-        .json({ error: errorConstants.paginationQueryError });
+        .json({ error: ErrorConstants.paginationQueryError });
     }
     let offsetInteger = !offset ? 0 : offset;
     const limitInteger = Number.parseInt(limit, 10);

@@ -1,6 +1,6 @@
 import express from 'express';
-import userController from '../controllers/userController';
-import documentController from '../controllers/documentController';
+import UserController from '../controllers/UserController';
+import DocumentController from '../controllers/DocumentController';
 import authorizationChecker from '../middlewares/authorization';
 import deleteDocAuthorization from '../middlewares/deleteDocumentAuthorization';
 import deleteUserAuthorization from '../middlewares/deleteUserAuthorization';
@@ -9,43 +9,43 @@ import limitAndOffsetValidator from '../middlewares/limitOffsetValidator';
 import searchValidator from '../middlewares/searchValidator';
 
 const router = express.Router();
-router.post('/users/login', userController.loginUser);
-router.post('/users/', userController.signupUser);
+router.post('/users/login', UserController.loginUser);
+router.post('/users/', UserController.signupUser);
 router.use('/', authorizationChecker);
-router.get('/users/', limitAndOffsetValidator, userController.getUsers);
-router.get('/users/:id/', idParameterValidator, userController.getUserById);
-router.put('/users/:id', idParameterValidator, userController.updateUserInfo);
+router.get('/users/', limitAndOffsetValidator, UserController.getUsers);
+router.get('/users/:id/', idParameterValidator, UserController.getUserById);
+router.put('/users/:id', idParameterValidator, UserController.updateUserInfo);
 router
   .delete(
     '/users/:id',
     [idParameterValidator, deleteUserAuthorization],
-    userController.deleteUser);
-router.post('/documents/', documentController.createDocument);
+    UserController.deleteUser);
+router.post('/documents/', DocumentController.createDocument);
 router
   .get(
     '/documents/',
     limitAndOffsetValidator,
-    documentController.getDocuments);
+    DocumentController.getDocuments);
 router
-  .get('/documents/:id', idParameterValidator, documentController.getDocument);
+  .get('/documents/:id', idParameterValidator, DocumentController.getDocument);
 router
   .put(
     '/documents/:id',
     idParameterValidator,
-    documentController.updateDocument);
+    DocumentController.updateDocument);
 router.delete(
   '/documents/:id',
   deleteDocAuthorization,
-  documentController.deleteDocument);
+  DocumentController.deleteDocument);
 router
   .get(
     '/users/:id/documents',
     idParameterValidator,
-    documentController.getUserDocuments);
-router.get('/search/users/', searchValidator, userController.searchUser);
+    DocumentController.getUserDocuments);
+router.get('/search/users/', searchValidator, UserController.searchUser);
 router
   .get('/search/documents/',
     searchValidator,
-    documentController.searchDocuments);
+    DocumentController.searchDocuments);
 
 export default router;

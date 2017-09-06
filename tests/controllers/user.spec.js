@@ -2,8 +2,8 @@ import jwtRunner from 'jsonwebtoken';
 import { assert } from 'chai';
 import supertest from 'supertest';
 import { User } from '../../server/models';
-import errorConstants from '../../server/constants/errorConstants';
-import successConstants from '../../server/constants/successConstants';
+import ErrorConstants from '../../server/constants/ErrorConstants';
+import SuccessConstants from '../../server/constants/SuccessConstants';
 import dummyUsers from '../dummyData/dummyUsers';
 import dummyAdmins from '../dummyData/dummyAdmins';
 import server from '../../server/server';
@@ -11,8 +11,8 @@ import server from '../../server/server';
 
 const request = supertest(server);
 
-const { userDeleteUnauthorizedError, userAuthErrors } = errorConstants;
-const { userDeleteSuccessful } = successConstants;
+const { userDeleteUnauthorizedError, userAuthErrors } = ErrorConstants;
+const { userDeleteSuccessful } = SuccessConstants;
 
 describe('User controller', () => {
   const sampleUser = dummyUsers[0];
@@ -133,7 +133,7 @@ describe('User controller', () => {
           .set('Authorization', userJwt)
           .expect(404)
           .expect((response) => {
-            assert.equal(response.body.error, errorConstants.userNotFound);
+            assert.equal(response.body.error, ErrorConstants.userNotFound);
           });
         return supertestPromise;
       });
@@ -144,7 +144,7 @@ describe('User controller', () => {
           .set('Authorization', userJwt)
           .expect(400)
           .expect((response) => {
-            assert.equal(response.body.error, errorConstants.wrongIdTypeError);
+            assert.equal(response.body.error, ErrorConstants.wrongIdTypeError);
           });
         return supertestPromise;
       });
@@ -186,7 +186,7 @@ describe('User controller', () => {
     it(`should respond with an error objects when validation
     error occurs`, () => {
         const { password, username } = sampleUser;
-        const { badEmailError } = errorConstants.userAuthErrors;
+        const { badEmailError } = ErrorConstants.userAuthErrors;
         return request
           .put(`/api/v1/users/${sampleUserId}`)
           .send({
@@ -232,7 +232,7 @@ describe('User controller', () => {
         })
         .expect(404)
         .expect((response) => {
-          assert.equal(response.body.error, errorConstants.userNotFound);
+          assert.equal(response.body.error, ErrorConstants.userNotFound);
         }));
     it(`should respond with an error message when the id 
     provided in the request url is not a number`, () => request
@@ -245,9 +245,9 @@ describe('User controller', () => {
         })
         .expect(400)
         .expect((response) => {
-          assert.equal(response.body.error, errorConstants.wrongIdTypeError);
+          assert.equal(response.body.error, ErrorConstants.wrongIdTypeError);
         }));
-    it(`should respond with '${errorConstants.passwordUpdateError}' 
+    it(`should respond with '${ErrorConstants.passwordUpdateError}' 
     new password and confirmation password doesn't match`, () => {
         const { username, password, email } = sampleUser;
         return request
@@ -263,7 +263,7 @@ describe('User controller', () => {
           .expect(409)
           .expect((response) => {
             const errorMessage = response.body.error;
-            assert.equal(errorMessage, errorConstants.passwordUpdateError);
+            assert.equal(errorMessage, ErrorConstants.passwordUpdateError);
           });
       });
     it(`should respond with a success message and the new user profile when 
@@ -281,7 +281,7 @@ describe('User controller', () => {
           .expect(200)
           .expect((response) => {
             const { message, user } = response.body;
-            const { userSuccessfullyUpdated } = successConstants;
+            const { userSuccessfullyUpdated } = SuccessConstants;
             assert.equal(message, userSuccessfullyUpdated);
             assert.equal(user.bio, 'this is a new bio');
           });
@@ -304,7 +304,7 @@ describe('User controller', () => {
 
     it(`should respond an error message when query(q) does not match
      any email in the database`, () => {
-        const { unmatchedUserSearch } = errorConstants;
+        const { unmatchedUserSearch } = ErrorConstants;
         return request
           .get('/api/v1/search/users/?q=kilimanjaro@mountain.com')
           .set('Authorization', userJwt)
@@ -476,7 +476,7 @@ describe('User controller', () => {
         .set('Authorization', userJwt)
         .expect(406)
         .expect(response => assert
-          .equal(errorConstants.paginationQueryError, response.body.error))
+          .equal(ErrorConstants.paginationQueryError, response.body.error))
     );
   });
   describe('POST /api/v1/users/', () => {
@@ -484,7 +484,7 @@ describe('User controller', () => {
       badEmailError,
       incompleteCredentialsError,
       conflictingPasswordError
-    } = errorConstants.userAuthErrors;
+    } = ErrorConstants.userAuthErrors;
 
     beforeEach(() => {
       after(() => User

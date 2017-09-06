@@ -4,8 +4,8 @@ import jwtDriver from 'jsonwebtoken';
 import { User, Document } from '../../server/models/';
 import server from '../../server/server';
 import dummyUsers from '../dummyData/dummyUsers';
-import errorConstants from '../../server/constants/errorConstants';
-import successConstants from '../../server/constants/successConstants';
+import ErrorConstants from '../../server/constants/ErrorConstants';
+import SuccessConstants from '../../server/constants/SuccessConstants';
 import dummyAdmins from '../dummyData/dummyAdmins';
 
 
@@ -14,7 +14,7 @@ describe('Document controller', () => {
   const {
     invalidDocAccessLevelError,
     duplicateDocTitleError
-  } = errorConstants;
+  } = ErrorConstants;
   const dummyUser = dummyUsers[0];
   const dummyUser2 = dummyUsers[1];
   const admin = dummyAdmins[0];
@@ -186,7 +186,7 @@ describe('Document controller', () => {
         .expect(404)
         .expect((response) => {
           const errorMessage = response.body.error;
-          assert.equal(errorMessage, errorConstants.voidDocumentDeleteError);
+          assert.equal(errorMessage, ErrorConstants.voidDocumentDeleteError);
         })
     );
     it(`should respond with an error message when user tries to
@@ -208,17 +208,18 @@ describe('Document controller', () => {
           .expect(403)
           .expect((response) => {
             const error = response.body.error;
-            assert.equal(error, errorConstants.docDeleteUnauthorizedError);
+            assert.equal(error, ErrorConstants.docDeleteUnauthorizedError);
           }))
     );
-    it(`should respond with when user tries to delete her own 
+    it(`should respond with success message when user  deletes her own 
     document`, () => request
         .delete(`/api/v1/documents/${docToBeDeletedId}`)
         .set('Authorization', user2AuthToken)
         .expect(200)
         .expect((response) => {
           const successMessage = response.body.message;
-          const expectedSuccessMessage = successConstants.docDeleteSuccessful;
+          const expectedSuccessMessage = SuccessConstants
+            .documentDeleteSuccessful;
           assert.equal(successMessage, expectedSuccessMessage);
         })
     );
@@ -244,7 +245,7 @@ describe('Document controller', () => {
         .expect((response) => {
           assert.equal(
             response.body.error,
-            errorConstants.fileQueryForbiddenError
+            ErrorConstants.fileQueryForbiddenError
           );
         }))
     );
@@ -256,7 +257,7 @@ describe('Document controller', () => {
         .expect((response) => {
           assert.equal(
             response.body.error,
-            errorConstants.fileQueryForbiddenError);
+            ErrorConstants.fileQueryForbiddenError);
         })
     );
     it('should get user private document for the user that owns it',
@@ -330,7 +331,7 @@ describe('Document controller', () => {
             assert
               .equal(
                 response.body.error,
-                errorConstants.fileQueryForbiddenError);
+                ErrorConstants.fileQueryForbiddenError);
           }))
     );
 
@@ -510,7 +511,7 @@ describe('Document controller', () => {
         .expect(404)
         .expect((response) => {
           const message = response.body.pageMetadata.message;
-          assert.equal(message, errorConstants.endOfPageReached);
+          assert.equal(message, ErrorConstants.endOfPageReached);
         })
     );
   });
@@ -540,7 +541,7 @@ describe('Document controller', () => {
             .expect((response) => {
               assert
                 .equal(response
-                  .body.error, errorConstants.noDocumentFoundError);
+                  .body.error, ErrorConstants.noDocumentFoundError);
             });
         })
     );
@@ -613,7 +614,7 @@ describe('Document controller', () => {
         .set('Authorization', userAuthToken)
         .expect(400)
         .expect((response) => {
-          assert.equal(response.body.error, errorConstants.emptySearchString);
+          assert.equal(response.body.error, ErrorConstants.emptySearchString);
         })
     );
     it('should not find private document of other users for admins',
@@ -632,7 +633,7 @@ describe('Document controller', () => {
           .expect(404)
           .expect((response) => {
             assert
-              .equal(response.body.error, errorConstants.noDocumentFoundError);
+              .equal(response.body.error, ErrorConstants.noDocumentFoundError);
           })
         )
     );
@@ -643,7 +644,7 @@ describe('Document controller', () => {
         .expect(404)
         .expect((response) => {
           assert
-            .equal(response.body.error, errorConstants.noDocumentFoundError);
+            .equal(response.body.error, ErrorConstants.noDocumentFoundError);
         })
     );
     it('should find private documents for the owner of the document',
@@ -728,7 +729,7 @@ describe('Document controller', () => {
             assert
               .equal(
                 response.body.error,
-                errorConstants.noDocumentFoundError
+                ErrorConstants.noDocumentFoundError
               );
           })));
   });
@@ -788,7 +789,7 @@ describe('Document controller', () => {
           .expect((response) => {
             assert.equal(
               response.body.error,
-              errorConstants.emptyDocUpdateError);
+              ErrorConstants.emptyDocUpdateError);
           })
         )
     );
@@ -799,7 +800,7 @@ describe('Document controller', () => {
         .set('Authorization', userAuthToken)
         .expect(400)
         .expect((response) => {
-          assert.equal(response.body.error, errorConstants.wrongIdTypeError);
+          assert.equal(response.body.error, ErrorConstants.wrongIdTypeError);
         })
     );
     it(`should respond with an error message when you try to 
@@ -811,7 +812,7 @@ describe('Document controller', () => {
         .expect((response) => {
           assert.equal(
             response.body.error,
-            errorConstants.invalidDocAccessLevelError);
+            ErrorConstants.invalidDocAccessLevelError);
         }));
     it(`should respond with new updated data when legal payload 
     is provided to the endpoint`, () => request

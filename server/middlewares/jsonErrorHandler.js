@@ -1,14 +1,11 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description returns an error message if bad
  * json object is 
  * 
  * @param {Error} error javascript error object
- * 
  * @param {object} request express request promise
- * 
  * @param {Promise} response expressjs response Promise
- * 
  * @param {function} next express next method which passes control to 
  * the next middleware
  * 
@@ -18,7 +15,7 @@ import errorConstants from '../constants/errorConstants';
 const jsonErrorHandler = (error, request, response, next) => {
   if (error && error.toString().indexOf('JSON') > -1) {
     return response
-      .status(400).json({ error: errorConstants.badJSONRequest });
+      .status(400).json({ error: ErrorConstants.badJSONRequest });
   }
   next();
 };

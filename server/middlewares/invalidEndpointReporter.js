@@ -1,12 +1,10 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description reports not found for any request
  * this should be placed after all middlware
  * 
  * @param {object} request http request object from express
- * 
  * @param {*} response http resonse object from expressjs
- * 
  * @param {function} next function from expressjs that passes
  * constrol to the next middleware
  * 
@@ -15,7 +13,7 @@ import errorConstants from '../constants/errorConstants';
 const invalidEndpointReporter = (request, response, next) => {
   response
     .status(404)
-    .json({ error: errorConstants.invalidEndpointError });
+    .json({ error: ErrorConstants.invalidEndpointError });
   next();
 };
 export default invalidEndpointReporter;

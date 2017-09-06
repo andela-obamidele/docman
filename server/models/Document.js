@@ -1,8 +1,10 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description defines Document model
+ * 
  * @param {object} sequelize sequelize orm object
  * @param {object} DataTypes Class that contains Sequelize
+ * 
  * @returns {function} Constructor function that describes
  * Document model and queries that are possible with it
  */
@@ -15,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [1, 30],
-          msg: errorConstants.docTitleLimitError
+          msg: ErrorConstants.docTitleLimitError
         }
       }
     },
@@ -25,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [1, 10000],
-          msg: errorConstants.docContentLimitError
+          msg: ErrorConstants.docContentLimitError
         }
       }
     },
