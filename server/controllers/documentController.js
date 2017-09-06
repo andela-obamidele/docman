@@ -1,10 +1,10 @@
 import { Document } from '../models';
-import errorConstants from '../constants/errorConstants';
-import successConstants from '../constants/successConstants';
-import documentHelpers from '../helpers/documentHelpers';
+import ErrorConstants from '../constants/ErrorConstants';
+import SuccessConstants from '../constants/SuccessConstants';
+import DocumentHelpers from '../helpers/DocumentHelpers';
 
-const getPageMetadata = documentHelpers.getPageMetadata;
-const documentController = {
+const getPageMetadata = DocumentHelpers.getPageMetadata;
+const DocumentController = {
   /**
    * @description creates a document. accepts title, content
    * and access. responds with a created document object if 
@@ -29,7 +29,7 @@ const documentController = {
         });
       }
       )
-      .catch(error => documentHelpers
+      .catch(error => DocumentHelpers
         .handleCreateDocumentError(error, response));
   },
   /**
@@ -44,7 +44,7 @@ const documentController = {
   getDocuments: (request, response) => {
     const paginationQueryStrings = response.locals.paginationQueryStrings;
     const currentUser = response.locals.user;
-    const options = documentHelpers
+    const options = DocumentHelpers
       .generateFindDocumentsOptions(currentUser, paginationQueryStrings);
     return Document.findAndCountAll(options)
       .then((docs) => {
@@ -56,18 +56,18 @@ const documentController = {
             options.offset,
             docs);
           if (!docs.rows[0]) {
-            pageMetadata.message = errorConstants.endOfPageReached;
+            pageMetadata.message = ErrorConstants.endOfPageReached;
             statusCode = 404;
           }
           responseData.pageMetadata = pageMetadata;
         } else if (!docs.rows[0]) {
           return response
-            .status(404).json({ error: errorConstants.noDocumentFoundError });
+            .status(404).json({ error: ErrorConstants.noDocumentFoundError });
         }
         return response.status(statusCode).json(responseData);
       })
       .catch(() => response
-        .status(500).json({ error: errorConstants.genericErrorMessage }));
+        .status(500).json({ error: ErrorConstants.genericErrorMessage }));
   },
 
   /**
@@ -88,19 +88,19 @@ const documentController = {
         if (!doc) {
           return response
             .status(404)
-            .json({ error: errorConstants.noDocumentFoundError });
-        } else if (!documentHelpers
+            .json({ error: ErrorConstants.noDocumentFoundError });
+        } else if (!DocumentHelpers
           .checkDocumentAccessibility(currentUser, doc)) {
           return response
             .status(403)
-            .json({ error: errorConstants.fileQueryForbiddenError });
+            .json({ error: ErrorConstants.fileQueryForbiddenError });
         }
         const { roleId, ...document } = doc.dataValues;
         return response
           .json({ document });
       })
       .catch(() => response
-        .status(500).json({ error: errorConstants.genericErrorMessage }));
+        .status(500).json({ error: ErrorConstants.genericErrorMessage }));
   },
 
   /**
@@ -116,17 +116,17 @@ const documentController = {
     const currentUserId = response.locals.user.id;
     return Document.findById(request.params.id)
       .then((doc) => {
-        const updateData = documentHelpers.getTruthyDocUpdate(request.body);
-        documentHelpers
-          .terminateDocUpdateOnBadPayload(doc, currentUserId, updateData);
+        const updateData = DocumentHelpers.getTruthyUpdateData(request.body);
+        DocumentHelpers
+          .terminateDocumentUpdate(doc, currentUserId, updateData);
         return doc.update(updateData);
       })
-      .then((updatedDoc) => {
-        const { roleId, ...newDocument } = updatedDoc.dataValues;
+      .then((updatedDocument) => {
+        const { roleId, ...document } = updatedDocument.dataValues;
         return response
-          .json({ document: newDocument });
+          .json({ document });
       })
-      .catch(error => documentHelpers
+      .catch(error => DocumentHelpers
         .handleDocumentUpdateErrors(error, response));
   },
 
@@ -144,11 +144,11 @@ const documentController = {
     return Document
       .destroy({ where: { id }, cascade: true, restartIdentity: true })
       .then(() => response.json({
-        message: successConstants.docDeleteSuccessful
+        message: SuccessConstants.documentDeleteSuccessful
       })
       )
       .catch(() => response
-        .status(500).json({ error: errorConstants.genericErrorMessage }));
+        .status(500).json({ error: ErrorConstants.genericErrorMessage }));
   },
 
   /**
@@ -163,19 +163,19 @@ const documentController = {
   getUserDocuments: (request, response) => {
     const currentUser = response.locals.user;
     const userToSearchId = request.params.id;
-    const queryOptions = documentHelpers
+    const queryOptions = DocumentHelpers
       .generateFindUserDocumentsOptions(currentUser, userToSearchId);
     return Document.findAll(queryOptions)
       .then((doc) => {
         if (!doc[0]) {
           return response
             .status(404)
-            .json({ error: errorConstants.noDocumentFoundError });
+            .json({ error: ErrorConstants.noDocumentFoundError });
         }
         return response.json({ documents: doc });
       })
       .catch(() => response
-        .status(500).json({ error: errorConstants.genericErrorMessage }));
+        .status(500).json({ error: ErrorConstants.genericErrorMessage }));
   },
 
   /**
@@ -192,7 +192,7 @@ const documentController = {
     const query = request.query.q;
     if (!query) {
       return response
-        .status(400).json({ error: errorConstants.badDocumentsQuery });
+        .status(400).json({ error: ErrorConstants.badDocumentsQuery });
     }
     return Document.findAndCountAll({
       where: { title: { $ilike: `%${query}%` } },
@@ -201,20 +201,20 @@ const documentController = {
         if (!docs.count) {
           return response
             .status(404)
-            .json({ error: errorConstants.noDocumentFoundError });
+            .json({ error: ErrorConstants.noDocumentFoundError });
         }
         const currentUser = response.locals.user;
-        docs = documentHelpers
+        docs = DocumentHelpers
           .removeRestrictedDocuments(currentUser, docs.rows);
         if (!docs[0]) {
           return response.status(404).json({
-            error: errorConstants.noDocumentFoundError
+            error: ErrorConstants.noDocumentFoundError
           });
         }
         return response.json({ documents: docs });
       })
       .catch(() => response
-        .status(500).json({ error: errorConstants.genericErrorMessage }));
+        .status(500).json({ error: ErrorConstants.genericErrorMessage }));
   }
 };
-export default documentController;
+export default DocumentController;

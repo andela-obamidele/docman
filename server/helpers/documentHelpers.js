@@ -1,7 +1,7 @@
-import errorConstants from '../constants/errorConstants';
-import helpers from './helpers';
+import ErrorConstants from '../constants/ErrorConstants';
+import Helpers from './Helpers';
 
-const documentHelpers = {
+const DocumentHelpers = {
   /**
    * @description  create handle potential errors from createDocuemtn controller
    * 
@@ -12,17 +12,17 @@ const documentHelpers = {
    * @returns {Promise} promise from expressjs response
    */
   handleCreateDocumentError(error, response) {
-    const errorMessage = errorConstants.genericCreateDocErrorMessage;
+    const errorMessage = ErrorConstants.genericCreateDocErrorMessage;
     if (error.original) {
       const errorCode = error.original.code;
-      if (errorConstants.errorCodes.erDupEntry === errorCode) {
+      if (ErrorConstants.errorCodes.erDupEntry === errorCode) {
         return response
           .status(409)
-          .json({ error: errorConstants.duplicateDocTitleError });
-      } else if (errorConstants.errorCodes.invalidEnumInput === errorCode) {
+          .json({ error: ErrorConstants.duplicateDocTitleError });
+      } else if (ErrorConstants.errorCodes.invalidEnumInput === errorCode) {
         return response
           .status(403)
-          .json({ error: errorConstants.invalidDocAccessLevelError });
+          .json({ error: ErrorConstants.invalidDocAccessLevelError });
       }
     } else if (error.errors) {
       const errors = this.handleValidationErrors(error.errors);
@@ -54,16 +54,16 @@ const documentHelpers = {
    * 
    * @returns {void}
    */
-  terminateDocUpdateOnBadPayload(doc, currentUserId, updateData) {
+  terminateDocumentUpdate(doc, currentUserId, updateData) {
     const error = new Error();
     if (!doc) {
-      error.message = errorConstants.nullDocumentUpdateError;
+      error.message = ErrorConstants.nullDocumentUpdateError;
       throw error;
     } else if (!updateData) {
-      error.message = errorConstants.emptyDocUpdateError;
+      error.message = ErrorConstants.emptyDocUpdateError;
       throw error;
     } else if (doc.dataValues.authorId !== currentUserId) {
-      error.message = errorConstants.unauthorizedDocumentUpdateError;
+      error.message = ErrorConstants.unauthorizedDocumentUpdateError;
       throw error;
     }
   },
@@ -78,7 +78,7 @@ const documentHelpers = {
     const {
       nullDocumentUpdateError,
       unauthorizedDocumentUpdateError,
-      emptyDocUpdateError } = errorConstants;
+      emptyDocUpdateError } = ErrorConstants;
     let documentUpdateError;
     if (error.errors) {
       const errors = this.handleValidationErrors(error.errors);
@@ -99,14 +99,14 @@ const documentHelpers = {
         .status(400).json({ error: emptyDocUpdateError });
     } else if (error.original) {
       const errorCode = error.original.code;
-      if (errorConstants.errorCodes.invalidEnumInput === errorCode) {
+      if (ErrorConstants.errorCodes.invalidEnumInput === errorCode) {
         return response
           .status(403)
-          .json({ error: errorConstants.invalidDocAccessLevelError });
+          .json({ error: ErrorConstants.invalidDocAccessLevelError });
       }
     }
     return response.status(500)
-      .json({ error: errorConstants.genericCreateDocErrorMessage });
+      .json({ error: ErrorConstants.genericCreateDocErrorMessage });
   },
 
   /**
@@ -117,7 +117,7 @@ const documentHelpers = {
    * 
    * @returns {object} new payload data to be used for update
    */
-  getTruthyDocUpdate(payload) {
+  getTruthyUpdateData(payload) {
     const { access, title, content } = payload;
     payload = { access, title, content };
     const fetchKeys = Object.keys;
@@ -238,6 +238,6 @@ const documentHelpers = {
     return queryOptions;
   }
 };
-documentHelpers.handleValidationErrors = helpers.handleValidationErrors;
-documentHelpers.getPageMetadata = helpers.getPageMetadata;
-export default documentHelpers;
+DocumentHelpers.handleValidationErrors = Helpers.handleValidationErrors;
+DocumentHelpers.getPageMetadata = Helpers.getPageMetadata;
+export default DocumentHelpers;

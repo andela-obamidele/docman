@@ -1,6 +1,6 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 
-const helpers = {
+const Helpers = {
   /**
  * @description used by both document and users to
  * routes to handle validation errors
@@ -51,9 +51,9 @@ const helpers = {
     metaData.pageCount = Math.ceil(count / limit);
     metaData.pageSize = Number(limit);
     if (queryHasNoData) {
-      metaData.message = errorConstants.endOfPageReached;
+      metaData.message = ErrorConstants.endOfPageReached;
     }
     return metaData;
   },
 };
-export default helpers;
+export default Helpers;

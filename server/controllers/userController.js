@@ -1,18 +1,18 @@
 import { User } from '../models';
-import errorConstants from '../constants/errorConstants';
-import successConstants from '../constants/successConstants';
-import authHelpers from '../helpers/authHelpers';
-import userHelpers from '../helpers/userHelpers';
+import ErrorConstants from '../constants/ErrorConstants';
+import SuccessConstants from '../constants/SuccessConstants';
+import AuthHelpers from '../helpers/AuthHelpers';
+import UserHelpers from '../helpers/UserHelpers';
 
 const {
   userAuthErrors,
   unmatchedUserSearch,
-  genericErrorMessage } = errorConstants;
+  genericErrorMessage } = ErrorConstants;
 
-const { userDeleteSuccessful } = successConstants;
-const { filterUsersResult, getPageMetadata } = userHelpers;
+const { userDeleteSuccessful } = SuccessConstants;
+const { filterUsersResult, getPageMetadata } = UserHelpers;
 
-const userController = {
+const UserController = {
   /**
    * @description responds with a json web token to be used for authorization
    * on providing email and password. or an error message if an error occurs 
@@ -30,8 +30,8 @@ const userController = {
       .then((user) => {
         const hashedPassword = user.dataValues.password;
         const userCredentials = user.dataValues;
-        authHelpers.isPasswordCorrect(password, hashedPassword);
-        return authHelpers
+        AuthHelpers.isPasswordCorrect(password, hashedPassword);
+        return AuthHelpers
           .sendUniqueJWT(userCredentials, response, false);
       })
       .catch((error) => {
@@ -44,7 +44,7 @@ const userController = {
         }
         return response
           .status(500)
-          .json(errorConstants.genericErrorMessage);
+          .json(ErrorConstants.genericErrorMessage);
       });
   },
 
@@ -67,15 +67,15 @@ const userController = {
       username
     } = request.body;
 
-    if (authHelpers.confirmPassword(password,
+    if (AuthHelpers.confirmPassword(password,
       confirmationPassword,
       response)) {
       return User.create({ email, password, username })
         .then((user) => {
-          authHelpers.sendUniqueJWT(user.dataValues, response, true);
+          AuthHelpers.sendUniqueJWT(user.dataValues, response, true);
         })
         .catch((error) => {
-          authHelpers.handleSignupError(error, response);
+          AuthHelpers.handleSignupError(error, response);
         })
         .catch(() => User.findOne({ where: { email } }))
         .catch(() => {
@@ -126,7 +126,7 @@ const userController = {
           });
       })
       .catch(() => response
-        .status(500).json({ error: errorConstants.genericErrorMessage }));
+        .status(500).json({ error: ErrorConstants.genericErrorMessage }));
   },
 
   /**
@@ -143,7 +143,7 @@ const userController = {
       if (!user) {
         return response
           .status(404)
-          .json({ error: errorConstants.userNotFound });
+          .json({ error: ErrorConstants.userNotFound });
       }
       const { password,
         bio,
@@ -167,7 +167,7 @@ const userController = {
     })
     .catch(() => response
       .status(500)
-      .json({ error: errorConstants.genericErrorMessage })),
+      .json({ error: ErrorConstants.genericErrorMessage })),
 
   /**
   * @description updates any user data apart from id. reponds
@@ -182,17 +182,17 @@ const userController = {
   * @returns {Promise} Promise object from express HTTP response
   */
   updateUserInfo: (request, response) => {
-    const updateData = userHelpers.getOnlyTruthyAttributes(request.body);
+    const updateData = UserHelpers.getTruthyAttributes(request.body);
     return User.findById(request.params.id)
       .then((user) => {
-        userHelpers.terminateUserUpdateOnBadPayload(
+        UserHelpers.terminateUserUpdateOnBadPayload(
           updateData,
           request.body,
           user);
-        let { userSuccessfullyUpdated } = successConstants;
+        let { userSuccessfullyUpdated } = SuccessConstants;
         if (request.body.newPassword) {
           updateData.password = request.body.newPassword;
-          userSuccessfullyUpdated += ` ${successConstants.userUpdatedPassword}`;
+          userSuccessfullyUpdated += ` ${SuccessConstants.userUpdatedPassword}`;
         }
         return user
           .update(updateData)
@@ -213,7 +213,7 @@ const userController = {
               });
           });
       })
-      .catch(error => userHelpers.handleUserUpdateError(error, response));
+      .catch(error => UserHelpers.handleUserUpdateError(error, response));
   },
 
   /**
@@ -236,7 +236,7 @@ const userController = {
           message: userDeleteSuccessful
         })
       ).catch(() => response
-        .status(500).json(errorConstants.genericErrorMessage));
+        .status(500).json(ErrorConstants.genericErrorMessage));
   },
 
   /**
@@ -268,4 +268,4 @@ const userController = {
       .catch(() => response.status(500).json({ error: genericErrorMessage }));
   }
 };
-export default userController;
+export default UserController;

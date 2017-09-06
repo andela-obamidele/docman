@@ -1,4 +1,4 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description returns an error message if bad
  * json object is 
@@ -18,7 +18,7 @@ import errorConstants from '../constants/errorConstants';
 const jsonErrorHandler = (error, request, response, next) => {
   if (error && error.toString().indexOf('JSON') > -1) {
     return response
-      .status(400).json({ error: errorConstants.badJSONRequest });
+      .status(400).json({ error: ErrorConstants.badJSONRequest });
   }
   next();
 };

@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 
-const { conflictingPasswordError } = errorConstants.userAuthErrors;
-const { errorCodes, userAuthErrors } = errorConstants;
+const { conflictingPasswordError } = ErrorConstants.userAuthErrors;
+const { errorCodes, userAuthErrors } = ErrorConstants;
 
-const authHelpers = {
+const AuthHelpers = {
   /**
    * @description compares two passwords. sends  http response if provided
    * 
@@ -87,7 +87,7 @@ const authHelpers = {
    * @returns {Promise} Promise from express http response
    */
   handleSignupError(error, HTTPResponse) {
-    let errorMessage = errorConstants.genericErrorMessage;
+    let errorMessage = ErrorConstants.genericErrorMessage;
     let status = 400;
     const { original } = error;
     if (original) {
@@ -131,4 +131,4 @@ const authHelpers = {
     return isPasswordCorrect;
   },
 };
-export default authHelpers;
+export default AuthHelpers;

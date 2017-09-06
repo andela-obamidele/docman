@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 import { User } from '../models';
-import constants from '../constants/constants';
+import Constants from '../constants/Constants';
 
 const {
   userDeleteUnauthorizedError,
   voidUserDeleteError,
-} = errorConstants;
+} = ErrorConstants;
 /**
  * @description allows users to delete only his account. 
  * Allows admin to delete all accounts
@@ -31,7 +31,7 @@ const deleteUserAuthorization = (request, response, next) => {
         throw error;
       }
       const expectedUserId = queryResult.dataValues.id;
-      if (expectedUserId !== user.id && user.roleId !== constants.adminRole) {
+      if (expectedUserId !== user.id && user.roleId !== Constants.adminRole) {
         error.message = userDeleteUnauthorizedError;
         statusCode = 403;
         throw error;

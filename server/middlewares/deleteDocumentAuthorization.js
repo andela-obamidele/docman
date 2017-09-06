@@ -1,11 +1,11 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 import { Document } from '../models';
-import constants from '../constants/constants';
+import Constants from '../constants/Constants';
 
 const {
   docDeleteUnauthorizedError,
   voidDocumentDeleteError,
-} = errorConstants;
+} = ErrorConstants;
 /**
  * @description allows users to delete only his document. 
  * Allows admin to delete all documents
@@ -32,7 +32,7 @@ const deleteDocumentAuthorization = (request, response, next) => {
         throw error;
       }
       const expectedUserId = queryResult.dataValues.authorId;
-      if (expectedUserId !== user.id && user.roleId !== constants.adminRole) {
+      if (expectedUserId !== user.id && user.roleId !== Constants.adminRole) {
         error.message = docDeleteUnauthorizedError;
         statusCode = 403;
         throw error;

@@ -1,4 +1,4 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description validate that id param is a number
  * 
@@ -14,7 +14,7 @@ const idParameterValidator = (request, response, next) => {
   const iD = request.params.id;
   if (Number.isNaN(Number.parseInt(iD, 10))) {
     return response
-      .status(400).json({ error: errorConstants.wrongIdTypeError });
+      .status(400).json({ error: ErrorConstants.wrongIdTypeError });
   }
   next();
 };

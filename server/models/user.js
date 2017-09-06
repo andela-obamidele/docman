@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 
-const { userAuthErrors } = errorConstants;
+const { userAuthErrors } = ErrorConstants;
 /**
  * @description defines User model
  * @param {object} sequelize sequelize orm object
@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [2, 15],
-          msg: errorConstants.usernameLimitError
+          msg: ErrorConstants.usernameLimitError
         }
       }
     },
@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           arg: [0, 25],
-          msg: errorConstants.fullNameLimitError
+          msg: ErrorConstants.fullNameLimitError
         }
       }
     },
@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [0, 240],
-          msg: errorConstants.bioLimitError
+          msg: ErrorConstants.bioLimitError
         }
       }
     }

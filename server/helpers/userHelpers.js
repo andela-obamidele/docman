@@ -1,19 +1,21 @@
-import authHelpers from './authHelpers';
-import errorConstants from '../constants/errorConstants';
-import helpers from './helpers';
+import AuthHelpers from './AuthHelpers';
+import ErrorConstants from '../constants/ErrorConstants';
+import Helpers from './Helpers';
 
 const {
   userAuthErrors,
   errorCodes,
   genericUserUpdateError
-} = errorConstants;
+} = ErrorConstants;
 
 const userHelpers = {
   /**
    * @description returns a new user object containing
    * id, email, createdAt, updatedAt, and roleId.
    * Helps eleminate noise from user objects
+   * 
    * @param {object[]} users - sequelize queried result
+   * 
    * @returns {object[]} - New object containing only specified props
    */
   filterUsersResult(users) {
@@ -43,7 +45,7 @@ const userHelpers = {
    * @param {object} payload user object
    * @returns {object} new user object containing truthy values only
    */
-  getOnlyTruthyAttributes(payload) {
+  getTruthyAttributes(payload) {
     const {
       email,
       username,
@@ -86,13 +88,13 @@ const userHelpers = {
       throw new Error('unassigned id');
     }
     user = user.dataValues;
-    const isPasswordCorrect = authHelpers
+    const isPasswordCorrect = AuthHelpers
       .isPasswordCorrect(expectedPayload.password, user.password);
     if (!isPasswordCorrect) {
       throw new Error('hashedPassword and password does not match');
     }
     const { confirmationPassword, newPassword } = providedPayload;
-    const isPasswordsMatch = authHelpers
+    const isPasswordsMatch = AuthHelpers
       .confirmPassword(newPassword, confirmationPassword);
     if ((newPassword || confirmationPassword) && !isPasswordsMatch) {
       throw new Error('unmatched passwords');
@@ -106,7 +108,7 @@ const userHelpers = {
    * @returns {Promise} from express http response object
    */
   handleUserUpdateError(error, HTTPResponse) {
-    const { passwordUpdateError } = errorConstants;
+    const { passwordUpdateError } = ErrorConstants;
     const errors = error.errors;
 
     if (errors) {
@@ -128,17 +130,17 @@ const userHelpers = {
     } else if (error.toString().indexOf('unassigned id') > -1) {
       return HTTPResponse
         .status(404)
-        .json(({ error: errorConstants.userNotFound }));
+        .json(({ error: ErrorConstants.userNotFound }));
     } else if (error.original && error.original.code === errorCodes.notAnInt) {
       return HTTPResponse
         .status(400)
-        .json({ error: errorConstants.wrongIdTypeError });
+        .json({ error: ErrorConstants.wrongIdTypeError });
     }
     return HTTPResponse
       .status(500)
       .json({ error: genericUserUpdateError });
   },
 };
-userHelpers.handleValidationErrors = helpers.handleValidationErrors;
-userHelpers.getPageMetadata = helpers.getPageMetadata;
+userHelpers.handleValidationErrors = Helpers.handleValidationErrors;
+userHelpers.getPageMetadata = Helpers.getPageMetadata;
 export default userHelpers;

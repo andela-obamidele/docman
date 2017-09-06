@@ -1,4 +1,4 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 
 /**
  * @description checks if query sting 'q' is provided
@@ -15,7 +15,7 @@ import errorConstants from '../constants/errorConstants';
 const searchValidator = (request, response, next) => {
   if (!request.query.q) {
     return response.status(400)
-      .json({ error: errorConstants.emptySearchString });
+      .json({ error: ErrorConstants.emptySearchString });
   }
   next();
 };

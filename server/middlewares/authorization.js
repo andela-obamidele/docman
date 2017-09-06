@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models';
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 
-const { userAuthErrors } = errorConstants;
+const { userAuthErrors } = ErrorConstants;
 /**
  * @description Uses jason web token to authorize users to access other routes
  * 
