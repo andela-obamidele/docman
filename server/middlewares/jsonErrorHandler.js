@@ -4,11 +4,8 @@ import ErrorConstants from '../constants/ErrorConstants';
  * json object is 
  * 
  * @param {Error} error javascript error object
- * 
  * @param {object} request express request promise
- * 
  * @param {Promise} response expressjs response Promise
- * 
  * @param {function} next express next method which passes control to 
  * the next middleware
  * 

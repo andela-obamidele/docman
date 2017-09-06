@@ -1,8 +1,10 @@
 import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description defines Document model
+ * 
  * @param {object} sequelize sequelize orm object
  * @param {object} DataTypes Class that contains Sequelize
+ * 
  * @returns {function} Constructor function that describes
  * Document model and queries that are possible with it
  */

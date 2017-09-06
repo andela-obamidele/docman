@@ -19,7 +19,6 @@ const UserController = {
    * in when using this method
    * 
    * @param {object} request Express http request object
-   * 
    * @param {object} response Express http response object
    * 
    * @returns {Promise} Promise object from express HTTP response
@@ -54,7 +53,6 @@ const UserController = {
    * when an error occur while using this endpoint
    * 
    * @param {object} request Express http request object
-   * 
    * @param {object} response Express http response object
    * 
    * @returns {Promise} Promise object from express HTTP response
@@ -98,7 +96,6 @@ const UserController = {
   * in when using this method
   *
   * @param {object} request Express http request object
-  *
   * @param {object} response Express http response object
   *
   * @returns {Promise} Promise object from express HTTP response
@@ -133,7 +130,6 @@ const UserController = {
   * @description responds with a simgle user object from the
   *
   * @param {object} request Express http request object
-  *
   * @param {object} response Express http response object
   *
   * @returns {Promise} Promise object from express HTTP response
@@ -176,7 +172,6 @@ const UserController = {
   * other payloads
   *
   * @param {object} request Express http request object
-  *
   * @param {object} response Express http response object
   *
   * @returns {Promise} Promise object from express HTTP response
@@ -222,7 +217,6 @@ const UserController = {
   * is expected to be done by a middleware
   *
   * @param {object} request Express http request object
-  *
   * @param {object} response Express http response object
   *
   * @returns {Promise} Promise object from express HTTP response
@@ -245,7 +239,6 @@ const UserController = {
   * not match any email in the database
   *
   * @param {object} request Express http request object
-  *
   * @param {object} response Express http response object
   *
   * @returns {Promise} Promise object from express HTTP response

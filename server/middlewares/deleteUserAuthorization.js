@@ -10,10 +10,12 @@ const {
 /**
  * @description allows users to delete only his account. 
  * Allows admin to delete all accounts
+ * 
  * @param {Request} request Http request object from express
  * @param {Response} response HTTP response object from express 
  * @param {function} next next function provided by the express. 
  * it passes control to the next middleware
+ * 
  * @returns {Promise | void} Promise from express HTTP response
  */
 const deleteUserAuthorization = (request, response, next) => {

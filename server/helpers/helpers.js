@@ -33,9 +33,7 @@ const Helpers = {
    * @description - Return metadata for pagination
    * 
    * @param {number} limit number of data to per page
-   * 
    * @param {number} offset represents steps away from starting point
-   * 
    * @param {object} queryResult total number of data
    * 
    * @returns {object} object containing metadata for pagination

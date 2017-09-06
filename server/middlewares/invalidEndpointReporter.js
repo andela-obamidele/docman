@@ -4,9 +4,7 @@ import ErrorConstants from '../constants/ErrorConstants';
  * this should be placed after all middlware
  * 
  * @param {object} request http request object from express
- * 
  * @param {*} response http resonse object from expressjs
- * 
  * @param {function} next function from expressjs that passes
  * constrol to the next middleware
  * 

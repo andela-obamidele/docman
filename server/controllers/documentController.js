@@ -11,7 +11,6 @@ const DocumentController = {
    * document creation succeeds
    * 
    * @param {object} request http request object from express
-   * 
    * @param {object} response http response object  from expressjs
    * 
    * @returns {Promise} promise from express http response
@@ -36,7 +35,6 @@ const DocumentController = {
   * @description gets an array of documents available in the database
 ` *
   * @param {object} request http request object from express
-  *
   * @param {object} response http response object  from expressjs
   *
   * @returns {Promise} promise from express http response
@@ -74,7 +72,6 @@ const DocumentController = {
    * @description gets one document from database
    * 
    * @param {object} request expressjs request object
-   * 
    * @param {object} response  expressjs response object
    * 
    * @returns {Promise} promise from express http resonse object
@@ -107,7 +104,6 @@ const DocumentController = {
    * @description update password, username, email but not id
    * 
    * @param {object} request expressjs http request object
-   * 
    * @param {object} response expressjs http response object
    * 
    * @returns {Promise} Promise returned from expressjs response object
@@ -134,7 +130,6 @@ const DocumentController = {
    * @description delete a document using its id
    * 
    * @param {object} request expressjs request object
-   * 
    * @param {object} response expressjs reponse object
    * 
    * @returns {Promise} promise from expressjs response object
@@ -155,7 +150,6 @@ const DocumentController = {
    * @description gets documents that belongs to a particular user
    * 
    * @param {object} request expressjs request object
-   * 
    * @param {object} response expressjs response object
    * 
    * @return {Promise} Promise from expressjs response object
@@ -183,7 +177,6 @@ const DocumentController = {
    * response of an array containing matched objects
    * 
    * @param {object} request expressjs request object
-   * 
    * @param {object} response expressjs response object
    * 
    * @returns {Promise} Promise from expressjs response ojectb

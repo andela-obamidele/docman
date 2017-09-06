@@ -211,14 +211,15 @@ describe('Document controller', () => {
             assert.equal(error, ErrorConstants.docDeleteUnauthorizedError);
           }))
     );
-    it(`should respond with when user tries to delete her own 
+    it(`should respond with success message when user  deletes her own 
     document`, () => request
         .delete(`/api/v1/documents/${docToBeDeletedId}`)
         .set('Authorization', user2AuthToken)
         .expect(200)
         .expect((response) => {
           const successMessage = response.body.message;
-          const expectedSuccessMessage = SuccessConstants.docDeleteSuccessful;
+          const expectedSuccessMessage = SuccessConstants
+            .documentDeleteSuccessful;
           assert.equal(successMessage, expectedSuccessMessage);
         })
     );

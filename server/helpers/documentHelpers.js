@@ -6,7 +6,6 @@ const DocumentHelpers = {
    * @description  create handle potential errors from createDocuemtn controller
    * 
    * @param {Error} error error from create documents controller 
-   * 
    * @param {object} response expressjs response object
    * 
    * @returns {Promise} promise from expressjs response
@@ -47,9 +46,7 @@ const DocumentHelpers = {
    * to update does not exist
    * 
    * @param {object} doc Document query result by id
-   * 
    * @param {number} currentUserId  id for currently logged in user
-   * 
    * @param {object} updateData 
    * 
    * @returns {void}
@@ -70,8 +67,10 @@ const DocumentHelpers = {
   /**
    * @description sends response to the client based on the type of error
    * that occured
+   * 
    * @param {Error} error - Error which occured during Document update
    * @param {object} response - Response object from expressjs
+   * 
    * @return {Promise} Promise object from expressjs server response
    */
   handleDocumentUpdateErrors(error, response) {
@@ -137,7 +136,6 @@ const DocumentHelpers = {
    * user
    * 
    * @param {object} user object containing user detail
-   * 
    * @param {object} doc document object
    * 
    * @returns {boolean} true if document is accessible by current user.
@@ -157,7 +155,6 @@ const DocumentHelpers = {
    * query result
    * 
    * @param {object} user object containing user detail
-   * 
    * @param {object} docs document object
    * 
    * @returns {object} array of unrestricted documents
@@ -178,7 +175,6 @@ const DocumentHelpers = {
    * used in getDocuments
    * 
    * @param {object}  currentUser currently logged in user data
-   * 
    * @param {object} paginationQueryStrings optional argument: 
    * it should contain limit and offset
    * 
@@ -208,7 +204,6 @@ const DocumentHelpers = {
    * used in getUserDocuments controller
    * 
    * @param {object} currentUser currently logged in user
-   * 
    * @param {number} userToSearchId id of the user whose documents is to be
    * searched
    * @return {object} query options to be used in getDocumentsController

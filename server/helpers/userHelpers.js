@@ -42,7 +42,9 @@ const userHelpers = {
    * gets email, username, password, fullName and bio from object
    * if any of this value is falsy, they are eliminated from the returned
    * object
+   * 
    * @param {object} payload user object
+   * 
    * @returns {object} new user object containing truthy values only
    */
   getTruthyAttributes(payload) {
@@ -76,9 +78,11 @@ const userHelpers = {
    * @description helps userController.updateUserInfo to validate
    * payload before updating. Throws error if unexpected payload
    * is found
+   * 
    * @param {object} expectedPayload  Payload expected from the user
    * @param {object} providedPayload Payload provided by the users
    * @param {object} user sequelize object queried from User model
+   * 
    * @returns {void}
    */
   terminateUserUpdateOnBadPayload(expectedPayload, providedPayload, user) {
@@ -103,8 +107,10 @@ const userHelpers = {
   /**
    * @description help userController.updateUserInfo to handle possible errors
    * which might occur while updating
+   * 
    * @param {object} error javascript error object
    * @param {Response} HTTPResponse express HTTP response object
+   * 
    * @returns {Promise} from express http response object
    */
   handleUserUpdateError(error, HTTPResponse) {
