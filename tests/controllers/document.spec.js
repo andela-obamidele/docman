@@ -789,7 +789,7 @@ describe('Document controller', () => {
           .expect((response) => {
             assert.equal(
               response.body.error,
-              ErrorConstants.emptyDocUpdateError);
+              ErrorConstants.emptyDocumentUpdateError);
           })
         )
     );

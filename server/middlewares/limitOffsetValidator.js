@@ -24,8 +24,7 @@ const limitAndOffsetValidator = (request, response, next) => {
     return response
       .status(400)
       .json({
-        error: 'invalid query string(s). limit and ' +
-        'offset are the only valid query strings in this endpoint'
+        error: 'only limit and offset is required on this endpoint'
       });
   }
   if (isPaginationRequired) {
