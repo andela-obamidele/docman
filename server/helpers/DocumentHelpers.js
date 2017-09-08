@@ -11,7 +11,7 @@ const DocumentHelpers = {
    * @returns {Promise} promise from expressjs response
    */
   handleCreateDocumentError(error, response) {
-    const errorMessage = ErrorConstants.genericCreateDocErrorMessage;
+    const errorMessage = ErrorConstants.genericCreateDocumentError;
     if (error.original) {
       const errorCode = error.original.code;
       if (ErrorConstants.errorCodes.erDupEntry === errorCode) {
@@ -57,7 +57,7 @@ const DocumentHelpers = {
       error.message = ErrorConstants.nullDocumentUpdateError;
       throw error;
     } else if (!updateData) {
-      error.message = ErrorConstants.emptyDocUpdateError;
+      error.message = ErrorConstants.emptyDocumentUpdateError;
       throw error;
     } else if (doc.dataValues.authorId !== currentUserId) {
       error.message = ErrorConstants.unauthorizedDocumentUpdateError;
@@ -77,7 +77,7 @@ const DocumentHelpers = {
     const {
       nullDocumentUpdateError,
       unauthorizedDocumentUpdateError,
-      emptyDocUpdateError } = ErrorConstants;
+      emptyDocumentUpdateError } = ErrorConstants;
     let documentUpdateError;
     if (error.errors) {
       const errors = this.handleValidationErrors(error.errors);
@@ -93,9 +93,9 @@ const DocumentHelpers = {
       return response
         .status(403)
         .json({ error: unauthorizedDocumentUpdateError });
-    } else if (error.message === emptyDocUpdateError) {
+    } else if (error.message === emptyDocumentUpdateError) {
       return response
-        .status(400).json({ error: emptyDocUpdateError });
+        .status(400).json({ error: emptyDocumentUpdateError });
     } else if (error.original) {
       const errorCode = error.original.code;
       if (ErrorConstants.errorCodes.invalidEnumInput === errorCode) {
@@ -105,7 +105,7 @@ const DocumentHelpers = {
       }
     }
     return response.status(500)
-      .json({ error: ErrorConstants.genericCreateDocErrorMessage });
+      .json({ error: ErrorConstants.genericCreateDocumentError });
   },
 
   /**

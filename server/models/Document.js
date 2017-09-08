@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [1, 30],
-          msg: ErrorConstants.docTitleLimitError
+          msg: ErrorConstants.documentTitleLimitError
         }
       }
     },

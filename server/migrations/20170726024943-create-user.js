@@ -1,8 +1,10 @@
 module.exports = {
   /**
     * @description creates Users table
+
     * @param {object} queryInterface sequelize orm object
     * @param {object} Sequelize Class that contains Sequelize
+    
     * @returns {Promise} sequelize query promise
     */
   up: (queryInterface, Sequelize) => {
