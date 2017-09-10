@@ -3,21 +3,21 @@ import supertest from 'supertest';
 import jwtDriver from 'jsonwebtoken';
 import { User, Document } from '../../server/models/';
 import server from '../../server/server';
-import dummyUsers from '../dummyData/dummyUsers';
+import DummyUsers from '../dummyData/DummyUsers';
 import ErrorConstants from '../../server/constants/ErrorConstants';
 import SuccessConstants from '../../server/constants/SuccessConstants';
-import dummyAdmins from '../dummyData/dummyAdmins';
+import DummyAdmins from '../dummyData/DummyAdmins';
 
 
 const request = supertest(server);
 describe('Document controller', () => {
   const {
-    invalidDocAccessLevelError,
+    invalidDocumentAccessLevel,
     duplicateDocTitleError
   } = ErrorConstants;
-  const dummyUser = dummyUsers[0];
-  const dummyUser2 = dummyUsers[1];
-  const admin = dummyAdmins[0];
+  const dummyUser = DummyUsers[0];
+  const dummyUser2 = DummyUsers[1];
+  const admin = DummyAdmins[0];
 
   let adminAuthToken;
   let admin2AuthToken;
@@ -31,7 +31,7 @@ describe('Document controller', () => {
   let user1RoleDocumentId;
   let user2PublicDocumentId;
   let adminRoleDocumentId;
-  const { email, password, username } = dummyUsers[0];
+  const { email, password, username } = DummyUsers[0];
   const aUser = {
     email,
     password,
@@ -65,7 +65,7 @@ describe('Document controller', () => {
       .then((response) => {
         user2AuthToken = response.body.token;
       }))
-    .then(() => User.bulkCreate(dummyAdmins))
+    .then(() => User.bulkCreate(DummyAdmins))
     .then(() => request
       .post('/api/v1/users/login')
       .send({
@@ -80,8 +80,8 @@ describe('Document controller', () => {
   );
 
   describe('Create document: POST /api/v1/documents/', () => {
-    it(`should respond with an error message an invalid access 
-    is specified`, () => request
+    it('should respond with an error message when invalid access is specified',
+      () => request
         .post('/api/v1/documents/')
         .send({
           title: 'some title',
@@ -91,7 +91,7 @@ describe('Document controller', () => {
         .set('Authorization', userAuthToken)
         .expect(403)
         .expect((response) => {
-          assert.equal(response.body.error, invalidDocAccessLevelError);
+          assert.equal(response.body.error, invalidDocumentAccessLevel);
         })
     );
     it('should respond with error message when there is a validation error',
@@ -112,8 +112,8 @@ describe('Document controller', () => {
               'title cannot be empty'
             );
         }));
-    it(`should respond with an array of errors multiple validation
-    error occurs`,
+    // eslint-disable-next-line
+    it('should respond with an array of errors multiple validation error occurs',
       () => request
         .post('/api/v1/documents')
         .send({
@@ -139,9 +139,9 @@ describe('Document controller', () => {
               'content cannot be empty'
             );
         }));
-
-    it(`should respond with the created user object when valid  payload
-        is expected`, () => request
+    // eslint-disable-next-line
+    it('should respond with the created user object when valid  payload is expected',
+      () => request
         .post('/api/v1/documents')
         .send({
           title: 'some title',
@@ -160,8 +160,9 @@ describe('Document controller', () => {
           assert.equal(doc.authorId, expectedAuthorId);
         })
     );
-    it(`should respond with an error message  when document
-    title already exist in the database`, () => request
+    // eslint-disable-next-line
+    it('should respond with an error message  when documenttitle already exist in the database',
+      () => request
         .post('/api/v1/documents')
         .send({
           title: 'some title',
@@ -178,41 +179,41 @@ describe('Document controller', () => {
   });
 
   describe('Delete document: DELETE /api/v1/documents/:Id', () => {
-    it(`should respond with an error message when user tries to 
-    delete document that does not exist in the
-    database`, () => request
-        .delete('/api/v1/documents/1')
+    // eslint-disable-next-line
+    it('should respond with an error message when user tries to delete document that does not exist', () => request
+      .delete('/api/v1/documents/1')
+      .set('Authorization', userAuthToken)
+      .expect(404)
+      .expect((response) => {
+        const errorMessage = response.body.error;
+        assert.equal(errorMessage, ErrorConstants.voidDocumentDeleteError);
+      })
+    );
+    // eslint-disable-next-line
+    it('should respond with an error message when user tries to delete document that does not belong to her', () => request
+      .post('/api/v1/documents')
+      .send({
+        title: 'the title',
+        content: 'the content',
+        access: 'public'
+      })
+      .set('Authorization', user2AuthToken)
+      .expect(201)
+      .then((response) => {
+        docToBeDeletedId = response.body.document.id;
+      })
+      .then(() => request
+        .delete(`/api/v1/documents/${docToBeDeletedId}`)
         .set('Authorization', userAuthToken)
-        .expect(404)
+        .expect(403)
         .expect((response) => {
-          const errorMessage = response.body.error;
-          assert.equal(errorMessage, ErrorConstants.voidDocumentDeleteError);
-        })
+          const error = response.body.error;
+          assert.equal(error, ErrorConstants.docDeleteUnauthorizedError);
+        }))
     );
-    it(`should respond with an error message when user tries to
-     delete document that does not belong to her`, () => request
-        .post('/api/v1/documents')
-        .send({
-          title: 'the title',
-          content: 'the content',
-          access: 'public'
-        })
-        .set('Authorization', user2AuthToken)
-        .expect(201)
-        .then((response) => {
-          docToBeDeletedId = response.body.document.id;
-        })
-        .then(() => request
-          .delete(`/api/v1/documents/${docToBeDeletedId}`)
-          .set('Authorization', userAuthToken)
-          .expect(403)
-          .expect((response) => {
-            const error = response.body.error;
-            assert.equal(error, ErrorConstants.docDeleteUnauthorizedError);
-          }))
-    );
-    it(`should respond with success message when user  deletes her own 
-    document`, () => request
+    // eslint-disable-next-line
+    it('should respond with success message when user  deletes her own document',
+      () => request
         .delete(`/api/v1/documents/${docToBeDeletedId}`)
         .set('Authorization', user2AuthToken)
         .expect(200)
@@ -339,8 +340,8 @@ describe('Document controller', () => {
       () => request
         .post('/api/v1/users/login')
         .send({
-          ...dummyAdmins[1],
-          confirmationPassword: dummyAdmins[1].password
+          ...DummyAdmins[1],
+          confirmationPassword: DummyAdmins[1].password
         })
         .expect(200)
         .then((response) => {
@@ -465,8 +466,9 @@ describe('Document controller', () => {
         })
       )
     );
-    it(`should not show document marked role that belongs to a user
-    with higher role`, () => request
+    // eslint-disable-next-line
+    it('should not get document marked role that belongs to a user with higher role',
+      () => request
         .post('/api/v1/documents')
         .send({
           title: 'admin secrete document',
@@ -487,8 +489,9 @@ describe('Document controller', () => {
             assert.equal(doc.authorId, user.id);
           }))
     );
-    it(`should respond with documents, counts and pages pageMetadata
-    when limit and offset is provided as a queries`, () => request
+    // eslint-disable-next-line
+    it('should respond with documents, counts and pages pageMetadata when limit and offset is provided as a queries',
+      () => request
         .get('/api/v1/documents/?limit=2&offset=0')
         .set('Authorization', adminAuthToken)
         .expect(200)
@@ -503,9 +506,8 @@ describe('Document controller', () => {
             'pageSize']);
         })
     );
-    it(`should respond with page matadata which contains a message
-    when limit and  offset exceed the total number of data available in 
-    the database`, () => request
+    it('should respond with page matadata when limit and offset is provided',
+      () => request
         .get('/api/v1/documents/?limit=10&offset=10')
         .set('Authorization', adminAuthToken)
         .expect(404)
@@ -567,8 +569,8 @@ describe('Document controller', () => {
             });
         }));
 
-    it(`should get all the documents of the currently 
-    logged in user`, () => request
+    it('should get all the documents of the currently logged in user',
+      () => request
         .post('/api/v1/documents')
         .send({
           title: 'user roles tile',
@@ -607,9 +609,9 @@ describe('Document controller', () => {
   describe('Search documents: GET /api/v1/documents/?q', () => {
     before(() => Document
       .destroy({ where: {}, cascade: true, restartIdentity: true }));
-
-    it(`should respond with an error message when query string q 
-    is not provided`, () => request
+    // eslint-disable-next-line
+    it('should respond with an error message when query string q is not provided',
+      () => request
         .get('/api/v1/search/documents/?j=rubish')
         .set('Authorization', userAuthToken)
         .expect(400)
@@ -734,8 +736,6 @@ describe('Document controller', () => {
           })));
   });
   describe('Update document: PUT /api/v1/documents/:id', () => {
-    // let user1AuthorizationToken;
-    // let user2AuthorizationToken;
     let user1DocumentId;
     before(() => User
       .destroy({ where: {}, cascade: true, restartIdentity: true })
@@ -766,45 +766,45 @@ describe('Document controller', () => {
       )
       .catch(error => error)
     );
-
-    it(`should respond with an error message when user do not provide 
-    all of the fields that is required to update`, () => request
-        .post('/api/v1/documents')
+    // eslint-disable-next-line
+    it('should respond with an error message when user do not provide all of the fields that is required to update', () => request
+      .post('/api/v1/documents')
+      .send({
+        title: 'tdd',
+        content: 'tdd is cool',
+        access: 'public'
+      })
+      .set('Authorization', userAuthToken)
+      .expect(201)
+      .then((response) => {
+        user1DocumentId = response.body.document.id;
+      })
+      .then(() => request
+        .put(`/api/v1/documents/${user1DocumentId}`)
         .send({
-          title: 'tdd',
-          content: 'tdd is cool',
-          access: 'public'
         })
-        .set('Authorization', userAuthToken)
-        .expect(201)
-        .then((response) => {
-          user1DocumentId = response.body.document.id;
-        })
-        .then(() => request
-          .put(`/api/v1/documents/${user1DocumentId}`)
-          .send({
-          })
-          .set('Authorization', userAuthToken)
-          .expect(400)
-          .expect((response) => {
-            assert.equal(
-              response.body.error,
-              ErrorConstants.emptyDocumentUpdateError);
-          })
-        )
-    );
-    it(`should respond with an error message when a none number
-  is provided as an id in parameters`, () => request
-        .put('/api/v1/documents/someranomebullsh*t')
-        .send({})
         .set('Authorization', userAuthToken)
         .expect(400)
         .expect((response) => {
-          assert.equal(response.body.error, ErrorConstants.wrongIdTypeError);
+          assert.equal(
+            response.body.error,
+            ErrorConstants.emptyDocumentUpdateError);
         })
+      )
     );
-    it(`should respond with an error message when you try to 
-    update with wrong input type`, () => request
+    // eslint-disable-next-line
+    it('should respond with an error message when a none number is provided as an id in parameters', () => request
+      .put('/api/v1/documents/someranomebullsh*t')
+      .send({})
+      .set('Authorization', userAuthToken)
+      .expect(400)
+      .expect((response) => {
+        assert.equal(response.body.error, ErrorConstants.wrongIdTypeError);
+      })
+    );
+    // eslint-disable-next-line
+    it('should respond with an error message when access is updated with invalid type',
+      () => request
         .put(`/api/v1/documents/${user1DocumentId}`)
         .send({ access: 'normal' })
         .set('Authorization', userAuthToken)
@@ -812,10 +812,11 @@ describe('Document controller', () => {
         .expect((response) => {
           assert.equal(
             response.body.error,
-            ErrorConstants.invalidDocAccessLevelError);
+            ErrorConstants.invalidDocumentAccessLevel);
         }));
-    it(`should respond with new updated data when legal payload 
-    is provided to the endpoint`, () => request
+    // eslint-disable-next-line
+    it('should respond with new updated data when legal payload is provided to the endpoint',
+      () => request
         .put(`/api/v1/documents/${user1DocumentId}`)
         .send({ content: 'new content' })
         .set('Authorization', userAuthToken)
@@ -824,8 +825,9 @@ describe('Document controller', () => {
           const newDoc = response.body.document;
           assert.equal(newDoc.content, 'new content');
         }));
-    it(`should not be able to update title with a title that is already used by 
-    someone else`, () => request
+    // eslint-disable-next-line
+    it('should not be able to update title with a title that is already used by someone else',
+      () => request
         .post('/api/v1/documents/')
         .send({
           content: 'second user content',

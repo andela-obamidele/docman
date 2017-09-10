@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description validate limit and offset
@@ -24,18 +25,34 @@ const limitAndOffsetValidator = (request, response, next) => {
     return response
       .status(400)
       .json({
-        error: 'only limit and offset is required on this endpoint'
+        error: ErrorConstants.badPaginationParameters
       });
   }
   if (isPaginationRequired) {
-    if (Number.isNaN(Number(limit)) || Number.isNaN(Number(offset))) {
-      return response
-        .status(406)
-        .json({ error: ErrorConstants.paginationQueryError });
+    if (offset && !limit) {
+      return response.status(400)
+        .json({ error: ErrorConstants.emptyLimitError });
     }
-    let offsetInteger = !offset ? 0 : offset;
+
+    if (limit) {
+      if (!Number.parseInt(limit, 10)) {
+        if (limit === '0') {
+          return response.status(400)
+            .json({ error: ErrorConstants.zeroLimitError });
+        }
+        return response.status(400)
+          .json({ error: ErrorConstants.limitTypeError });
+      }
+    }
+
+    if (offset) {
+      if (!Number.parseInt(offset, 10) && offset !== '0') {
+        return response.status(400)
+          .json({ error: ErrorConstants.offsetTypeError });
+      }
+    }
     const limitInteger = Number.parseInt(limit, 10);
-    offsetInteger = Number.parseInt(offset, 10);
+    const offsetInteger = !offset ? 0 : Number.parseInt(offset, 10);
     response
       .locals.paginationQueryStrings = {
         limit: limitInteger,
@@ -44,4 +61,5 @@ const limitAndOffsetValidator = (request, response, next) => {
   }
   next();
 };
+
 export default limitAndOffsetValidator;
