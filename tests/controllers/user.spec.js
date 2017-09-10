@@ -4,8 +4,8 @@ import supertest from 'supertest';
 import { User } from '../../server/models';
 import ErrorConstants from '../../server/constants/ErrorConstants';
 import SuccessConstants from '../../server/constants/SuccessConstants';
-import dummyUsers from '../dummyData/dummyUsers';
-import dummyAdmins from '../dummyData/dummyAdmins';
+import DummyUsers from '../dummyData/DummyUsers';
+import DummyAdmins from '../dummyData/DummyAdmins';
 import server from '../../server/server';
 
 
@@ -15,18 +15,18 @@ const { userDeleteUnauthorizedError, userAuthErrors } = ErrorConstants;
 const { userDeleteSuccessful } = SuccessConstants;
 
 describe('User controller', () => {
-  const sampleUser = dummyUsers[0];
+  const sampleUser = DummyUsers[0];
   let userJwt;
   let adminJwt;
   let sampleUserId;
-  const admin = dummyAdmins[0];
+  const admin = DummyAdmins[0];
   before(() =>
     User.destroy({ where: {}, cascade: true, restartIdentity: true })
-      .then(() => User.bulkCreate(dummyUsers))
-      .then(() => User.bulkCreate(dummyAdmins))
+      .then(() => User.bulkCreate(DummyUsers))
+      .then(() => User.bulkCreate(DummyAdmins))
       .then(() => request
         .post('/api/v1/users/login')
-        .send(dummyUsers[0])
+        .send(DummyUsers[0])
         .expect(200)
         .then((response) => {
           userJwt = response.body.token;
@@ -46,11 +46,11 @@ describe('User controller', () => {
     User.destroy({ where: {}, cascade: true, restartIdentity: true })
   );
   describe('Delete user: DELETE /api/v1/users/:id', () => {
-    it(`should respond with an error message when user
-    user trying to delete another user `, () => {
+    it('should respond with error message when user tries to delete other user',
+      () => {
         let userToBeDeletedId;
         return User
-          .findOne({ where: { email: dummyUsers[2].email } })
+          .findOne({ where: { email: DummyUsers[2].email } })
           .then((user) => {
             userToBeDeletedId = user.dataValues.id;
           })
@@ -64,11 +64,11 @@ describe('User controller', () => {
             })
           );
       });
-
-    it(`should respond with a success message when user tries
-    to delete her own account`, () => {
+    // eslint-disable-next-line
+    it('should respond with a success message when user tries to delete her own account',
+      () => {
         let userToBeDeletedId;
-        return User.findOne({ where: { email: dummyUsers[0].email } })
+        return User.findOne({ where: { email: DummyUsers[0].email } })
           .then((user) => {
             userToBeDeletedId = user.id;
           })
@@ -86,10 +86,11 @@ describe('User controller', () => {
               }))
           );
       });
-    it(`should respond with with a success messsage when an admin
-     tries to delete any user`, () => {
+    // eslint-disable-next-line
+    it('should respond with with a success messsage when an admin tries to delete any user',
+      () => {
         let userToBeDeletedId;
-        return User.findOne({ where: { email: dummyUsers[1].email } })
+        return User.findOne({ where: { email: DummyUsers[1].email } })
           .then((user) => {
             userToBeDeletedId = user.id;
           })
@@ -112,22 +113,21 @@ describe('User controller', () => {
   describe('GET /api/v1/users/:id', () => {
     before(() => User
       .destroy({ where: {}, cascade: true, restartIdentity: true })
-      .then(() => User.bulkCreate(dummyUsers))
+      .then(() => User.bulkCreate(DummyUsers))
       .then(() => request
         .post('/api/v1/users/login')
-        .send(dummyUsers[0])
+        .send(DummyUsers[0])
         .expect(200)
         .then((response) => {
           userJwt = response.body.token;
-          return User.findOne({ where: { email: dummyUsers[0].email } });
+          return User.findOne({ where: { email: DummyUsers[0].email } });
         }))
       .then((queryResult) => {
         sampleUserId = queryResult.dataValues.id;
       })
       .catch(error => error));
-
-    it(`should respond with an error message when userId does not 
-    exist in the database`, () => {
+    it('should respond with an error message when userId does not  exist',
+      () => {
         const supertestPromise = request
           .get('/api/v1/users/92342343')
           .set('Authorization', userJwt)
@@ -137,8 +137,9 @@ describe('User controller', () => {
           });
         return supertestPromise;
       });
-    it(`should respond with an error message when id 
-      provided is not of type number`, () => {
+    // eslint-disable-next-line
+    it('should respond with an error message when id provided is not of type number',
+      () => {
         const supertestPromise = request
           .get('/api/v1/users/onehundred')
           .set('Authorization', userJwt)
@@ -148,19 +149,19 @@ describe('User controller', () => {
           });
         return supertestPromise;
       });
-    it(`it should respond with a user object with corresponding info
-      when the user id provided exist in db`, () => {
-        const supertestPromise = request
-          .get(`/api/v1/users/${sampleUserId}`)
-          .set('Authorization', userJwt)
-          .expect(200)
-          .expect((response) => {
-            const expectedEmail = dummyUsers[0].email;
-            assert.equal(response.body.email, expectedEmail);
-            assert.equal(response.body.id, sampleUserId);
-          });
-        return supertestPromise;
-      });
+    // eslint-disable-next-line
+    it('it should respond with a user object with corresponding info when the user id provided exist in db', () => {
+      const supertestPromise = request
+        .get(`/api/v1/users/${sampleUserId}`)
+        .set('Authorization', userJwt)
+        .expect(200)
+        .expect((response) => {
+          const expectedEmail = DummyUsers[0].email;
+          assert.equal(response.body.email, expectedEmail);
+          assert.equal(response.body.id, sampleUserId);
+        });
+      return supertestPromise;
+    });
   });
   describe('Update user: PUT /ap/v1/users/:id', () => {
     beforeEach(() => User
@@ -183,8 +184,8 @@ describe('User controller', () => {
       .catch(error => error)
     );
 
-    it(`should respond with an error objects when validation
-    error occurs`, () => {
+    it('should respond with an error objects when validation error occurs',
+      () => {
         const { password, username } = sampleUser;
         const { badEmailError } = ErrorConstants.userAuthErrors;
         return request
@@ -203,8 +204,9 @@ describe('User controller', () => {
             assert.equal(error.message, badEmailError);
           });
       });
-    it(`should respond with an error message when authorization
-     password doesn't belong to the user to be updated`, () => {
+    // eslint-disable-next-line
+    it('should respond with an error message when authorization password doesn\'t belong to the user to be updated',
+      () => {
         const { username, newPassword, confirmationPassword } = sampleUser;
         return request
           .put(`/api/v1/users/${sampleUserId}`)
@@ -221,8 +223,9 @@ describe('User controller', () => {
               .equal(response.body.error, userAuthErrors.wrongPasswordError);
           });
       });
-    it(`should respond with an error message when provided route is
-      called with a none existing id`, () => request
+    // eslint-disable-next-line
+    it('should respond with an error message route is called with a none existing id',
+      () => request
         .put('/api/v1/users/9999999')
         .set('Authorization', userJwt)
         .send({
@@ -234,8 +237,9 @@ describe('User controller', () => {
         .expect((response) => {
           assert.equal(response.body.error, ErrorConstants.userNotFound);
         }));
-    it(`should respond with an error message when the id 
-    provided in the request url is not a number`, () => request
+    // eslint-disable-next-line
+    it('should respond with an error message when the id provided in the url is not a number',
+      () => request
         .put('/api/v1/users/somejargon')
         .set('Authorization', userJwt)
         .send({
@@ -247,8 +251,9 @@ describe('User controller', () => {
         .expect((response) => {
           assert.equal(response.body.error, ErrorConstants.wrongIdTypeError);
         }));
-    it(`should respond with '${ErrorConstants.passwordUpdateError}' 
-    new password and confirmation password doesn't match`, () => {
+    // eslint-disable-next-line
+    it('should respond with an error message when newpassword and confirmationPasssword doesn\'t match',
+      () => {
         const { username, password, email } = sampleUser;
         return request
           .put(`/api/v1/users/${sampleUserId}`)
@@ -266,8 +271,9 @@ describe('User controller', () => {
             assert.equal(errorMessage, ErrorConstants.passwordUpdateError);
           });
       });
-    it(`should respond with a success message and the new user profile when 
-    profile is updated successfully`, () => {
+    // eslint-disable-next-line
+    it('should respond with a success message and the new user profile when profile is updated successfully',
+      () => {
         const { username, password, email } = sampleUser;
         return request
           .put(`/api/v1/users/${sampleUserId}`)
@@ -290,20 +296,20 @@ describe('User controller', () => {
   describe('Search user: GET /api/v1/search', () => {
     before(() => User
       .destroy({ where: {}, cascade: true, restartIdentity: true })
-      .then(() => User.bulkCreate(dummyUsers))
+      .then(() => User.bulkCreate(DummyUsers))
       .then(() => request
         .post('/api/v1/users/login')
-        .send(dummyUsers[0])
+        .send(DummyUsers[0])
         .expect(200)
         .then((response) => {
           userJwt = response.body.token;
-          return User.findOne({ where: { email: dummyUsers[0].email } });
+          return User.findOne({ where: { email: DummyUsers[0].email } });
         }))
       .catch(error => error)
     );
-
-    it(`should respond an error message when query(q) does not match
-     any email in the database`, () => {
+    // eslint-disable-next-line
+    it('should respond an error message when query(q) does not match any email in the database',
+      () => {
         const { unmatchedUserSearch } = ErrorConstants;
         return request
           .get('/api/v1/search/users/?q=kilimanjaro@mountain.com')
@@ -314,16 +320,17 @@ describe('User controller', () => {
             assert.equal(expectedResponse, unmatchedUserSearch);
           });
       });
-    it(`should respond with an array of users and the number of matches
-      when query matches one or more email in the database`, () => request
-        .get(`/api/v1/search/users/?q=${dummyUsers[0].email}`)
+    // eslint-disable-next-line
+    it('should respond with an array of users and the number of matches when query matches one or more email in the database',
+      () => request
+        .get(`/api/v1/search/users/?q=${DummyUsers[0].email}`)
         .set('Authorization', userJwt)
         .expect(200)
         .expect((response) => {
           const user = response.body.users.pop();
           assert.equal(response.body.matches, 1);
           assert.equal(user.bio, 'not set');
-          assert.equal(user.username, dummyUsers[0].username);
+          assert.equal(user.username, DummyUsers[0].username);
           assert.equal(user.fullName, 'not set');
         })
     );
@@ -360,8 +367,9 @@ describe('User controller', () => {
       cascade: true,
       restartIdentity: true
     }));
-    it(`should respond with '${wrongEmailOrPassword}' when trying 
-    to signup with wrong password`, () => {
+    // eslint-disable-next-line
+    it('should respond with error message when user tries to login with wrong password',
+      () => {
         const supertestPromise = request
           .post('/api/v1/users/login')
           .expect(401)
@@ -370,8 +378,9 @@ describe('User controller', () => {
           });
         return supertestPromise;
       });
-    it(`should respond with an error message when
-    the email provided is not in database `, (done) => {
+    // eslint-disable-next-line
+    it('should respond with an error message whenthe email provided is not in database',
+      (done) => {
         request
           .post('/api/v1/users/login')
           .send({
@@ -388,8 +397,8 @@ describe('User controller', () => {
           });
       });
 
-    it(`should respond with a succss message and a jwt token 
-    when user logs in successfully`, () => {
+    it('should respond with a jwt token when user logs in successfully',
+      () => {
         const supertestPromise = request
           .post('/api/v1/users/login/')
           .send({
@@ -408,8 +417,8 @@ describe('User controller', () => {
           });
         return supertestPromise;
       });
-    it(`should respond with '${unAuthorizedUserError}' when 
-    user is not authenticated`, () => {
+    it('should respond with an error message when user is not authenticated',
+      () => {
         const supertestRequest = request
           .get('/api/v1/users/')
           .expect(401)
@@ -418,8 +427,8 @@ describe('User controller', () => {
           });
         return supertestRequest;
       });
-    it(`should be able to access routes on sending valid json web token to
-     the server`, () => {
+    it('should be able to get all users when a user is authenticaed',
+      () => {
         const supertestPromise = request
           .get('/api/v1/users/')
           .set('Authorization', userJwt)
@@ -430,10 +439,10 @@ describe('User controller', () => {
   describe('GET /api/v1/users', () => {
     before(() => User
       .destroy({ where: {}, cascade: true, restartIdentity: true })
-      .then(() => User.bulkCreate(dummyUsers))
+      .then(() => User.bulkCreate(DummyUsers))
       .then(() => request
         .post('/api/v1/users/login')
-        .send(dummyUsers[0])
+        .send(DummyUsers[0])
         .expect(200)
         .then((response) => {
           userJwt = response.body.token;
@@ -446,7 +455,7 @@ describe('User controller', () => {
       .expect(200)
       .expect((response) => {
         const { users } = response.body;
-        assert.equal(users.length, dummyUsers.length);
+        assert.equal(users.length, DummyUsers.length);
       }));
 
     it(`should respond with n=limit numbers of users when
@@ -462,21 +471,45 @@ describe('User controller', () => {
           assert.equal(users.length, 5);
           assert
             .equal(
-              dummyUsers[randomUserIndex].username,
+              DummyUsers[randomUserIndex].username,
               users[randomUserIndex].username);
           const pageMetaData = response.body.metaData;
-          assert.equal(pageMetaData.totalCount, dummyUsers.length);
+          assert.equal(pageMetaData.totalCount, DummyUsers.length);
           assert.equal(pageMetaData.currentPage, 1);
           assert.equal(pageMetaData.pageCount, 3);
           assert.equal(pageMetaData.pageSize, 5);
         }));
-    it(`should respond with an error message
-       limit or query is not number`, () => request
+    it('should respond with an error message limit  is not number',
+      () => request
         .get('/api/v1/users/?limit=one&offset=0')
         .set('Authorization', userJwt)
-        .expect(406)
+        .expect(400)
         .expect(response => assert
-          .equal(ErrorConstants.paginationQueryError, response.body.error))
+          .equal(ErrorConstants.limitTypeError, response.body.error))
+    );
+    it('should respond with an error message offset is not number',
+      () => request
+        .get('/api/v1/users/?limit=1&offset=dfs')
+        .set('Authorization', userJwt)
+        .expect(400)
+        .expect(response => assert
+          .equal(ErrorConstants.offsetTypeError, response.body.error))
+    );
+    it('should respond with an error message only offse is provided',
+      () => request
+        .get('/api/v1/users/?offset=0')
+        .set('Authorization', userJwt)
+        .expect(400)
+        .expect(response => assert
+          .equal(ErrorConstants.emptyLimitError, response.body.error))
+    );
+    it('should respond with an error message invalid query string is used',
+      () => request
+        .get('/api/v1/users/?invalid=1')
+        .set('Authorization', userJwt)
+        .expect(400)
+        .expect(response => assert
+          .equal(ErrorConstants.badPaginationParameters, response.body.error))
     );
   });
   describe('POST /api/v1/users/', () => {
@@ -490,8 +523,9 @@ describe('User controller', () => {
       after(() => User
         .destroy({ where: {}, cascade: true, restartIdentity: true }));
     });
-    it(`should respond with an error message when provided with 
-    malformed email`, () => {
+    // eslint-disable-next-line
+    it('should respond with an error message when provided with malformed email',
+      () => {
         const supertestPromise = request.post('/api/v1/users/')
           .send({
             email: 'andela',
@@ -505,8 +539,8 @@ describe('User controller', () => {
           });
         return supertestPromise;
       });
-    it(`should respond with '${incompleteCredentialsError}' 
-    when 1 or all fields are omitted`, () => {
+    it('should respond with an error message when 1 or all fields are omitted',
+      () => {
         const supertestPromise = request.post('/api/v1/users/')
           .send({ password: 'password', confirmationPassword: 'password' })
           .expect(400)
@@ -517,8 +551,9 @@ describe('User controller', () => {
           });
         return supertestPromise;
       });
-    it(`shoud respond with an error message when 
-    password and cofirmation password conflicts`, () => {
+    // eslint-disable-next-line
+    it('should respond with an error message when password and cofirmationPassword conflicts',
+      () => {
         const supertestPromise = request.post('/api/v1/users')
           .send({
             email: 'fizzy@gmail.com',
@@ -532,8 +567,8 @@ describe('User controller', () => {
           });
         return supertestPromise;
       });
-    it(`should respond with  a token when provided 
-    with the right credentials`, () => {
+    it('should respond with  a token when provided with the right credentials',
+      () => {
         const supertestPromise = request.post('/api/v1/users')
           .send({
             email: 'fizzy@gmail.com',

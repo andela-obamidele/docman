@@ -14,6 +14,11 @@ const ErrorConstants = {
     userNotFound: 'sorry. user not found',
     unAuthorizedUserError: 'you are not authorized to complete this action',
   },
+  zeroLimitError: 'limit cannot be 0',
+  badPaginationParameters: 'only limit and offset is required on this endpoint',
+  emptyLimitError: 'please provide limit',
+  offsetTypeError: 'offset should be a number',
+  limitTypeError: 'limit should be a number',
   endOfPageReached: 'you have reached end of the page',
   unmatchedUserSearch: 'your query does not match any email in our database',
   voidUserDeleteError: 'the user you tried to delete is not on docman',
@@ -27,7 +32,7 @@ const ErrorConstants = {
   paginationQueryError: 'sorry, limit and offset shoud be numbers',
   wrongIdTypeError: 'param \'id\' should be a number',
   duplicateDocTitleError: 'duplicate document title not allowed',
-  invalidDocAccessLevelError: 'access can either be public, private or role',
+  invalidDocumentAccessLevel: 'access can either be public, private or role',
   documentTitleLimitError: 'title should be between 1 to 30 characters',
   documentContentLimitError: 'content should be between 1 to 10000 characters',
   genericCreateDocumentError: 'document create failed due to server error',
@@ -42,9 +47,9 @@ const ErrorConstants = {
   badDocumentsQuery: 'query string q cannot be empty',
   badMethodError: 'this api only takes one POST, PUT, DELETE AND GET methods',
   errorCodes: {
-    errNoDefaultForField: '1364',
-    erDupEntry: '23505',
-    notAnInt: '22P02',
+    noDefaultFieldProvidedError: '1364',
+    noDuplicateEntryError: '23505',
+    notAnIntegerError: '22P02',
     invalidEnumInput: '22P02'
   },
 };

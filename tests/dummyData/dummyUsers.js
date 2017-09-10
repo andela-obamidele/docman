@@ -1,4 +1,4 @@
-const dummyUsers = [
+const DummyUsers = [
   {
     email: 'test1@testdomain.com',
     password: 'password124',
@@ -60,4 +60,4 @@ const dummyUsers = [
     username: 'username5'
   },
 ];
-export default dummyUsers;
+export default DummyUsers;

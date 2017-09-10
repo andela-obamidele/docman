@@ -86,9 +86,9 @@ const AuthHelpers = {
     let status = 400;
     const { original } = error;
     if (original) {
-      if (original.code === errorCodes.errNoDefaultForField) {
+      if (original.code === errorCodes.noDefaultFieldProvidedError) {
         errorMessage = userAuthErrors.incompleteCredentialsError;
-      } else if (original.code === errorCodes.erDupEntry) {
+      } else if (original.code === errorCodes.noDuplicateEntryError) {
         const { constraint } = original;
         if (constraint.indexOf('email') > -1) {
           status = 409;

@@ -8,7 +8,7 @@ const {
   genericUserUpdateError
 } = ErrorConstants;
 
-const userHelpers = {
+const UserHelpers = {
   /**
    * @description returns a new user object containing
    * id, email, createdAt, updatedAt, and roleId.
@@ -137,7 +137,9 @@ const userHelpers = {
       return HTTPResponse
         .status(404)
         .json(({ error: ErrorConstants.userNotFound }));
-    } else if (error.original && error.original.code === errorCodes.notAnInt) {
+    } else if (
+      error.original &&
+      error.original.code === errorCodes.notAnIntegerError) {
       return HTTPResponse
         .status(400)
         .json({ error: ErrorConstants.wrongIdTypeError });
@@ -147,6 +149,6 @@ const userHelpers = {
       .json({ error: genericUserUpdateError });
   },
 };
-userHelpers.handleValidationErrors = Helpers.handleValidationErrors;
-userHelpers.getPageMetadata = Helpers.getPageMetadata;
-export default userHelpers;
+UserHelpers.handleValidationErrors = Helpers.handleValidationErrors;
+UserHelpers.getPageMetadata = Helpers.getPageMetadata;
+export default UserHelpers;

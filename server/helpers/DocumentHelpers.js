@@ -14,14 +14,14 @@ const DocumentHelpers = {
     const errorMessage = ErrorConstants.genericCreateDocumentError;
     if (error.original) {
       const errorCode = error.original.code;
-      if (ErrorConstants.errorCodes.erDupEntry === errorCode) {
+      if (ErrorConstants.errorCodes.noDuplicateEntryError === errorCode) {
         return response
           .status(409)
           .json({ error: ErrorConstants.duplicateDocTitleError });
       } else if (ErrorConstants.errorCodes.invalidEnumInput === errorCode) {
         return response
           .status(403)
-          .json({ error: ErrorConstants.invalidDocAccessLevelError });
+          .json({ error: ErrorConstants.invalidDocumentAccessLevel });
       }
     } else if (error.errors) {
       const errors = this.handleValidationErrors(error.errors);
@@ -101,7 +101,7 @@ const DocumentHelpers = {
       if (ErrorConstants.errorCodes.invalidEnumInput === errorCode) {
         return response
           .status(403)
-          .json({ error: ErrorConstants.invalidDocAccessLevelError });
+          .json({ error: ErrorConstants.invalidDocumentAccessLevel });
       }
     }
     return response.status(500)

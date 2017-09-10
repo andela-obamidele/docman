@@ -12,12 +12,12 @@ import ErrorConstants from '../constants/ErrorConstants';
  * @returns {void |Promise} Promise from express http response if
  * a json error occurs
  */
-const jsonErrorHandler = (error, request, response, next) => {
+const JSONErrorHandler = (error, request, response, next) => {
   if (error && error.toString().indexOf('JSON') > -1) {
     return response
       .status(400).json({ error: ErrorConstants.badJSONRequest });
   }
   next();
 };
-export default jsonErrorHandler;
+export default JSONErrorHandler;
 
