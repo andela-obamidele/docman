@@ -10,7 +10,7 @@ module.exports = {
   up: (queryInterface) => {
     const query = queryInterface.bulkInsert('Users', [
       {
-        email: 'admin@docman.com',
+        email: process.env.FIRST_ADMIN_EMAIL,
         password: process.env.FIRST_ADMIN_PASSWORD,
         username: 'admin',
         roleId: 1,
@@ -20,7 +20,7 @@ module.exports = {
       {
         email: 'admin2@docman.com',
         password: process.env.SECOND_ADMIN_PASSWORD,
-        username: 'admin2',
+        username: process.env.SECOND_ADMIN_EMAIL,
         roleId: 1,
         updatedAt: new Date(),
         createdAt: new Date()
