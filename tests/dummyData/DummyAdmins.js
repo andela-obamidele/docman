@@ -1,14 +1,14 @@
 const DummyAdmins = [
   {
-    email: 'admin@docman.com',
+    email: process.env.FIRST_ADMIN_EMAIL,
     password: process.env.FIRST_ADMIN_PASSWORD,
-    username: 'admin',
+    username: process.env.FIRST_ADMIN_USERNAME,
     roleId: 1
   },
   {
-    email: 'admin2@docman.com',
+    email: process.env.SECOND_ADMIN_EMAIL,
     password: process.env.SECOND_ADMIN_PASSWORD,
-    username: 'admin2',
+    username: process.env.SECOND_ADMIN_USERNAME,
     roleId: 1
   }
 ];
