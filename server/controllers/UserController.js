@@ -1,21 +1,26 @@
 import { User } from '../models';
-import errorConstants from '../constants/errorConstants';
-import successConstants from '../constants/successConstants';
-import authHelpers from '../helpers/authHelpers';
-import userHelpers from '../helpers/userHelpers';
+import ErrorConstants from '../constants/ErrorConstants';
+import SuccessConstants from '../constants/SuccessConstants';
+import AuthHelpers from '../helpers/AuthHelpers';
+import UserHelpers from '../helpers/UserHelpers';
 
-const { userAuthErrors, unmatchedUserSearch } = errorConstants;
+const {
+  userAuthErrors,
+  unmatchedUserSearch,
+  genericErrorMessage } = ErrorConstants;
 
-const { userDeleteSuccessful } = successConstants;
-const { filterUsersResult, getPageMetadata } = userHelpers;
+const { userDeleteSuccessful } = SuccessConstants;
+const { filterUsersResult, getPageMetadata } = UserHelpers;
 
-export default {
+const UserController = {
   /**
    * @description responds with a json web token to be used for authorization
    * on providing email and password. or an error message if an error occurs 
    * in when using this method
+   * 
    * @param {object} request Express http request object
    * @param {object} response Express http response object
+   * 
    * @returns {Promise} Promise object from express HTTP response
    */
   loginUser: (request, response) => {
@@ -24,22 +29,32 @@ export default {
       .then((user) => {
         const hashedPassword = user.dataValues.password;
         const userCredentials = user.dataValues;
-        authHelpers.isPasswordCorrect(password, hashedPassword);
-        return authHelpers
+        AuthHelpers.isPasswordCorrect(password, hashedPassword);
+        return AuthHelpers
           .sendUniqueJWT(userCredentials, response, false);
       })
-      .catch(() => {
-        response.status(401).json({
-          error: userAuthErrors.wrongEmailOrPassword
-        });
+      .catch((error) => {
+        const errorMessage = error.toString();
+        if (errorMessage.indexOf('null') > -1 ||
+          error.indexOf('password') > -1) {
+          return response.status(401).json({
+            error: userAuthErrors.wrongEmailOrPassword
+          });
+        }
+        return response
+          .status(500)
+          .json(ErrorConstants.genericErrorMessage);
       });
   },
+
   /**
    * @description responds with a json web token to be used for authorization
    * on providing email and password and username or an error message 
    * when an error occur while using this endpoint
+   * 
    * @param {object} request Express http request object
    * @param {object} response Express http response object
+   * 
    * @returns {Promise} Promise object from express HTTP response
    */
   signupUser: (request, response) => {
@@ -50,15 +65,15 @@ export default {
       username
     } = request.body;
 
-    if (authHelpers.isTheTwoPasswordsSame(password,
+    if (AuthHelpers.confirmPassword(password,
       confirmationPassword,
       response)) {
       return User.create({ email, password, username })
         .then((user) => {
-          authHelpers.sendUniqueJWT(user.dataValues, response, true);
+          AuthHelpers.sendUniqueJWT(user.dataValues, response, true);
         })
         .catch((error) => {
-          authHelpers.handleSignupError(error, response);
+          AuthHelpers.handleSignupError(error, response);
         })
         .catch(() => User.findOne({ where: { email } }))
         .catch(() => {
@@ -71,6 +86,7 @@ export default {
         });
     }
   },
+
   /**
   * @description responds with list of all users when error when
   * request parameters does not contain limit and offset query
@@ -78,8 +94,10 @@ export default {
   * when request paramiters contains limit and offset query.
   *  or an error message if an error occurs 
   * in when using this method
+  *
   * @param {object} request Express http request object
   * @param {object} response Express http response object
+  *
   * @returns {Promise} Promise object from express HTTP response
   */
   getUsers: (request, response) => {
@@ -103,68 +121,73 @@ export default {
             metaData,
             users: filterUsersResult(queryResult.rows)
           });
-      });
-  },
-  /**
-  * @description responds with a simgle user object from the
-  * @param {object} request Express http request object
-  * @param {object} response Express http response object
-  * @returns {Promise} Promise object from express HTTP response
-  */
-  getUserById: (request, response) => {
-    const userQueryPromise = User.findById(request.params.id)
-      .then((user) => {
-        if (!user) {
-          return response
-            .status(404)
-            .json({ error: errorConstants.userNotFound });
-        }
-        const { password,
-          bio,
-          updatedAt,
-          fullName,
-          roleId,
-          email,
-          ...userData
-        } = user.dataValues;
-        const currentUserId = response.locals.user.id;
-        const isUserIdOwner = currentUserId === Number
-          .parseInt(request.params.id, 10);
-        if (isUserIdOwner) {
-          userData.email = email;
-        }
-        return response.json({
-          ...userData,
-          fullName: !fullName ? 'not set' : fullName,
-          bio: !bio ? 'not set' : bio
-        });
       })
       .catch(() => response
-        .status(400)
-        .json({ error: errorConstants.wrongIdTypeError }));
-    return userQueryPromise;
+        .status(500).json({ error: ErrorConstants.genericErrorMessage }));
   },
+
+  /**
+  * @description responds with a simgle user object from the
+  *
+  * @param {object} request Express http request object
+  * @param {object} response Express http response object
+  *
+  * @returns {Promise} Promise object from express HTTP response
+  */
+  getUserById: (request, response) => User.findById(request.params.id)
+    .then((user) => {
+      if (!user) {
+        return response
+          .status(404)
+          .json({ error: ErrorConstants.userNotFound });
+      }
+      const { password,
+        bio,
+        updatedAt,
+        fullName,
+        roleId,
+        email,
+        ...userData
+      } = user.dataValues;
+      const currentUserId = response.locals.user.id;
+      const isUserIdOwner = currentUserId === Number
+        .parseInt(request.params.id, 10);
+      if (isUserIdOwner) {
+        userData.email = email;
+      }
+      return response.json({
+        ...userData,
+        fullName: !fullName ? 'not set' : fullName,
+        bio: !bio ? 'not set' : bio
+      });
+    })
+    .catch(() => response
+      .status(500)
+      .json({ error: ErrorConstants.genericErrorMessage })),
+
   /**
   * @description updates any user data apart from id. reponds
   * with new user object or error message if any error occurs in 
   * the process. It is only going to get needed payload and ignore
   * other payloads
+  *
   * @param {object} request Express http request object
   * @param {object} response Express http response object
+  *
   * @returns {Promise} Promise object from express HTTP response
   */
   updateUserInfo: (request, response) => {
-    const updateData = userHelpers.getOnlyTruthyAttributes(request.body);
+    const updateData = UserHelpers.getTruthyAttributes(request.body);
     return User.findById(request.params.id)
       .then((user) => {
-        userHelpers.terminateUserUpdateOnBadPayload(
+        UserHelpers.terminateUserUpdateOnBadPayload(
           updateData,
           request.body,
           user);
-        let { userSuccessfullyUpdated } = successConstants;
+        let { userSuccessfullyUpdated } = SuccessConstants;
         if (request.body.newPassword) {
           updateData.password = request.body.newPassword;
-          userSuccessfullyUpdated += ` ${successConstants.userUpdatedPassword}`;
+          userSuccessfullyUpdated += ` ${SuccessConstants.userUpdatedPassword}`;
         }
         return user
           .update(updateData)
@@ -185,32 +208,39 @@ export default {
               });
           });
       })
-      .catch(error => userHelpers.handleUserUpdateError(error, response));
+      .catch(error => UserHelpers.handleUserUpdateError(error, response));
   },
+
   /**
   * @description deletes a user from the database. responds with a success
   * message. there is no error handling in this method as all error handling
   * is expected to be done by a middleware
+  *
   * @param {object} request Express http request object
   * @param {object} response Express http response object
+  *
   * @returns {Promise} Promise object from express HTTP response
   */
   deleteUser: (request, response) => {
     const userToDelete = request.params.id;
-    User.destroy({ where: { id: userToDelete } })
+    return User.destroy({ where: { id: userToDelete } })
       .then(() => response
         .status(200)
         .json({
           message: userDeleteSuccessful
         })
-      );
+      ).catch(() => response
+        .status(500).json(ErrorConstants.genericErrorMessage));
   },
+
   /**
   * @description searches user by email. respoonds with all
   * matching instances or an error message if search term does
   * not match any email in the database
+  *
   * @param {object} request Express http request object
   * @param {object} response Express http response object
+  *
   * @returns {Promise} Promise object from express HTTP response
   */
   searchUser: (request, response) => {
@@ -227,6 +257,8 @@ export default {
         }
         return response
           .json({ matches: users.count, users: filterUsersResult(users.rows) });
-      });
+      })
+      .catch(() => response.status(500).json({ error: genericErrorMessage }));
   }
 };
+export default UserController;

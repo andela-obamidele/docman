@@ -1,14 +1,21 @@
-import authHelpers from './authHelpers';
-import errorConstants from '../constants/errorConstants';
-import helpers from './helpers';
+import AuthHelpers from './AuthHelpers';
+import ErrorConstants from '../constants/ErrorConstants';
+import Helpers from './Helpers';
 
-const { userAuthErrors, errorCodes } = errorConstants;
-const userHelpers = {
+const {
+  userAuthErrors,
+  errorCodes,
+  genericUserUpdateError
+} = ErrorConstants;
+
+const UserHelpers = {
   /**
    * @description returns a new user object containing
    * id, email, createdAt, updatedAt, and roleId.
    * Helps eleminate noise from user objects
+   * 
    * @param {object[]} users - sequelize queried result
+   * 
    * @returns {object[]} - New object containing only specified props
    */
   filterUsersResult(users) {
@@ -35,10 +42,12 @@ const userHelpers = {
    * gets email, username, password, fullName and bio from object
    * if any of this value is falsy, they are eliminated from the returned
    * object
+   * 
    * @param {object} payload user object
+   * 
    * @returns {object} new user object containing truthy values only
    */
-  getOnlyTruthyAttributes(payload) {
+  getTruthyAttributes(payload) {
     const {
       email,
       username,
@@ -69,24 +78,28 @@ const userHelpers = {
    * @description helps userController.updateUserInfo to validate
    * payload before updating. Throws error if unexpected payload
    * is found
+   * 
    * @param {object} expectedPayload  Payload expected from the user
    * @param {object} providedPayload Payload provided by the users
    * @param {object} user sequelize object queried from User model
+   * 
    * @returns {void}
    */
   terminateUserUpdateOnBadPayload(expectedPayload, providedPayload, user) {
+    expectedPayload
+      .password = !expectedPayload.password ? '' : expectedPayload.password;
     if (!user) {
       throw new Error('unassigned id');
     }
     user = user.dataValues;
-    const isPasswordCorrect = authHelpers
+    const isPasswordCorrect = AuthHelpers
       .isPasswordCorrect(expectedPayload.password, user.password);
     if (!isPasswordCorrect) {
       throw new Error('hashedPassword and password does not match');
     }
     const { confirmationPassword, newPassword } = providedPayload;
-    const isPasswordsMatch = authHelpers
-      .isTheTwoPasswordsSame(newPassword, confirmationPassword);
+    const isPasswordsMatch = AuthHelpers
+      .confirmPassword(newPassword, confirmationPassword);
     if ((newPassword || confirmationPassword) && !isPasswordsMatch) {
       throw new Error('unmatched passwords');
     }
@@ -94,15 +107,14 @@ const userHelpers = {
   /**
    * @description help userController.updateUserInfo to handle possible errors
    * which might occur while updating
+   * 
    * @param {object} error javascript error object
    * @param {Response} HTTPResponse express HTTP response object
+   * 
    * @returns {Promise} from express http response object
    */
   handleUserUpdateError(error, HTTPResponse) {
-    const {
-      passwordUpdateError,
-      genericUserUpdateError
-    } = errorConstants;
+    const { passwordUpdateError } = ErrorConstants;
     const errors = error.errors;
 
     if (errors) {
@@ -113,7 +125,7 @@ const userHelpers = {
       return HTTPResponse
         .status(400)
         .json({ errors: errorResponse });
-    } else if (error.toString().indexOf('hash') > -1) {
+    } else if (error.toString().indexOf('hashedPassword and password') > -1) {
       return HTTPResponse
         .status(403)
         .json({ error: userAuthErrors.wrongPasswordError });
@@ -124,17 +136,19 @@ const userHelpers = {
     } else if (error.toString().indexOf('unassigned id') > -1) {
       return HTTPResponse
         .status(404)
-        .json(({ error: errorConstants.userNotFound }));
-    } else if (error.original && error.original.code === errorCodes.notAnInt) {
+        .json(({ error: ErrorConstants.userNotFound }));
+    } else if (
+      error.original &&
+      error.original.code === errorCodes.notAnIntegerError) {
       return HTTPResponse
         .status(400)
-        .json({ error: errorConstants.wrongIdTypeError });
+        .json({ error: ErrorConstants.wrongIdTypeError });
     }
     return HTTPResponse
-      .status(404)
+      .status(500)
       .json({ error: genericUserUpdateError });
   },
 };
-userHelpers.handleValidationErrors = helpers.handleValidationErrors;
-userHelpers.getPageMetadata = helpers.getPageMetadata;
-export default userHelpers;
+UserHelpers.handleValidationErrors = Helpers.handleValidationErrors;
+UserHelpers.getPageMetadata = Helpers.getPageMetadata;
+export default UserHelpers;

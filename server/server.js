@@ -4,18 +4,18 @@ import http from 'http';
 import path from 'path';
 import bodyParser from 'body-parser';
 import router from './routes/routes';
-import jsonErrorHandler from './middlewares/jsonErrorHandler';
+import JSONErrorHandler from './middlewares/JSONErrorHandler';
 import serverErrorHandler from './middlewares/serverErrorHandler';
 import methodValidator from './middlewares/methodValidator';
 import invalidEndpointReporter from './middlewares/invalidEndpointReporter';
 
 const app = express();
 app.use(express.static('./public/'));
-app.set('PORT', process.env.PORT || 3000);
+app.set('PORT', process.env.PORT || 4001);
 app.use(logger('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(jsonErrorHandler);
+app.use(JSONErrorHandler);
 app.use(methodValidator);
 app.use('/api/v1/', router);
 app.get('*', (request, response) =>

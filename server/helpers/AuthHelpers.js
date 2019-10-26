@@ -1,32 +1,37 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 
-const { conflictingPasswordError } = errorConstants.userAuthErrors;
-const { errorCodes, userAuthErrors } = errorConstants;
+const { conflictingPasswordError } = ErrorConstants.userAuthErrors;
+const { errorCodes, userAuthErrors } = ErrorConstants;
 
-const authHelpers = {
+const AuthHelpers = {
   /**
    * @description compares two passwords. sends  http response if provided
-   * @param {string} password1 - first user password to be compared
-   * @param {string} password2 - second password to be compared
+   * 
+   * @param {string} firstPassword - first user password to be compared
+   * @param {string} secondPassword - second password to be compared
    * @param {Response} [HTTPResponse] express http response object
+   * 
    * @returns {boolean} - returns true  if passwords match
    * or false if passwords doesn't match
    */
-  isTheTwoPasswordsSame(password1, password2, HTTPResponse) {
-    if (password1 !== password2) {
+  confirmPassword(firstPassword, secondPassword, HTTPResponse) {
+    if (firstPassword !== secondPassword) {
       if (HTTPResponse) {
         const error = conflictingPasswordError;
-        return !HTTPResponse.status(409).json({ error });
+        return !HTTPResponse.status(400).json({ error });
       }
       return false;
     }
     return true;
   },
+
   /**
    * @description generates a json web tokien
-   * @param {object} userCredentials - an object containing current user detail
+   * 
+   * @param {object} userCredentials - an object containing current use detail
+   * 
    * @returns {string} a json web token for current user
    */
   generateJWT(userCredentials) {
@@ -36,36 +41,54 @@ const authHelpers = {
     token += jwt.sign({ data: otherCredentials }, secret, { expiresIn: '48h' });
     return token;
   },
+
   /**
    * @description - sends jwt to client
+   * 
    * @param {object} userCredentials object containing user credentials
    * @param {Response} HTTPResponse any object capable of sending http response
    * (express preferrably)
    *  @param {boolean} isSignup expected to be true when method is called
    * @param {string} message - response message wished to be displayed
    * from signup controller
+   * 
    * @returns {Promise} javascript promise from http response
    */
   sendUniqueJWT(userCredentials, HTTPResponse, isSignup) {
     const statusCode = isSignup ? 201 : 200;
+    const {
+      password,
+      updatedAt,
+      roleId,
+      fullName,
+      bio,
+      ...otherData
+    } = userCredentials;
     const token = this.generateJWT(userCredentials);
-    return HTTPResponse.status(statusCode).json({ token });
+    const responseData = { token };
+    if (isSignup) {
+      responseData.user = otherData;
+    }
+    return HTTPResponse.status(statusCode).json(responseData);
   },
+
   /**
    * @description makes sure server respond with appropriate error message
    * during  signup
-   * @param {object} error - signup error
+   * 
+   * @param {object} error - signup error 
    * @param {Response} HTTPResponse - express http response
+   * 
    * @returns {Promise} Promise from express http response
    */
   handleSignupError(error, HTTPResponse) {
-    let errorMessage = errorConstants.genericErrorMessage;
+    let errorMessage = ErrorConstants.genericErrorMessage;
     let status = 400;
     const { original } = error;
     if (original) {
-      if (original.code === errorCodes.errNoDefaultForField) {
+      if (original.code === errorCodes.noDefaultFieldProvidedError) {
         errorMessage = userAuthErrors.incompleteCredentialsError;
-      } else if (original.code === errorCodes.erDupEntry) {
+      } else if (original.code === errorCodes.noDuplicateEntryError) {
         const { constraint } = original;
         if (constraint.indexOf('email') > -1) {
           status = 409;
@@ -86,16 +109,20 @@ const authHelpers = {
       error: errorMessage
     });
   },
+
   /**
    * @description - Compares the password in the database to the one provided
+   * 
    * @param {string} providedPassword - Password provided by client
    * @param {*} hashedPassword - User password stored in the database
+   * 
    * @returns {boolean} true if password match. false if they don't
    */
   isPasswordCorrect(providedPassword, hashedPassword) {
+    providedPassword = !providedPassword ? '' : providedPassword;
     const isPasswordCorrect = bcrypt
       .compareSync(providedPassword, hashedPassword);
     return isPasswordCorrect;
   },
 };
-export default authHelpers;
+export default AuthHelpers;

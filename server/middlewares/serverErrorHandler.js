@@ -1,4 +1,4 @@
-import errorConstants from '../constants/errorConstants';
+import ErrorConstants from '../constants/ErrorConstants';
 /**
  * @description responds with a generic error message cannot process a
  * request for an unknown reason
@@ -7,12 +7,13 @@ import errorConstants from '../constants/errorConstants';
  * @param {object} response express http responsonse object
  * @param {function} next express middlware next function which passes 
  * control to next middleware
+ * 
  * @returns {void | Promise} promise returned from express http response object
  */
 const serverErrorHandler = (error, request, response, next) => {
   if (error) {
     return response
-      .status(500).json({ error: errorConstants.genericErrorMessage });
+      .status(500).json({ error: ErrorConstants.genericErrorMessage });
   }
   next();
 };

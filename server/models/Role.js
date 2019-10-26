@@ -1,7 +1,9 @@
 /**
  * @description defines Role model
+ * 
  * @param {object} sequelize sequelize orm object
  * @param {object} DataTypes Class that contains Sequelize
+ * 
  * @returns {function} Constructor function that describes
  * Role model and queries that are possible with it
  */
